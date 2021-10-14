@@ -1,4 +1,4 @@
-QT          += core gui widgets
+QT          += core gui widgets opengl
 
 TEMPLATE    = app
 CONFIG      += c++11
