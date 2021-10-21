@@ -168,17 +168,6 @@ void RenderWindow::render()
     ball->draw();
 
 
-
-
-
-
-
-
-
-
-
-
-
     //xyz.draw();
     //mia.draw();
     //fx.draw();
