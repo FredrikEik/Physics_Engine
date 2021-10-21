@@ -1,4 +1,4 @@
-#include "rollingball.h"
+﻿#include "rollingball.h"
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
@@ -6,16 +6,31 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
     mPosition.translate(0,0,0.25);
     mScale.scale(0.25,0.25,0.25);
 }
+
 RollingBall::~RollingBall()
 {
 
 }
+
 void RollingBall::move(float dt)
 {
+//    QVector3D vector3D BallSpeed = (0.0, 0.0, 0.0);
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+
+//std::cout << vertices;
 
     mMatrix = mPosition * mScale;
 
+//    if(mMatrix == vertices) //Trying to check if overlap. Uncertain if provided codebase have this functionality.
+//    {
+//        std::cout << "contact";
+//    }
+//    else
+//    {
+        //h = v0t+1/2 gt^2
+    //BallSpeed += (-0.1, 0, 0);
+//    }
+    //mPosition += BallSpeed;
 }
 
 void RollingBall::init(GLint matrixUniform)
