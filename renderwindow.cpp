@@ -44,6 +44,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Demo
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     ball = new RollingBall(3);
+    ball->move(2,2,0);
+    ball->heightAt();
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -57,8 +59,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 RenderWindow::~RenderWindow()
 {
     //cleans up the GPU memory
-    //glDeleteVertexArrays( 1, &mVAO );
-    //glDeleteBuffers( 1, &mVBO );
+    glDeleteVertexArrays( 1, &mVAO );
+    glDeleteBuffers( 1, &mVBO );
 }
 
 /// Sets up the general OpenGL stuff and the buffers needed to render a triangle
@@ -164,7 +166,7 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+    //ball->move(0.017f);
     ball->draw();
 
 

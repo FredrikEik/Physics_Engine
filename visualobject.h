@@ -25,6 +25,7 @@ public:
     virtual void move(float dx, float dy, float dz) { }
     gsml::Vector3d barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position);
     float barycentricHeight(const QVector3D &point, const QVector3D &corner1, const QVector3D &corner2, const QVector3D &corner3);
+    std::vector<gsml::Vertex> get_vertices();
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};

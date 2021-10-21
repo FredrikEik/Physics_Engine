@@ -80,3 +80,8 @@ float VisualObject::barycentricHeight(const QVector3D &point, const QVector3D &c
 
     return heightOut;
 }
+
+std::vector<gsml::Vertex> VisualObject::get_vertices()
+{
+    return mVertices;
+}

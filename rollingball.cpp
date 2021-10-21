@@ -12,7 +12,7 @@ RollingBall::~RollingBall()
 }
 void RollingBall::baryMove(float x, float y, float z)
 {
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
 
     if (z==0)
     {
@@ -37,7 +37,7 @@ void RollingBall::baryMove(float x, float y, float z)
 
             if (bary.x >=0 && bary.y >=0 && bary.z >=0)
             {
-                gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
+                //gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
                 //qDebug() << "translating" << translation;
                 mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
                 break;
@@ -95,14 +95,14 @@ gsml::Vector3d RollingBall::Get_position()
 
 void RollingBall::setHeight(float z)
 {
-    QVector3D HeightVector{0,0,z};
-    QVector3D Translation{0,0,0};
+    gsml::Vector3d HeightVector{0,0,z};
+    gsml::Vector3d Translation{0,0,0};
 
-    Translation.setZ((HeightVector.z() - Get_position().z)+0.5);
+    Translation.z = ((HeightVector.z - Get_position().z)+0.5);
 
     if(z != mMatrix.getColumn(3).z())
     {
-        mMatrix.translate(Translation.x(),Translation.y(),Translation.z());
+        mMatrix.translate(Translation.x,Translation.y,Translation.z);
     }
 }
 
@@ -113,8 +113,14 @@ void RollingBall::heightAt()
     baryMove(pos.x,pos.y,pos.z);
 }
 
+void RollingBall::move(float dx, float dy, float dz)
+{
+    mPosition.translate(dx, dy, dz);
+    mMatrix = mPosition * mScale;
+}
+
 void RollingBall::move(float dt)
 {
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
     mMatrix = mPosition * mScale;
 }
