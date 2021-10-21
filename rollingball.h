@@ -13,6 +13,7 @@ public:
     void draw() override;
     void move(float dt) override;
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
+    void barycentricCoordinates();
 protected:
     VisualObject* triangle_surface;
 private:

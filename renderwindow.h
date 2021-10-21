@@ -72,6 +72,8 @@ private:
 
     void startOpenGLDebugger();
 
+
+
 protected:
     //The QWindow that we inherit from has these functions to capture
     // mouse and keyboard. Uncomment to use
