@@ -14,10 +14,8 @@ RollingBall::~RollingBall()
 
 void RollingBall::move(float dt)
 {
-//    QVector3D vector3D BallSpeed = (0.0, 0.0, 0.0);
+    gsml::Vector3d BallSpeed;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-
-//std::cout << vertices;
 
     mMatrix = mPosition * mScale;
 
@@ -27,10 +25,10 @@ void RollingBall::move(float dt)
 //    }
 //    else
 //    {
-        //h = v0t+1/2 gt^2
-    //BallSpeed += (-0.1, 0, 0);
+        //h = v0t+1/2 gt^2 //formula for "hastighet" given freefall. Simplified in code.
+        BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
 //    }
-    //mPosition += BallSpeed;
+mPosition.translate(BallSpeed.x, BallSpeed.y, BallSpeed.z); //Based on calculations in either collision or free-fall apply translation to ball.
 }
 
 void RollingBall::init(GLint matrixUniform)
