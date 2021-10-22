@@ -13,7 +13,6 @@ RollingBall::~RollingBall()
 void RollingBall::baryMove(float x, float y, float z)
 {
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-
     if (z==0)
     {
         mMatrix.translate(x, 0, 0);
@@ -33,12 +32,15 @@ void RollingBall::baryMove(float x, float y, float z)
                                      gsml::Vector2d(p2.x, p2.y),
                                      gsml::Vector2d(p3.x, p3.y),
                                      gsml::Vector2d(mMatrix.getColumn(3).x(), mMatrix.getColumn(3).y()));
-            //qDebug() << "bary value: " << bary;
+            qDebug() << "bary value: " << bary.x << bary.y << bary.z;
 
             if (bary.x >=0 && bary.y >=0 && bary.z >=0)
             {
                 gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
-                //qDebug() << "translating" << translation;
+                qDebug() << "translating" << translation.x << translation.y << translation.z;
+                //setHeight((p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
+                setHeight(barycentricHeight(Get_position(), p1, p2, p3));
+                //mMatrix.translate(0,0,);
                 mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
                 break;
             }
@@ -86,9 +88,9 @@ gsml::Vector3d RollingBall::Get_position()
 {
     gsml::Vector3d temp;
 
-    temp.x = (mMatrix.getColumn(3).x());
-    temp.y = (mMatrix.getColumn(3).y());
-    temp.z = (mMatrix.getColumn(3).z());
+    temp.x = ((mMatrix.getColumn(3)).x());
+    temp.y = ((mMatrix.getColumn(3)).y());
+    temp.z = ((mMatrix.getColumn(3)).z());
 
     return temp;
 }
@@ -115,6 +117,12 @@ void RollingBall::heightAt()
 
 void RollingBall::move(float dt)
 {
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    mMatrix = mPosition * mScale;
+}
+
+void RollingBall::move(float dx, float dy, float dz)
+{
+    mPosition.translate(dx, dy, dz);
     mMatrix = mPosition * mScale;
 }

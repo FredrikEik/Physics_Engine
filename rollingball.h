@@ -12,6 +12,7 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override;
+    void move(float dx, float dy, float dz) override;
     void baryMove(float x, float y, float z);
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
     gsml::Vector3d Get_position();

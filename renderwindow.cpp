@@ -45,6 +45,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     ball = new RollingBall(3);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    ball->move(1.5,1.5,0);
+    //ball->heightAt();
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -121,7 +123,7 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
     surf2->init(mMatrixUniform);
     ball->init(mMatrixUniform);
-    xyz.init(mMatrixUniform);
+    //xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -131,7 +133,6 @@ void RenderWindow::render()
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
     // initializeOpenGLFunctions();    //must call this every frame it seems...
-
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -164,14 +165,14 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+    //ball->move(0.017f);
     ball->draw();
 
 
     //xyz.draw();
     //mia.draw();
     //fx.draw();
-   // tetraeder->draw();
+    // tetraeder->draw();
     //disc->move(0.017);
     //disc->draw();
     //vogn->move(0.017f);
