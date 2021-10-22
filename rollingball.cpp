@@ -19,14 +19,15 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
 
-//    if(mMatrix == vertices) //Trying to check if overlap. Uncertain if provided codebase have this functionality.
+//    if(mMatrix = vertices) //Trying to check if overlap.
 //    {
-//        std::cout << "contact";
+//        std::cout << "contact" << std::endl;
 //    }
 //    else
 //    {
-        //h = v0t+1/2 gt^2 //formula for "hastighet" given freefall. Simplified in code.
-        BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
+      //h = v0t+1/2 gt^2 - formula for "hastighet" given freefall. Simplified in code.
+      BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
+//      std::cout << "ball is moving" << std::endl;
 //    }
 mPosition.translate(BallSpeed.x, BallSpeed.y, BallSpeed.z); //Based on calculations in either collision or free-fall apply translation to ball.
 }

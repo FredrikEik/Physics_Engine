@@ -1,4 +1,4 @@
-#ifndef VISUALOBJECT_H
+﻿#ifndef VISUALOBJECT_H
 #define VISUALOBJECT_H
 
 #include <QOpenGLFunctions_4_1_Core>
@@ -23,6 +23,7 @@ public:
     virtual void draw()=0;
     virtual void move(float dt) { }
     virtual void move(float dx, float dy, float dz) { }
+
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};
