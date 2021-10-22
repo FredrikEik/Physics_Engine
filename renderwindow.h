@@ -1,4 +1,4 @@
-#ifndef RENDERWINDOW_H
+﻿#ifndef RENDERWINDOW_H
 #define RENDERWINDOW_H
 
 #include <QWindow>

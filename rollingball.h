@@ -1,4 +1,4 @@
-#ifndef ROLLINGBALL_H
+﻿#ifndef ROLLINGBALL_H
 #define ROLLINGBALL_H
 
 #include "octahedronball.h"
@@ -13,6 +13,9 @@ public:
     void draw() override;
     void move(float dt) override;
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
+
+    QVector3D WhichTriangleToBarysentrificate(VisualObject* ballObject, VisualObject* triangleObject);
+    QVector3D BarysentricCordinates(VisualObject* ballObject, VisualObject* triangleObject);
 protected:
     VisualObject* triangle_surface;
 private:
