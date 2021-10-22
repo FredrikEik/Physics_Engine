@@ -23,8 +23,10 @@ public:
     virtual void draw()=0;
     virtual void move(float dt) { }
     virtual void move(float dx, float dy, float dz) { }
-protected:
     std::vector<gsml::Vertex> mVertices;
+        std::vector<GLuint> mIndices;
+    
+protected:
     GLuint mVAO{0};
     GLuint mVBO{0};
     GLint mMatrixUniform{0};

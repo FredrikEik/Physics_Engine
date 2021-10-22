@@ -179,7 +179,7 @@ void RenderWindow::render()
 
 
 
-    //xyz.draw();
+    xyz.draw();
     //mia.draw();
     //fx.draw();
    // tetraeder->draw();

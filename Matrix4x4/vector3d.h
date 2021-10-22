@@ -26,6 +26,83 @@ struct Vector3d {
         z = v.z;
         return *this;
     }*/
+    
+    GLfloat getY() const
+    {
+        return y;
+    }
+    GLfloat getX() const
+    {
+        return x;
+    }
+    GLfloat getZ() const
+    {
+        return z;
+    }
+
+    void setX(const GLfloat &value)
+    {
+        x = value;
+    }
+    void setY(const GLfloat &value)
+    {
+        y = value;
+    }
+    void setZ(const GLfloat &value)
+    {
+        z = value;
+    }
+    
+    static Vector3d cross(const Vector3d &v1, const Vector3d &v2)
+    {
+        return {((v1.getY() * v2.getZ()) - (v1.getZ() * v2.getY())), ((v1.getZ() * v2.getX()) - (v1.getX() * v2.getZ())), ((v1.getX() * v2.getY()) - (v1.getY() * v2.getX()))};
+    }
+    
+    static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
+    {
+        return ((v1.getX() * v2.getX()) + (v1.getY() * v2.getY()) + (v1.getZ() * v2.getZ()));
+    }
+    
+    const Vector3d& operator=(const Vector3d &rhs)
+    {
+        x = rhs.getX();
+        y = rhs.getY();
+        z = rhs.getZ();
+
+        return *this;
+    }
+    Vector3d normalized()
+        {
+            Vector3d normalized;
+            GLfloat l = length();
+
+            if (l > 0.f)
+            {
+                normalized.setX(x / l);
+                normalized.setY(y / l);
+                normalized.setZ(z / l);
+            }
+
+            return normalized;
+        }
+
+    bool  operator!=(const Vector3d &rhs)
+    {
+        return (x!=rhs.x || y!=rhs.y || z!=rhs.z);
+    }
+    bool operator==(const Vector3d &rhs)
+    {
+        return (x==rhs.x && y==rhs.y && z==rhs.z);
+    }
+
+    Vector3d& operator+=(const Vector3d &rhs)
+    {
+        x += rhs.getX();
+        y += rhs.getY();
+        z += rhs.getZ();
+
+        return *this;
+    }
 
     Vector3d operator + (const Vector3d& v) const {
         Vector3d u;
@@ -338,6 +415,41 @@ struct Vector3d {
         w.y =  z*v.x - x*v.z;
         w.z =  x*v.y - y*v.x;
         return w;
+    }
+
+    GLfloat getX() const
+    {
+        return x;
+    }
+
+
+    void setX(const GLfloat &value)
+    {
+        x = value;
+    }
+
+
+    GLfloat getY() const
+    {
+        return y;
+    }
+
+
+    void setY(const GLfloat &value)
+    {
+        y = value;
+    }
+
+
+    GLfloat getZ() const
+    {
+        return z;
+    }
+
+
+    void setZ(const GLfloat &value)
+    {
+        z = value;
     }
 
     //! Length

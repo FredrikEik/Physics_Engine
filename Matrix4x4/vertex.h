@@ -61,6 +61,8 @@ public:
     void data(float v[]) const;
     gsml::Vector3d getXYZ() const;
     void operator = (const Vertex& v);
+    
+    gsml::Vector3d mXYZ;
 };
 }
 
