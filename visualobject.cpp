@@ -43,26 +43,26 @@ gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const g
     return baryc;
 }
 
-float VisualObject::barycentricHeight(const QVector3D &point, const QVector3D &corner1, const QVector3D &corner2, const QVector3D &corner3)
+float VisualObject::barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3)
 {
     // This calculation assumes that height is in the Y axis.
     // We also assume that the point is projected down the Y axis onto the triangle
     // Because of this we flatten the problem down to 2D
-    QVector2D p{point.x(), point.y()};
-    QVector2D a{corner1.x(), corner1.y()};
-    QVector2D b{corner2.x(), corner2.y()};
-    QVector2D c{corner3.x(), corner3.y()};
+    gsml::Vector2d p{point.x, point.y};
+    gsml::Vector2d a{corner1.x, corner1.y};
+    gsml::Vector2d b{corner2.x, corner2.y};
+    gsml::Vector2d c{corner3.x, corner3.y};
 
-    QVector2D v0 = b - a;
-    QVector2D v1 = c - a;
-    QVector2D v2 = p - a;
+    gsml::Vector2d v0 = b - a;
+    gsml::Vector2d v1 = c - a;
+    gsml::Vector2d v2 = p - a;
 
 
-    float d00 = (v0.x() * v0.x() +  v0.y() * v0.y());
-    float d01 = (v0.x() * v1.x() +  v0.y() * v1.y());
-    float d11 = (v1.x() * v1.x() +  v1.y() * v1.y());
-    float d20 = (v2.x() * v0.x() +  v2.y() * v0.y());
-    float d21 = (v2.x() * v1.x() +  v2.y() * v1.y());
+    float d00 = (v0.x * v0.x +  v0.y * v0.y);
+    float d01 = (v0.x * v1.x +  v0.y * v1.y);
+    float d11 = (v1.x * v1.x +  v1.y * v1.y);
+    float d20 = (v2.x * v0.x +  v2.y * v0.y);
+    float d21 = (v2.x * v1.x +  v2.y * v1.y);
     float invDenom = 1.0f / (d00 * d11 - d01 * d01);
 
     // u, v, w are the barycentric coordinates
@@ -74,7 +74,7 @@ float VisualObject::barycentricHeight(const QVector3D &point, const QVector3D &c
 
     float heightOut;
     if(u >= 0.f && v >= 0.f && w >= 0.f )
-        heightOut = corner1.z() * u + corner2.z() * v + corner3.z() * w;
+        heightOut = corner1.z * u + corner2.z * v + corner3.z * w;
     else
         heightOut = -10000.f;
 

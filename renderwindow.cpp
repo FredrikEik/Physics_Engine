@@ -47,6 +47,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     ball->move(2,2,0);
     ball->heightAt();
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    ball->move(1.5,1.5,0);
+    //ball->heightAt();
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -123,7 +125,7 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
     surf2->init(mMatrixUniform);
     ball->init(mMatrixUniform);
-    xyz.init(mMatrixUniform);
+    //xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -133,7 +135,6 @@ void RenderWindow::render()
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
     // initializeOpenGLFunctions();    //must call this every frame it seems...
-
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -173,7 +174,7 @@ void RenderWindow::render()
     //xyz.draw();
     //mia.draw();
     //fx.draw();
-   // tetraeder->draw();
+    // tetraeder->draw();
     //disc->move(0.017);
     //disc->draw();
     //vogn->move(0.017f);
