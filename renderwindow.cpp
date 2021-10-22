@@ -44,11 +44,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Demo
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     ball = new RollingBall(3);
-    ball->move(2,2,0);
-    ball->heightAt();
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-    ball->move(1.5,1.5,0);
-    //ball->heightAt();
+
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -138,6 +135,8 @@ void RenderWindow::render()
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //ball->move(0,0,3);
+    ball->heightAt();
     // what shader to use
     glUseProgram(mShaderProgram->getProgram() );
     glEnable(GL_PROGRAM_POINT_SIZE);

@@ -20,24 +20,28 @@ gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const g
     gsml::Vector2d p12 = p2-p1;
     gsml::Vector2d p13 = p3-p1;
 
-    gsml::Vector3d n = {0,0,(p13.x*p12.y)-(p13.y*p12.x)};
+    qDebug() << "P12" << p12.x << p12.y << "P13" << p13.x << p13.y;
 
+    gsml::Vector3d n = p12.operator^(p13);
+
+    qDebug() << "n" << n.x << n.y << n.z;
     float areal_123 = n.length();
 
+    qDebug() << "areal_123" << areal_123;
     gsml::Vector3d baryc;
     gsml::Vector2d p = p2 - position;
     gsml::Vector2d q = p3 - position;
-    n = {0,0,(q.x*p.y)-(q.y*p.x)};
+    n = p.operator^(q);// {0,0,(q.x*p.y)-(q.y*p.x)};
     baryc.x = (n.z / areal_123);
 
     p = p3 - position;
     q = p1 - position;
-    n = n = {0,0,(q.x*p.y)-(q.y*p.x)};
+    n = p.operator^(q);//n = {0,0,(q.x*p.y)-(q.y*p.x)};
     baryc.y = (n.z / areal_123);
 
     p = p1 - position;
     q = p2 - position;
-    n = n = {0,0,(q.x*p.y)-(q.y*p.x)};
+    n = p.operator^(q);//n = {0,0,(q.x*p.y)-(q.y*p.x)};
     baryc.z = (n.z / areal_123);
 
     return baryc;

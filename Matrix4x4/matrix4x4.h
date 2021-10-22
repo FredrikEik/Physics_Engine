@@ -51,6 +51,7 @@ public:
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);
     void frustum(float left, float right, float bottom, float top, float near, float far);
+    void setPosition(float dx, float dy, float dz);
     Vector4d getColumn(int index);
 
     void perspective(float fovy, float aspectRatio, float nearPlane, float farPlane);
