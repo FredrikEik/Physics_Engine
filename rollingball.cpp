@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1,0,0.55);
+    mPosition.translate(0.5,0,1.55);
     mScale.scale(0.25,0.25,0.25);
 }
 RollingBall::~RollingBall()
@@ -23,6 +23,9 @@ void RollingBall::move(float dt)
 
 
         gsml::Vector3d playerPos = mPosition.getPosition();
+        gsml::Vector3d playerNorm = mPosition.getPosition();
+        gsml::Vector3d avstand = 0;
+        gsml::Vector3d temp = (1,1,1);
 
         barycentricCord = playerPos.barycentricCoordinates(vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
 
@@ -31,14 +34,28 @@ void RollingBall::move(float dt)
                 barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){
             qDebug() << "you are inside";
 
-            for (int i=0; i < vertices.size()-3; i+=3){
-            qDebug() << playerPos.x << playerPos.y << playerPos.z;
-            playerPos.normalize();
-            qDebug() << playerPos.x << playerPos.y << playerPos.z;
-            }
+            //for (int i=0; i < vertices.size()-3; i+=3){
+            playerNorm.normalize();
+
+            avstand = (temp-vertices[0].getXYZ())*playerNorm;
+            qDebug() << avstand.x << avstand.y << avstand.z;
+
+            //ting som trengs for akselerasjonsvektor og posisjon
+            // *******************************************************
+            //normalvektor n-> , avstanden til planet y og projeksjonen y->n->= n->*(y->*n->)
+            //Avstanden ballen har flyttet seg langs normalvektoren =ds->n-> = n->*(ds->*n->)
+            //Tyngdepunktet til ballen ligger enten over eller under planet (y->*n->)/||y->|| = +-1
+            //negativt = under, må flytte tilbake posisjon med d=r-y langs normalvektor til planet,
+            // må også flytte samme distansen d langs nye hastighetsvektoren
+
+
+            //}
 
         }
     }
+
+
+
 
 }
 
