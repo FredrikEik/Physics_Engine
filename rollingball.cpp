@@ -34,8 +34,6 @@ void RollingBall::move(float dt)
             playerPos.normalize();
 
 
-
-            barycentricCord.normalize();
             }
 
         }
