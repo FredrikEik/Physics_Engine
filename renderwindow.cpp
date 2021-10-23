@@ -164,7 +164,7 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+    ball->move(0.000017f);
     ball->draw();
 
 
@@ -297,16 +297,16 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
     if (event->key() == Qt::Key_A)
         //mia.move(0.1,0,0);
-        help.x -= 0.1;
+        help.x -= 0.5;
     if (event->key() == Qt::Key_D)
-        help.x += 0.1;
+        help.x += 0.5;
     if (event->key() == Qt::Key_W)
-        help.y += 0.1;
+        help.y += 0.5;
     if (event->key() == Qt::Key_S)
-        help.y -= 0.1;
+        help.y -= 0.5;
     if (event->key() == Qt::Key_Q)
-        help.z += 0.1;
+        help.z += 0.5;
     if (event->key() == Qt::Key_Z)
-        help.z -= 0.1;
+        help.z -= 0.5;
     qDebug() << help.x << help.y << help.z;
 }
