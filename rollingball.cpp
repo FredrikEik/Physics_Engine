@@ -22,13 +22,22 @@ void RollingBall::move(float dt)
     for (int i=0; i < vertices.size()-3; i+=3){
 
 
-        auto playerPos = mPosition.getPosition();
+        gsml::Vector3d playerPos = mPosition.getPosition();
 
         barycentricCord = playerPos.barycentricCoordinates(vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
 
 
-        if(barycentricCord.x > 0 && barycentricCord.y > 0){
+        if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0){
             qDebug() << "you are inside";
+
+            for (int i=0; i < vertices.size()-3; i+=3){
+            playerPos.normalize();
+
+
+
+            barycentricCord.normalize();
+            }
+
         }
     }
 
