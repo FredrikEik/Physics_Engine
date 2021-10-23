@@ -57,6 +57,9 @@ public:
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
     const float * constData() const;
 
+    Vector2d gsml::Matrix4x4::Matrix4x4::getPosition2D();
+    Vector3d gsml::Matrix4x4::Matrix4x4::getPosition3D();
+
 protected:
     static const int M=4;
     static const int N=4;
