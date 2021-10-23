@@ -19,7 +19,7 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
 
-//    QVector3D BaryCordinates = BarysentricCordinates(this, triangle_surface);
+    gsml::Vector3d BaryCordinates = BarysentricCordinates(triangle_surface);
 
 //    if(mMatrix = vertices) //Trying to check if overlap.
 //    {
@@ -66,17 +66,18 @@ void RollingBall::draw()
    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
 
-QVector3D RollingBall::BarysentricCordinates(VisualObject* ballObject, VisualObject* GroundObject)
+gsml::Vector3d RollingBall::BarysentricCordinates(/*VisualObject* ballObject,*/ VisualObject* GroundObject)
 {
     //https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
     // Compute barycentric coordinates (u, v, w) for
     // point p with respect to triangle (a, b, c)
 
-    QVector2D ballPosition; //Ignore height, position of ball
-    QVector2D a, b, c; //Position of points of the triangle the ball is inside
+    gsml::Vector2d ballPosition; //Ignore height, position of ball
+    gsml::Vector2d a, b, c; //Position of points of the triangle the ball is inside
     float u, v, w; //Returned barysentric cordinates
 
     ballPosition = mMatrix.getPosition2D(); //Get the current position of the ball
+    //qDebug() << "x: " << ballPosition.x << "y: " << ballPosition.y;
     //a = GroundObject.kantA
     //b = GroundObject.kantB
     //c = GroundObject.kantC
@@ -93,6 +94,6 @@ QVector3D RollingBall::BarysentricCordinates(VisualObject* ballObject, VisualObj
 //    w = (d00 * d21 - d01 * d20) / denom;
 //    u = 1.0f - v - w;
 
-    QVector3D BaricentricCordinates = {u, v, w};
+    gsml::Vector3d BaricentricCordinates = {u, v, w};
     return BaricentricCordinates;
 }

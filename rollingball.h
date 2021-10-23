@@ -14,7 +14,7 @@ public:
     void move(float dt) override;
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
 
-    QVector3D BarysentricCordinates(VisualObject* ballObject, VisualObject* triangleObject);
+    gsml::Vector3d BarysentricCordinates(/*VisualObject* ballObject,*/ VisualObject* triangleObject);
 protected:
     VisualObject* triangle_surface;
 private:

@@ -421,18 +421,21 @@ const float *Matrix4x4::constData() const
     return &A[0][0];
 }
 
-}
-Vector2d gsml::Matrix4x4::Matrix4x4::getPosition2D();
+Vector2d gsml::Matrix4x4::Matrix4x4::getPosition2D()
 {
-    Vector2d Position2D {T[0,3], T[1,3]};
-    return Position2D;
+    return Vector2d{A[0][3], A[1][3]};
 }
 
-Vector3d gsml::Matrix4x4::Matrix4x4::getPosition3D();
+Vector3d gsml::Matrix4x4::Matrix4x4::getPosition3D()
 {
-    Vector3d Position3D {T[0,3], T[1,3], T[2,3]};
-    return Position3D;
+    return Vector3d{A[0][3], A[1][3], A[2][3]};
 }
+
+
+}
+
+
+
 
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
