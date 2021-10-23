@@ -19,7 +19,7 @@ public:
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
     void barycentricCoordinates();
     float nextYPos;
-    gsml::Vector3d urmom;
+    gsml::Vector3d barycentricCord;
 protected:
     VisualObject* triangle_surface;
 private:
