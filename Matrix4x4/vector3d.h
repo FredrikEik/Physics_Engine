@@ -96,6 +96,8 @@ struct Vector3d {
         return i;
     }
 
+
+
     //!
     //! \brief barycentricCoordinates()
     //! \param p1 (x,y,0) coordinates for point 1 (z-value is neglected)
@@ -150,6 +152,8 @@ struct Vector3d {
 };
 
 typedef Vector3d Vec3;
+
+
 
 /*
 std::istream& operator>> (std::istream& is, Vector3d& v)
@@ -227,6 +231,7 @@ struct Vector2d
             //u.z = z - v.z;
             return u;
         }
+
 
 
         Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)

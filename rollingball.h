@@ -3,6 +3,8 @@
 
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "vector3d.h"
+#include "matrix4x4.h"
 
 
 
@@ -17,9 +19,9 @@ public:
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
     void barycentricCoordinates();
     float nextYPos;
+    gsml::Vector3d urmom;
 protected:
     VisualObject* triangle_surface;
-    Transform* mtransform;
 private:
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int old_index{0};

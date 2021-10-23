@@ -24,6 +24,15 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
             A[i][j] = 0.0f;
 }
 
+Vec3 Matrix4x4::getPosition()
+{
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
 void Matrix4x4::setToIdentity()
 {
     if (m == n) {
