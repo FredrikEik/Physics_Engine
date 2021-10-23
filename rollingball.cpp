@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(0.5,0,1.55);
+    mPosition.translate(1,0,0.55);
     mScale.scale(0.25,0.25,0.25);
 }
 RollingBall::~RollingBall()
