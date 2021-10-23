@@ -23,6 +23,7 @@ public:
     virtual void draw()=0;
     virtual void move(float dt) { }
     virtual void move(float dx, float dy, float dz) { }
+    QVector3D getPosition();
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};

@@ -17,6 +17,7 @@ HEADERS += \
     renderwindow.h \
     rollingball.h \
     shader.h \
+    staticmath.h \
     trianglesurface.h \
     visualobject.h \
     xyz.h
@@ -30,6 +31,7 @@ SOURCES += \
     renderwindow.cpp \
     rollingball.cpp \
     shader.cpp \
+    staticmath.cpp \
     trianglesurface.cpp \
     visualobject.cpp \
     xyz.cpp

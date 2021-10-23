@@ -8,7 +8,7 @@
 #include <fstream>
 #include <cmath>
 #include "vector3d.h"
-
+#include "qvector4d.h"
 namespace gsml { // nytt navn 5/11/20
 
 typedef std::pair<int, int> Dimension;
@@ -37,6 +37,8 @@ public:
     void operator =(const Matrix4x4& M);
     Matrix4x4 operator * (const Matrix4x4& M) const;
     float& operator () (int i, int j) {return A[i][j]; }
+//    QVector4D operator() (int i){return QVector4D(A[i][0], A[i][1], A[i][2], A[i][3]);}
+    QVector4D getRow(int row){return QVector4D(A[0][row], A[1][row], A[2][row], A[3][row]);}
 
     Matrix4x4 inverse() const;
     Matrix4x4 transpose() const;
@@ -101,6 +103,7 @@ public:
     void operator =(const Matrix4x4& M);
     Matrix4x4 operator * (const Matrix4x4& M) const;
     float& operator () (int i, int j) {return A[i][j]; }
+
 
     Matrix4x4 inverse() const;
     Matrix4x4 transpose() const;

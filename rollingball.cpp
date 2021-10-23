@@ -12,10 +12,33 @@ RollingBall::~RollingBall()
 }
 void RollingBall::move(float dt)
 {
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    TriangleSurface* surface = dynamic_cast<TriangleSurface*>(triangle_surface);
+    std::vector<gsml::Vertex>& vertices = surface->get_vertices();
+
+//    float terrainHeight = surface->getTerrainHeight(getPosition());
 
     mMatrix = mPosition * mScale;
 
+}
+
+void RollingBall::move(float dx, float dy, float dz)
+{
+    if(bIsSimulating)
+        return;
+
+    // TODO: Make barycentric coordinates work
+    qDebug()<< "Should move, height: "<<dynamic_cast<TriangleSurface*>(triangle_surface)->getTerrainHeight(getPosition());
+    // TODO: Position is transposed from what i'm used to, take that into account or return transposed version
+    qDebug() << mPosition.getRow(3).toVector3D();
+    mPosition.translate(dx, dy, dz);
+    mPosition(2, 3) = dynamic_cast<TriangleSurface*>(triangle_surface)->getTerrainHeight(getPosition());
+
+    mMatrix = mPosition * mScale;
+}
+
+void RollingBall::startSimulation()
+{
+    bIsSimulating = true;
 }
 
 void RollingBall::init(GLint matrixUniform)

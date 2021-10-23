@@ -168,17 +168,6 @@ void RenderWindow::render()
     ball->draw();
 
 
-
-
-
-
-
-
-
-
-
-
-
     //xyz.draw();
     //mia.draw();
     //fx.draw();
@@ -308,5 +297,14 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         help.z += 0.1;
     if (event->key() == Qt::Key_Z)
         help.z -= 0.1;
+
+    if(event->key() == Qt::Key_I)
+        ball->move(0.5f, 0, 0);
+    if(event->key() == Qt::Key_K)
+        ball->move(-0.5f, 0, 0);
+    if(event->key() == Qt::Key_J)
+        ball->move(0, 0.5f, 0);
+    if(event->key() == Qt::Key_L)
+        ball->move(0, -0.5f, 0);
     qDebug() << help.x << help.y << help.z;
 }
