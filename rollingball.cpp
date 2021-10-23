@@ -27,13 +27,14 @@ void RollingBall::move(float dt)
         barycentricCord = playerPos.barycentricCoordinates(vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
 
 
-        if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0){
+        if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0 &&
+                barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){
             qDebug() << "you are inside";
 
             for (int i=0; i < vertices.size()-3; i+=3){
+            qDebug() << playerPos.x << playerPos.y << playerPos.z;
             playerPos.normalize();
-
-
+            qDebug() << playerPos.x << playerPos.y << playerPos.z;
             }
 
         }
