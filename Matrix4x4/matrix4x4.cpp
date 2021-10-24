@@ -60,6 +60,15 @@ void Matrix4x4::print() const
     std::cout << std::endl;
 }
 
+Vector3d Matrix4x4::getPosition()
+{
+    Vector3d temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
 void Matrix4x4::set(int i, int j, float x)
 {
     A[i][j] = x;

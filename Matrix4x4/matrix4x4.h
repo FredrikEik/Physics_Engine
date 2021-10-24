@@ -57,6 +57,8 @@ public:
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
     const float * constData() const;
 
+    Vector3d getPosition();
+
 protected:
     static const int M=4;
     static const int N=4;
