@@ -32,6 +32,12 @@ Vec3 Matrix4x4::getPosition()
     temp.z = A[2][3];
     return temp;
 }
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
 
 void Matrix4x4::setToIdentity()
 {

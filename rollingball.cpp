@@ -3,8 +3,9 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1,0,0.55);
+    mPosition.translate(1.5,0,0);
     mScale.scale(0.25,0.25,0.25);
+    gKraft = gAkselerasjon*masseIKG;
 }
 RollingBall::~RollingBall()
 {
@@ -19,26 +20,65 @@ void RollingBall::move(float dt)
 
 
 
-    for (int i=0; i < vertices.size()-3; i+=3){
+    for (int i=0; i < vertices.size()-2; i+=3){
+
+        gsml::Vector3d v0,v1,v2;
+        v0 = gsml::Vector3d(vertices[i].getXYZ());
+        v1 = gsml::Vector3d(vertices[i+1].getXYZ());
+        v2 = gsml::Vector3d(vertices[i+2].getXYZ());
 
 
         gsml::Vector3d playerPos = mPosition.getPosition();
-        gsml::Vector3d playerNorm = mPosition.getPosition();
-        gsml::Vector3d avstand = 0;
-        gsml::Vector3d temp = (1,1,1);
+
+        gsml::Vector3d temp = (1,0,0.55);
 
         barycentricCord = playerPos.barycentricCoordinates(vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
-
+       // qDebug() << barycentricCord.x << barycentricCord.y << barycentricCord.z;
 
         if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0 &&
                 barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){
-            qDebug() << "you are inside";
+            //qDebug() << "you are inside";
 
+            gsml::Vector3d normalvektor =0;
+            gsml::Vector3d playerNorm = mPosition.getPosition();
+            gsml::Vector3d avstand = 0;
+            gsml::Vector3d projeksjon=0;
+            gsml::Vector3d newPosition;
+            normalvektor = (v1-v0)^(v2-v0);
+            normalvektor.normalize();
+
+            akselerasjon = gKraft * normalvektor * normalvektor.z;
+
+
+
+            if(i==3){
+            hastighet = hastighet + akselerasjon * dt;
+            newPosition = playerPos + hastighet;
+            newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
+            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+            qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
+            qDebug() << hastighet.x << hastighet.y << hastighet.z;
+            }
+            else{
+            hastighet = hastighet - akselerasjon * dt;
+            newPosition = playerPos + hastighet;
+            newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
+            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+
+            }
             //for (int i=0; i < vertices.size()-3; i+=3){
-            playerNorm.normalize();
+            //playerNorm.normalize();
 
-            avstand = (temp-vertices[0].getXYZ())*playerNorm;
-            qDebug() << avstand.x << avstand.y << avstand.z;
+            //avstand = (temp-vertices[0].getXYZ())*normalvektor;
+            //qDebug() << avstand.x << avstand.y << avstand.z;
+            //projeksjon = normalvektor*(avstand*normalvektor);
+            //qDebug() << projeksjon.x << projeksjon.y << projeksjon.z;
+
+
+            if (newPosition.z > playerPos.z){
+                hastighet = hastighet - akselerasjon * dt;
+            }
+
 
             //ting som trengs for akselerasjonsvektor og posisjon
             // *******************************************************
@@ -52,10 +92,13 @@ void RollingBall::move(float dt)
             //}
 
         }
+        else {
+           //qDebug() << "You are outside";
+        }
     }
 
 
-
+//mPosition.translate(0,0,0);
 
 }
 
@@ -84,31 +127,7 @@ void RollingBall::barycentricCoordinates()
 //    }
 
 //    else {
-//        // ------------------------------------- BARYCENTRIC COORDINATES FOR TRIANGLE (2/2) -------------------------------------
-//        a = QVector2D(collidingQuad[3].x(), collidingQuad[3].z());
-//        b = QVector2D(collidingQuad[4].x(), collidingQuad[4].z());
-//        c = QVector2D(collidingQuad[5].x(), collidingQuad[5].z());
-
-//        QVector2D ab = b - a;
-//        QVector2D ac = c - a;
-//        QVector3D n = QVector3D::crossProduct(ab.toVector3D(), ac.toVector3D());
-//        area = n.length();
-
-//        QVector2D p = b - playerPos;
-//        QVector2D q = c - playerPos;
-//        n = QVector3D::crossProduct(p.toVector3D(), q.toVector3D());
-//        barycCoords.setX(n.z() / area);
-
-//        p = c - playerPos;
-//        q = a - playerPos;
-//        n = QVector3D::crossProduct(p.toVector3D(), q.toVector3D());
-//        barycCoords.setY(n.z() / area);
-
-//        p = a - playerPos;
-//        q = b - playerPos;
-//        n = QVector3D::crossProduct(p.toVector3D(), q.toVector3D());
-//        barycCoords.setZ(n.z() / area);
-        // ---------------------------------------------------------------------------------------------------------------------
+//
 
         // Calculate player's height at current position
         // Then turn it into an additive value.
