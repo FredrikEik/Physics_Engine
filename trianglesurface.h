@@ -18,6 +18,9 @@ public:
     void construct_cylinder();
     void construct_plane();
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
+
+    gsml::Vector3d RightPlaneVector;
+    gsml::Vector3d LeftPlaneVector;
 };
 
 #endif // TRIANGLESURFACE_H
