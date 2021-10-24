@@ -37,7 +37,8 @@ public:
     void operator =(const Matrix4x4& M);
     Matrix4x4 operator * (const Matrix4x4& M) const;
     float& operator () (int i, int j) {return A[i][j]; }
-
+    Vector3d getPosition();
+    void setPosition(float x, float y, float z);
     Matrix4x4 inverse() const;
     Matrix4x4 transpose() const;
     void LU();
@@ -101,6 +102,7 @@ public:
     void operator =(const Matrix4x4& M);
     Matrix4x4 operator * (const Matrix4x4& M) const;
     float& operator () (int i, int j) {return A[i][j]; }
+
 
     Matrix4x4 inverse() const;
     Matrix4x4 transpose() const;

@@ -127,17 +127,17 @@ struct Vector3d {
         Vector3d p = p2 - *this;
         Vector3d q = p3 - *this;
         n = p^q;
-        baryc.x = n.length()/areal_123;
+        baryc.x = n.z/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
         n = p^q;
-        baryc.y = n.length()/areal_123;
+        baryc.y = n.z/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
         n = p^q;
-        baryc.z = n.length()/areal_123;
+        baryc.z = n.z/areal_123;
 
         return baryc;
     }
@@ -509,6 +509,8 @@ struct Vector2d
             //u.z = z - v.z;
             return u;
         }
+
+
 
 
 Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)

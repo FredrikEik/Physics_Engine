@@ -3,6 +3,7 @@
 // gs2019 ligger nederst
 #include "../Matrix4x4/Matrix4x4.h"
 
+#include <vector3d.h>
 #include <iomanip>
 #include <cmath>
 
@@ -421,7 +422,20 @@ const float *Matrix4x4::constData() const
     return &A[0][0];
 }
 
-
+Vector3d Matrix4x4::getPosition()
+{
+    Vector3d temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
 }
 namespace gs2019 {
 
@@ -840,3 +854,4 @@ const float *Matrix4x4::constData() const
 
 
 }
+

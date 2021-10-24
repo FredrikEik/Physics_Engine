@@ -19,6 +19,12 @@ protected:
 private:
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int old_index{0};
-    float gravity = 0;
+    float gravity = -9.8f;
+    gsml::Vector3d acceleration = {0, 0, 0};
+    gsml::Vector3d velocity = {0, 0, 0};
+    gsml::Vector3d gAcceleration = {0, 0, -9.8};
+    gsml::Vector3d gForce = {0, 0, 0};
+    float massKG = 0.05f;
+
 };
 #endif // ROLLINGBALL_H

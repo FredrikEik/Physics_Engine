@@ -1,10 +1,12 @@
 #include "rollingball.h"
+#include "QDebug"
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(0,0,0.25);
+    mPosition.setPosition(1,0,1.25);
     mScale.scale(0.25,0.25,0.25);
+    gForce = gAcceleration * massKG;
 }
 RollingBall::~RollingBall()
 {
@@ -14,18 +16,55 @@ void RollingBall::move(float dt)
 {
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
-    mMatrix = mPosition * mScale;
-
-    gsml::Vertex BaryCord;
 
 
-   /* for(int i = 0; i < vertices.size - 3; i+=3)
+    gsml::Vector3d BaryCord;
+    gsml::Vector3d BallPosition = mPosition.getPosition();
+
+    for(unsigned long long i = 0; i < vertices.size() - 2; i+=3)
     {
+        gsml::Vector3d p1, p2, p3;
+        p1 = gsml::Vector3d(vertices[i].getXYZ());
+        p2 = gsml::Vector3d(vertices[i+1].getXYZ());
+        p3 = gsml::Vector3d(vertices[i+2].getXYZ());
 
-    }*/
+        BaryCord = BallPosition.barycentricCoordinates(p1, p2, p3);
 
-    gravity = gravity - 9.2*dt;
-    mPosition.translate(0, 0, gravity);
+        if(BaryCord.x >= 0 && BaryCord.y >= 0 && BaryCord.z >= 0)
+        {
+            gsml::Vector3d p12     = p2-p1;
+            gsml::Vector3d p13     = p3-p1;
+            gsml::Vector3d pNormal = p12^p13;
+            pNormal.normalize();
+
+            /*gForce.x = abs(gForce.x);
+            gForce.y = abs(gForce.y);
+            gForce.z = abs(gForce.z);*/
+
+            acceleration = gForce * pNormal * pNormal.z;
+
+            if(i!=0)
+            {
+                velocity = velocity + acceleration * dt;
+            }
+
+
+            if(i == 0)
+            {
+                velocity = velocity - acceleration * dt;
+            }
+
+            gsml::Vector3d newPosition = mPosition.getPosition() + velocity*dt;
+            newPosition.z = p1.z*BaryCord.x + p2.z*BaryCord.y + p3.z*BaryCord.z;
+            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+0.25);
+
+            BallPosition = mPosition.getPosition();
+            qDebug() << "BallPosition: " << BallPosition.x << BallPosition.y << BallPosition.z;
+        }
+    }
+
+
+    mMatrix = mPosition * mScale;
 
 
 }
