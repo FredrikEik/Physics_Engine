@@ -19,7 +19,9 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
 
-    gsml::Vector3d BaryCordinates = BarysentricCordinates(triangle_surface);
+    gsml::Vector3d closestTriangleVector3 = getClosestTriangleToBall(vertices);
+
+    gsml::Vector3d baryCordinates = getBarysentricCordinates(closestTriangleVector3);
 
 //    if(mMatrix = vertices) //Trying to check if overlap.
 //    {
@@ -66,21 +68,42 @@ void RollingBall::draw()
    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
 
-gsml::Vector3d RollingBall::BarysentricCordinates(/*VisualObject* ballObject,*/ VisualObject* GroundObject)
+gsml::Vector3d RollingBall::getClosestTriangleToBall(std::vector<gsml::Vertex> vertices)
+{
+    gsml::Vector3d ballPosition = mMatrix.getPosition3D();
+
+    qDebug() << vertices.data()->getXYZ().x; //How do i access the array in vertex.cpp at line 128?
+
+    //How to find the three closest vertices to the balls position.
+    gsml::Vector3d closestTrianglePoints;
+    gsml::Vector3d distance {0.0f, 0.0f, 0.0f};
+
+    //Cycle through the vertices and keep the closest three?
+//    for (int i = 0; i < vertices.size(); i++)
+//    {
+//        //find distance between
+//        distance.x = ballPosition.x - vertices.data()->getXYZ().x;
+//        qDebug() << distance.x;
+//    }
+
+    return closestTrianglePoints;
+}
+
+gsml::Vector3d RollingBall::getBarysentricCordinates(/*VisualObject* ballObject,*/ gsml::Vector3d closestTriangleToPoint)
 {
     //https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
     // Compute barycentric coordinates (u, v, w) for
     // point p with respect to triangle (a, b, c)
 
     gsml::Vector2d ballPosition; //Ignore height, position of ball
-    gsml::Vector2d a, b, c; //Position of points of the triangle the ball is inside
+    gsml::Vector2d a, b, c; //Position of points of the triangle
     float u, v, w; //Returned barysentric cordinates
 
     ballPosition = mMatrix.getPosition2D(); //Get the current position of the ball
     //qDebug() << "x: " << ballPosition.x << "y: " << ballPosition.y;
-    //a = GroundObject.kantA
-    //b = GroundObject.kantB
-    //c = GroundObject.kantC
+//    a = GroundObject.kantA
+//    b = GroundObject.kantB
+//    c = GroundObject.kantC
 
     //Calculate Barycentric cordiantes
 //    QVector2D v0 = b - a, v1 = c - a, v2 = ballPosition - a;
