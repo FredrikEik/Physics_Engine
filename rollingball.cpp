@@ -19,7 +19,7 @@ void RollingBall::move(float dt)
     gsml::Vector3d barycCoords;
     gsml::Vector3d ballPosition = mPosition.getPosition();
 
-    for(int i = 0; i < vertices.size() - 2; i+= 3) //0
+    for(int i = 0; i < vertices.size() - 2; i+= 3)
     {
         gsml::Vector3d p1, p2, p3;
         p1 = gsml::Vector3d(vertices[i].getXYZ());
@@ -33,30 +33,21 @@ void RollingBall::move(float dt)
         if(barycCoords.x >= 0 && barycCoords.y >= 0 && barycCoords.z >= 0)
         {
 
-            qDebug() << "pos before:   " << ballPosition.x << ballPosition.y << ballPosition.z;
-            qDebug() << i << barycCoords.x << barycCoords.y << barycCoords.z;
+            //qDebug() << "pos before:   " << ballPosition.x << ballPosition.y << ballPosition.z;
+            //qDebug() << "barycentric index: " i << barycCoords.x << barycCoords.y << barycCoords.z;
 
             gsml::Vector3d p12 = p2-p1;
-                    //gsml::Vector3d(abs(p2.x), abs(p2.y), abs(p2.z)) - gsml::Vector3d(abs(p1.x), abs(p1.y), abs(p1.z));
             gsml::Vector3d p13 = p3-p1;
-                    //gsml::Vector3d(abs(p3.x), abs(p3.y), abs(p3.z)) - gsml::Vector3d(abs(p1.x), abs(p1.y), abs(p1.z));
             gsml::Vector3d pNormal = p12^p13;
-            //if(i == 3) {pNormal = gsml::Vector3d(-pNormal.x, -pNormal.y, -pNormal.z);}
 
-
-
-
-            qDebug() << "pNormal: " << pNormal.x << pNormal.y << pNormal.z;
+            //qDebug() << "pNormal not normalized: " << pNormal.x << pNormal.y << pNormal.z;
             pNormal.normalize();
-            qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
+            //qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
 
             //gForce.z = abs(gForce.z);
             acceleration = gForce * pNormal * pNormal.z;
             //acceleration = gAcceleration * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
             if(i == 0) {acceleration = gsml::Vector3d(-acceleration.x, -acceleration.y, -acceleration.z);}
-
-            qDebug() << pNormal.z;
-
 
             velocity = velocity + acceleration * dt;
 
@@ -65,11 +56,12 @@ void RollingBall::move(float dt)
             newPosition.z = p1.z*barycCoords.x + p2.z*barycCoords.y + p3.z*barycCoords.z;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z + zOffset);
 
-            //mPosition.translate(velocity.x, velocity.y, velocity.z);
             ballPosition = mPosition.getPosition();
-            qDebug() << "pos after:    " << ballPosition.x << ballPosition.y << ballPosition.z;
-            qDebug() << "acceleration: " << acceleration.x << acceleration.y << acceleration.z;
-            qDebug() << "velocity:     " << velocity.x << velocity.y << velocity.z;
+
+            //mPosition.translate(velocity.x, velocity.y, velocity.z);
+            //qDebug() << "pos after:    " << ballPosition.x << ballPosition.y << ballPosition.z;
+            //qDebug() << "acceleration: " << acceleration.x << acceleration.y << acceleration.z;
+            //qDebug() << "velocity:     " << velocity.x << velocity.y << velocity.z;
         }
         //qDebug() << "ballpos: " << ballPosition.x << ballPosition.y << ballPosition.z;
     }
