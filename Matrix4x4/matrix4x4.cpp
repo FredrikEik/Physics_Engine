@@ -313,6 +313,13 @@ void Matrix4x4::translate(float tx, float ty, float tz)
     mult(T);
 }
 
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
 // Rotasjon om (1,0,0), (0,1,0) eller (0,0,1)
 // Rotasjon om vilkårlig akse er beskrevet i Angel 4.10.4
 void Matrix4x4::rotate(float degrees, float rx, float ry, float rz)

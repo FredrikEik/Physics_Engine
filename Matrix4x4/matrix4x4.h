@@ -58,6 +58,7 @@ public:
     const float * constData() const;
 
     Vector3d getPosition();
+    void setPosition(float x, float y, float z);
 
 protected:
     static const int M=4;

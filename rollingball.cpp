@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(2,2,1);
+    mPosition.translate(-1,0.5,1);
     mScale.scale(0.25,0.25,0.25);
     gForce = gAcceleration * mass;
 }
@@ -27,25 +27,35 @@ void RollingBall::move(float dt)
     p3 = gsml::Vec3(vertices[i+2].getXYZ());
     gsml::Vec3 baryCoords = ballPos.barycentricCoordinates(p1,p2,p3);
 
-    qDebug() <<ballPos.x << ballPos.y << ballPos.z;
+    //qDebug() <<ballPos.x << ballPos.y << ballPos.z;
     //qDebug() << i << baryCoords.x << baryCoords.y << baryCoords.z;
 
-    if((baryCoords.x + baryCoords.y + baryCoords.z == 1)
-    &&(baryCoords.x >= 0 && baryCoords.y >= 0 && baryCoords.z >= 0))
+    if(baryCoords.x >= 0 && baryCoords.y >= 0 && baryCoords.z >= 0)
         {
-        qDebug() <<ballPos.x << ballPos.y << ballPos.z;
+        //qDebug() << ballPos.x << ballPos.y << ballPos.z;
+        qDebug() << velocity.x << velocity.y << velocity.z;
         //qDebug()<< i;
+        /*
+        p1.x = abs(p1.x); p1.y = abs(p1.y); p1.z = abs(p1.z);
+        p2.x = abs(p2.x); p2.y = abs(p2.y); p2.z = abs(p2.z);
+        p3.x = abs(p3.x); p3.y = abs(p3.y); p3.z = abs(p3.z);
+        */
+
         gsml::Vec3 p12 = p2-p1;
         gsml::Vec3 p13 = p3-p1;
         gsml::Vec3 planeNormal = p12^p13;
         planeNormal.normalize();
+
         acceleration = gForce * planeNormal * planeNormal.z;
-        velocity = velocity + acceleration * 0.000017;
+        if(i==0){velocity = velocity - acceleration * 0.00017;}
+        else{velocity = velocity + acceleration * 0.00017;}
+
+        gsml::Vec3 newPos = ballPos + velocity;
+        newPos.z = (baryCoords.x * p1.z + baryCoords.y * p2.z + baryCoords.z * p3.z)+0.25;
+        mPosition.setPosition(newPos.x,newPos.y,newPos.z);
+
         //qDebug()<< velocity.x << velocity.y << velocity.z;
-        mPosition.translate(velocity.x,velocity.y,velocity.z);
-
-
-
+        //mPosition.translate(velocity.x,velocity.y,velocity.z);
         }
     }
 
