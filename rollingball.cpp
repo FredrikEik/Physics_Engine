@@ -30,7 +30,7 @@ void RollingBall::move(float dt)
 //    else
 //    {
       //h = v0t+1/2 gt^2 - formula for "hastighet" given freefall. Simplified in code.
-      BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
+//      BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
 //      std::cout << "ball is moving" << std::endl;
 //    }
 mPosition.translate(BallSpeed.x, BallSpeed.y, BallSpeed.z); //Based on calculations in either collision or free-fall apply translation to ball.
@@ -72,24 +72,24 @@ gsml::Vector3d RollingBall::getClosestTriangleToBall(std::vector<gsml::Vertex> v
 {
     gsml::Vector3d ballPosition = mMatrix.getPosition3D();
 
-    qDebug() << vertices.data()->getXYZ().x; //How do i access the array in vertex.cpp at line 128?
-
-    //How to find the three closest vertices to the balls position.
     gsml::Vector3d closestTrianglePoints;
-    gsml::Vector3d distance {0.0f, 0.0f, 0.0f};
+    gsml::Vector3d distance[6]; //vertices.size() instead of hardcoding 6 would be better. On to more difficult things.
 
-    //Cycle through the vertices and keep the closest three?
-//    for (int i = 0; i < vertices.size(); i++)
-//    {
-//        //find distance between
-//        distance.x = ballPosition.x - vertices.data()->getXYZ().x;
-//        qDebug() << distance.x;
-//    }
+    //Cycle through the vertices and keep the three closest to the ball
+    for (int i = 0; i < vertices.size(); i += 3)
+    {
+        //Find distance the balls position and the vertices of the ground-triangles
+        distance[i] = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
+        distance[i+1] = ballPosition - gsml::Vector3d (vertices[i+1].getXYZ());
+        distance[i+2] = ballPosition - gsml::Vector3d (vertices[i+2].getXYZ());
+//        qDebug() << i << "X-" << distance[i].x << i+1 << "Y-" << distance[i+1].y << i+2 << "Z-" << distance[i+2].z;
 
+
+    }
     return closestTrianglePoints;
 }
 
-gsml::Vector3d RollingBall::getBarysentricCordinates(/*VisualObject* ballObject,*/ gsml::Vector3d closestTriangleToPoint)
+gsml::Vector3d RollingBall::getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint)
 {
     //https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
     // Compute barycentric coordinates (u, v, w) for

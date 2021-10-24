@@ -15,7 +15,7 @@ public:
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
 
     gsml::Vector3d getClosestTriangleToBall(std::vector<gsml::Vertex>);
-    gsml::Vector3d getBarysentricCordinates(gsml::Vector3d closestTriangleVector3);
+    gsml::Vector3d getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint);
 protected:
     VisualObject* triangle_surface;
 private:
