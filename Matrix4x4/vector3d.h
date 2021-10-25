@@ -6,6 +6,7 @@
 #define VECTOR3D_H
 #include <cmath>
 #include <iostream>
+#include <qvector3d.h>
 
 namespace gsml { // nytt navn 5/11/20
 typedef float GLfloat;
@@ -17,6 +18,7 @@ struct Vector3d {
 
     //! Standard and parametric constructor
     Vector3d(float a=0.0, float b=0.0, float c=0.0) : x(a), y(b), z(c) { }
+    Vector3d(QVector3D vec3) : x(vec3.x()), y(vec3.y()), z(vec3.z()) { }
 
     float& operator [] (int i) { if(i==0) return x; else if (i==1) return y; else if(i==2) return z; }
 

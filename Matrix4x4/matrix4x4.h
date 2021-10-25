@@ -8,6 +8,7 @@
 #include <fstream>
 #include <cmath>
 #include "vector3d.h"
+#include "qvector4d.h"
 
 namespace gsml { // nytt navn 5/11/20
 
@@ -51,11 +52,11 @@ public:
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);
     void frustum(float left, float right, float bottom, float top, float near, float far);
-
     void perspective(float fovy, float aspectRatio, float nearPlane, float farPlane);
-
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
     const float * constData() const;
+
+    QVector4D row(int r) const;
 
 protected:
     static const int M=4;

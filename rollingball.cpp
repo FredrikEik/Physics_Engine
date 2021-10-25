@@ -15,6 +15,7 @@ void RollingBall::move(float dt)
     //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     mMatrix = mPosition * mScale;
+    gsml::Vector3d pos(mPosition.row(3).toVector3D()); //use for function call for bary.
 
 }
 
@@ -40,15 +41,18 @@ bool RollingBall::findTriangle(unsigned int index, gsml::Vector3d &position, gsm
     return false;
 }
 
-float RollingBall::getHeight() const
+float RollingBall::getHeight(gsml::Vector3d& positon) const
 {
-    gsml::Vector3d BaryCords{};
+    gsml::Vector3d BaryCords{}, p, q, r;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     for (unsigned int i{}; i < vertices.size(); i += 3)
     {
-        if (findTriangle(i, ))
+        if (findTriangle(i, positon, BaryCords, p, q, r))
+            break;
     }
+
+    return BaryCords.x * p.y + BaryCords.y * q.y + BaryCords.z * r.y;
 
 }
 

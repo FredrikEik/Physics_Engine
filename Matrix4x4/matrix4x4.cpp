@@ -421,6 +421,11 @@ const float *Matrix4x4::constData() const
     return &A[0][0];
 }
 
+QVector4D Matrix4x4::row(int r) const
+{
+    return QVector4D(A[0][r], A[1][r], A[2][r], A[3][r]);
+}
+
 
 }
 namespace gs2019 {
