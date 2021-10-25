@@ -308,5 +308,5 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         help.z += 0.1;
     if (event->key() == Qt::Key_Z)
         help.z -= 0.1;
-    qDebug() << help.x << help.y << help.z;
+//    qDebug() << help.x << help.y << help.z;
 }
