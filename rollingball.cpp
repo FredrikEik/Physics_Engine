@@ -39,8 +39,8 @@ void RollingBall::baryMove(float x, float y, float z)
             {
                 //qDebug() << "translating" << barycentricHeight(Get_position(), p1,p2,p3);
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
-                mPoint1 = p1; mPoint2 = p2; mPoint3 = p3;
                 m_index = i;
+                qDebug() << "m_index: " << i;
                 //gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
                 //mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
                 break;
@@ -96,6 +96,12 @@ gsml::Vector3d RollingBall::Get_position()
     return temp;
 }
 
+void RollingBall::setPosition(gsml::Vector3d v)
+{
+    mPosition.setPosition(v.x, v.y, v.z);
+    mMatrix = mPosition * mScale;
+}
+
 void RollingBall::setHeight(float z)
 {
     gsml::Vector3d HeightVector{0,0,z};
@@ -125,40 +131,90 @@ void RollingBall::move(float dx, float dy, float dz)
 
 void RollingBall::move(float dt)
 {
-//    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
-//    int index=0;
-//    for(auto i=0; i<vertices.size(); i++)
-//    {
-//    }
-//    if()
-////    if()
-////    // Finne trekant
-////    for( /* indekser til flaten */ )
-////    {
-////        // Finn trekantens vertices v0 , v1 , v2
-////        // Finn ballensposisjon i xy=planet
-////        // Soek etter triangel som ballen er pa na
-////        // med barysentriske koordinater
-////        if( /* barysentriske koordinater mellom 0 og 1 */ )
-////        {
-////            // beregne normal
-////            // beregn akselerasjonsvektor = ligning(7)
-////            // Oppdaterer hastighet og posisjon
-////            if( /* ny indeks != forrige indeks */ )
-////            {
-////                // Ballen har rullet over pa nytt triangel
-////                // Beregner normalen til kollisjonsplanet,
-////                // se ligning(9)
-////                // Korrigere posisjon oppover i normalens retning
-////                // Oppdater hastighetsvektoren, se ligning(8)
-////                // Oppdatere posisjon i retning den nye
-////                // hastighetsvektoren
-////            }
-////            // Oppdater gammel normal og indeks
-////        }
-////    }
+    gsml::Vector3d bary;
+    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
+    gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
+    for (size_t i=0; i<vertices.size(); i++)
+    {
+        if(i<=2)
+            m_index = i;
+        else
+            m_index++;
+        //qDebug() << "ground size: " << vertices.size();
+        gsml::Vector3d p1 = vertices[i].getXYZ();
+        gsml::Vector3d p2 = vertices[++i].getXYZ();
+        gsml::Vector3d p3 = vertices[++i].getXYZ();
+        //qDebug() << "p1: " << p1.x << p1.y << p1.z << "p2: " << p2.x << p2.y << p2.z << "p3: " << p3.x << p3.y << p3.z;
 
+        bary = barycentricCoords(gsml::Vector2d(p1.x, p1.y),
+                                 gsml::Vector2d(p2.x, p2.y),
+                                 gsml::Vector2d(p3.x, p3.y),
+                                 ballPosXY);
 
-    //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-    mMatrix = mPosition * mScale;
+        //qDebug() << "bary value: " << bary.x << " " << bary.y << " " << bary.z;
+
+        if (bary.x >=0 && bary.y >=0 && bary.z >=0)
+        {
+            //qDebug() << "translating" << barycentricHeight(Get_position(), p1,p2,p3);
+            gsml::Vector3d p12 = p2-p1;
+            gsml::Vector3d p13 = p3-p1;
+            gsml::Vector3d n = p12^p13;
+            n.normalize();
+            m_normal = n;
+            mAcceleration = gsml::Vector3d(n.x * n.z, n.y * n.z, (n.z*n.z)-1) * lilleG;
+            mVelocity = mVelocity + mAcceleration * dt;
+            gsml::Vector3d mPos = (oldVelocity + mVelocity) * (dt/2);
+            mPosition.translate(mPos.x, mPos.y, mPos.z);
+            mMatrix = mPosition * mScale;
+            setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+            if(m_index != old_index)
+            {
+                gsml::Vector3d p12 = p2-p1;
+                gsml::Vector3d p13 = p3-p1;
+                gsml::Vector3d m = p12^p13;
+                m.normalize();
+
+                m_normal = m + old_normal;
+                m_normal.normalize();
+
+                mVelocity = m_normal * gsml::Vector3d::dot(mVelocity, m_normal);
+                mVelocity = oldVelocity - mVelocity * 2;
+                gsml::Vector3d mPos = (oldVelocity + mVelocity) * (dt/2);
+                mPosition.translate(mPos.x, mPos.y, mPos.z);
+                mMatrix = mPosition * mScale;
+                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+            }
+            oldVelocity = mVelocity;
+            old_index = m_index;
+            old_normal = m_normal;
+            //gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
+            //mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
+            break;
+        }
+    }
+    // Finne trekant
+    //    for( /* indekser til flaten */ )
+    //    {
+    //        // Finn trekantens vertices v0 , v1 , v2
+    //        // Finn ballens posisjon i xy=planet
+    //        // Soek etter triangel som ballen er pa na
+    //        // med barysentriske koordinater
+    //        if( /* barysentriske koordinater mellom 0 og 1 */ )
+    //        {
+    //            // beregne normal
+    //            // beregn akselerasjonsvektor = ligning(7)
+    //            // Oppdaterer hastighet og posisjon
+    //            if( /* ny indeks != forrige indeks */ )
+    //            {
+    //                // Ballen har rullet over pa nytt triangel
+    //                // Beregner normalen til kollisjonsplanet,
+    //                // se ligning(9)
+    //                // Korrigere posisjon oppover i normalens retning
+    //                // Oppdater hastighetsvektoren, se ligning(8)
+    //                // Oppdatere posisjon i retning den nye
+    //                // hastighetsvektoren
+    //            }
+    //            // Oppdater gammel normal og indeks
+    //        }
+    //    }
 }

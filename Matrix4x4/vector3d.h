@@ -80,6 +80,11 @@ struct Vector3d {
         return x*v.x + y*v.y + z*v.z;
     }
 
+    static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
+     {
+         return ((v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z));
+     }
+
     //! Scaling
     Vector3d operator * (float c) const {
         return Vector3d{x*c, y*c, z*c};

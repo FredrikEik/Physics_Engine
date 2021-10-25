@@ -136,7 +136,8 @@ void RenderWindow::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //ball->move(0,0,3);
-    ball->heightAt();
+    ball->move(0.017);
+    //ball->heightAt();
     // what shader to use
     glUseProgram(mShaderProgram->getProgram() );
     glEnable(GL_PROGRAM_POINT_SIZE);
