@@ -45,6 +45,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     ball = new RollingBall(3);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    ball->move(1,1,3);
+    ball->heightAt();
+
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -164,31 +167,9 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+    //ball->move(0.017f);
     ball->draw();
 
-
-
-
-
-
-
-
-
-
-
-
-
-    //xyz.draw();
-    //mia.draw();
-    //fx.draw();
-   // tetraeder->draw();
-    //disc->move(0.017);
-    //disc->draw();
-    //vogn->move(0.017f);
-    //vogn->draw();
-    //cylinder->draw();
-    //toppen->draw();
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();

@@ -27,11 +27,11 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
 void Matrix4x4::setToIdentity()
 {
     if (m == n) {
-    for (int i=0; i<m; i++)
-        for (int j=0; j<n; j++)
-            A[i][j] = 0.0f;
-    for (int i=0; i<m; i++)
-        A[i][i] = 1.0f;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                A[i][j] = 0.0f;
+        for (int i=0; i<m; i++)
+            A[i][i] = 1.0f;
     }
 }
 void Matrix4x4::read(std::string filnavn)
@@ -42,10 +42,10 @@ void Matrix4x4::read(std::string filnavn)
         inn >> m >> n;
         // Må kreve m=n=4
         for (int i=0; i<m; i++)
-           for (int j=0; j<n; j++)
-               inn >> A[i][j];
-   }
-   inn.close(); // Lukke fil
+            for (int j=0; j<n; j++)
+                inn >> A[i][j];
+    }
+    inn.close(); // Lukke fil
 }
 
 void Matrix4x4::print() const
@@ -89,7 +89,7 @@ void Matrix4x4::operator =(const Matrix4x4 &M)
     for (int i=0; i<m; i++)
         for (int j=0; j<n; j++)
             set(i, j, M.A[i][j]);
-            //A[i][j] = M(i,j);
+    //A[i][j] = M(i,j);
 }
 
 void Matrix4x4::mult(const Matrix4x4& M) // Hjelpefunksjon
@@ -98,11 +98,11 @@ void Matrix4x4::mult(const Matrix4x4& M) // Hjelpefunksjon
     //M.print();
     for (int i=0; i<4; i++)
         for (int j=0; j<4; j++)
-           for(int k=0; k<4; k++)
+            for(int k=0; k<4; k++)
                 // multipliserer i-te rad i A
                 // med j-te kolonne i B
                 AA.A[i][j] += A[i][k]*M.A[k][j];
-                //AA(i,j) += A[i][k]*M(k,j);
+    //AA(i,j) += A[i][k]*M(k,j);
     for (int i=0; i<4; i++)
         for (int j=0; j<4; j++)
             //set(i, j, AA.A[i][j]);
@@ -118,7 +118,7 @@ Matrix4x4 Matrix4x4::operator * (const Matrix4x4& M) const
                 // endre for andre enn 4x4 matriser
                 // altså kontroller dimensjonene
                 AA.A[i][j] += A[i][k]*M.A[k][j];
-                //AA(i,j) += A[i][k]*M(k,j);
+    //AA(i,j) += A[i][k]*M(k,j);
     return AA;
 }
 
@@ -143,7 +143,7 @@ void Matrix4x4::pivot(int k)
 
         // swapper rader
         for (int j=k; j<n; j++)
-           std::swap(A[k][j], A[pivot][j]);
+            std::swap(A[k][j], A[pivot][j]);
         std::swap(permutasjon[k], permutasjon[pivot]);
     }
 }
@@ -316,7 +316,7 @@ void Matrix4x4::rotate(float degrees, float rx, float ry, float rz)
     float rad = degrees*pi/180;
     float a = std::cos(rad);
     float b = std::sin(rad);
-// Her kan vi ha både 1 og -1 som rx ry rz
+    // Her kan vi ha både 1 og -1 som rx ry rz
     if (rx==0.0f && ry==0.0f && rz==1.0f)
     {
         //R.A[0][0] = a;
@@ -380,6 +380,18 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     /*
     */
 }
+
+Vector4d gsml::Matrix4x4::getColumn(int index)
+{
+    float a = A[0][index];
+    float b = A[1][index];
+    float c = A[2][index];
+    float d = A[3][index];
+    gsml::Vector4d temp(a, b, c, d);
+    return temp;
+}
+
+
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {
@@ -444,11 +456,11 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
 void Matrix4x4::setToIdentity()
 {
     if (m == n) {
-    for (int i=0; i<m; i++)
-        for (int j=0; j<n; j++)
-            A[i][j] = 0.0f;
-    for (int i=0; i<m; i++)
-        A[i][i] = 1.0f;
+        for (int i=0; i<m; i++)
+            for (int j=0; j<n; j++)
+                A[i][j] = 0.0f;
+        for (int i=0; i<m; i++)
+            A[i][i] = 1.0f;
     }
 }
 void Matrix4x4::read(std::string filnavn)
@@ -459,10 +471,10 @@ void Matrix4x4::read(std::string filnavn)
         inn >> m >> n;
         // Må kreve m=n=4
         for (int i=0; i<m; i++)
-           for (int j=0; j<n; j++)
-               inn >> A[i][j];
-   }
-   inn.close(); // Lukke fil
+            for (int j=0; j<n; j++)
+                inn >> A[i][j];
+    }
+    inn.close(); // Lukke fil
 }
 
 void Matrix4x4::print() const
@@ -506,7 +518,7 @@ void Matrix4x4::operator =(const Matrix4x4 &M)
     for (int i=0; i<m; i++)
         for (int j=0; j<n; j++)
             set(i, j, M.A[i][j]);
-            //A[i][j] = M(i,j);
+    //A[i][j] = M(i,j);
 }
 
 void Matrix4x4::mult(const Matrix4x4& M) // Hjelpefunksjon
@@ -519,7 +531,7 @@ void Matrix4x4::mult(const Matrix4x4& M) // Hjelpefunksjon
                 // multipliserer i-te rad i A
                 // med j-te kolonne i B
                 AA.A[i][j] += A[i][k]*M.A[k][j];
-                //AA(i,j) += A[i][k]*M(k,j);
+    //AA(i,j) += A[i][k]*M(k,j);
     for (int i=0; i<4; i++)
         for (int j=0; j<4; j++)
             //set(i, j, AA.A[i][j]);
@@ -535,7 +547,7 @@ Matrix4x4 Matrix4x4::operator * (const Matrix4x4& M) const
                 // endre for andre enn 4x4 matriser
                 // altså kontroller dimensjonene
                 AA.A[i][j] += A[i][k]*M.A[k][j];
-                //AA(i,j) += A[i][k]*M(k,j);
+    //AA(i,j) += A[i][k]*M(k,j);
     return AA;
 }
 
@@ -560,7 +572,7 @@ void Matrix4x4::pivot(int k)
 
         // swapper rader
         for (int j=k; j<n; j++)
-           std::swap(A[k][j], A[pivot][j]);
+            std::swap(A[k][j], A[pivot][j]);
         std::swap(permutasjon[k], permutasjon[pivot]);
     }
 }
@@ -733,7 +745,7 @@ void Matrix4x4::rotate(float degrees, float rx, float ry, float rz)
     float rad = degrees*pi/180;
     float a = std::cos(rad);
     float b = std::sin(rad);
-// Her kan vi ha både 1 og -1 som rx ry rz
+    // Her kan vi ha både 1 og -1 som rx ry rz
     if (rx==0.0f && ry==0.0f && rz==1.0f)
     {
         //R.A[0][0] = a;

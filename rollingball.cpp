@@ -10,13 +10,85 @@ RollingBall::~RollingBall()
 {
 
 }
-void RollingBall::move(float dt)
+
+void RollingBall::baryMove(float x, float y, float z)
 {
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
 
-    mMatrix = mPosition * mScale;
+    if (z==0)
+    {
+//        mMatrix.translate(x, 0, 0);
+//        mMatrix.translate(0, y, 0);
 
+        gsml::Vector3d bary;
+        qDebug() << "column x: " << mMatrix.getColumn(3).x();
+        qDebug() << "column y: " << mMatrix.getColumn(3).y();
+        for (size_t i=0; i<vertices.size(); i = i++)
+        {
+            qDebug() << "ground size: " << vertices.size();
+            gsml::Vector3d p1 = vertices[i].getXYZ();
+            gsml::Vector3d p2 = vertices[++i].getXYZ();
+            gsml::Vector3d p3 = vertices[++i].getXYZ();
+
+            bary = barycentricCoords(gsml::Vector2d(p1.x, p1.y),
+                                     gsml::Vector2d(p2.x, p2.y),
+                                     gsml::Vector2d(p3.x, p3.y),
+                                     gsml::Vector2d(mMatrix.getColumn(3).x(), mMatrix.getColumn(3).y()));
+            //qDebug() << "bary value: " << bary;
+
+            if (bary.x >=0 && bary.y >=0 && bary.z >=0)
+            {
+                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+               // gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
+                qDebug() << "translating";
+                //mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
+                break;
+            }
+        }
+    }
+    else
+    {
+        mMatrix.translate(0,0,z);
+    }
 }
+
+gsml::Vector3d RollingBall::Get_position()
+{
+    gsml::Vector3d temp;
+
+    temp.x = (mMatrix.getColumn(3).x());
+    temp.y = (mMatrix.getColumn(3).y());
+    temp.z = (mMatrix.getColumn(3).z());
+
+    return temp;
+}
+
+void RollingBall::setHeight(float z)
+{
+    gsml::Vector3d HeightVector{0,0,z};
+    gsml::Vector3d Translation{0,0,0};
+
+    Translation.z =((HeightVector.z - Get_position().z)+0.5);
+
+    if(z != mMatrix.getColumn(3).z())
+    {
+        mMatrix.translate(Translation.x,Translation.y,Translation.z);
+    }
+}
+
+void RollingBall::heightAt()
+{
+    gsml::Vector3d pos = Get_position();
+
+    baryMove(pos.x,pos.y,0);
+}
+
+void RollingBall::move(float dx, float dy, float dz)
+{
+    mPosition.translate(dx, dy, dz);
+    mMatrix = mPosition * mScale;
+}
+
 
 void RollingBall::init(GLint matrixUniform)
 {
@@ -49,3 +121,4 @@ void RollingBall::draw()
    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
+

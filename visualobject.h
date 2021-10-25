@@ -23,6 +23,10 @@ public:
     virtual void draw()=0;
     virtual void move(float dt) { }
     virtual void move(float dx, float dy, float dz) { }
+    gsml::Vector3d barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position);
+    static float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
+    std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
+
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};
