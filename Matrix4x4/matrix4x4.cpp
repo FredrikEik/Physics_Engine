@@ -1,7 +1,7 @@
 // Dag Nylund 31/1/18 - 1/2/18
 // gsml fra 5/11/20
 // gs2019 ligger nederst
-#include "../Matrix4x4/Matrix4x4.h"
+#include "../Matrix4x4/matrix4x4.h"
 
 #include <iomanip>
 #include <cmath>
@@ -381,7 +381,23 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     */
 }
 
-Vector4d gsml::Matrix4x4::getColumn(int index)
+void Matrix4x4::setPosition(float dx, float dy, float dz)
+{
+    A[0][3] = dx;
+    A[1][3] = dy;
+    A[2][3] = dz;
+}
+
+Vector3d Matrix4x4::getPosition()
+{
+    Vector3d temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
+Vector4d Matrix4x4::getColumn(int index)
 {
     float a = A[0][index];
     float b = A[1][index];
@@ -390,8 +406,6 @@ Vector4d gsml::Matrix4x4::getColumn(int index)
     gsml::Vector4d temp(a, b, c, d);
     return temp;
 }
-
-
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {
