@@ -3,6 +3,7 @@
 
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "vector3d.h" //for barycentric cordinates in gsml
 
 class RollingBall : public OctahedronBall
 {
@@ -15,7 +16,7 @@ public:
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
 
     gsml::Vector3d getClosestTriangleToBall(std::vector<gsml::Vertex>);
-    gsml::Vector3d getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint);
+    //gsml::Vector3d getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint);
 protected:
     VisualObject* triangle_surface;
 private:

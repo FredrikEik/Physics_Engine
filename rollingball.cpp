@@ -20,19 +20,16 @@ void RollingBall::move(float dt)
     mMatrix = mPosition * mScale;
 
     gsml::Vector3d closestTriangleVector3 = getClosestTriangleToBall(vertices);
+//    qDebug() << closestTriangleVector3.x << closestTriangleVector3.y << closestTriangleVector3.z;
 
-    gsml::Vector3d baryCordinates = getBarysentricCordinates(closestTriangleVector3);
+    gsml::Vector3d baryCordinates;
+    baryCordinates = barycentricCoordinates(closestTriangleVector3, );
 
-//    if(mMatrix = vertices) //Trying to check if overlap.
-//    {
-//        std::cout << "contact" << std::endl;
-//    }
-//    else
-//    {
-      //h = v0t+1/2 gt^2 - formula for "hastighet" given freefall. Simplified in code.
-//      BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
-//      std::cout << "ball is moving" << std::endl;
-//    }
+
+    //h = v0t+1/2 gt^2 - formula for "hastighet" given freefall. Simplified in code.
+    BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
+//    std::cout << "ball is moving" << std::endl;
+
 mPosition.translate(BallSpeed.x, BallSpeed.y, BallSpeed.z); //Based on calculations in either collision or free-fall apply translation to ball.
 }
 
@@ -75,38 +72,49 @@ gsml::Vector3d RollingBall::getClosestTriangleToBall(std::vector<gsml::Vertex> v
     gsml::Vector3d closestTrianglePoints;
     gsml::Vector3d distance[6]; //vertices.size() instead of hardcoding 6 would be better. On to more difficult things.
 
-    //Cycle through the vertices and keep the three closest to the ball
+    //Cycle through the vertices
     for (int i = 0; i < vertices.size(); i += 3)
     {
-        //Find distance the balls position and the vertices of the ground-triangles
+        //Find distance between the balls position and the vertices of the ground-triangles
         distance[i] = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
         distance[i+1] = ballPosition - gsml::Vector3d (vertices[i+1].getXYZ());
         distance[i+2] = ballPosition - gsml::Vector3d (vertices[i+2].getXYZ());
 //        qDebug() << i << "X-" << distance[i].x << i+1 << "Y-" << distance[i+1].y << i+2 << "Z-" << distance[i+2].z;
-
-
     }
-    return closestTrianglePoints;
+
+    //Keep the three closest points of the triangle
+    if (distance[0].x + distance[1].y + distance[2].z > distance[3].x + distance[4].y + distance[5].z)
+    {
+        closestTrianglePoints = vertices[0].getXYZ().x, vertices[1].getXYZ().y, vertices[2].getXYZ().z;
+        //qDebug() << "First triangle";
+        return closestTrianglePoints;
+    }
+        else
+    {
+        closestTrianglePoints = vertices[3].getXYZ().x, vertices[4].getXYZ().y, vertices[5].getXYZ().z;
+        //qDebug() << "Second triangle";
+        return closestTrianglePoints;
+    }
 }
 
-gsml::Vector3d RollingBall::getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint)
-{
-    //https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
-    // Compute barycentric coordinates (u, v, w) for
-    // point p with respect to triangle (a, b, c)
+//gsml::Vector3d RollingBall::getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint)
+//{
+//    //https://gamedev.stackexchange.com/questions/23743/whats-the-most-efficient-way-to-find-barycentric-coordinates
+//    // Compute barycentric coordinates (u, v, w) for
+//    // point p with respect to triangle (a, b, c)
 
-    gsml::Vector2d ballPosition; //Ignore height, position of ball
-    gsml::Vector2d a, b, c; //Position of points of the triangle
-    float u, v, w; //Returned barysentric cordinates
+//    gsml::Vector2d ballPosition; //Ignore height, position of ball
+//    float a, b, c; //Position of points of the triangle
+//    float u, v, w; //Returned barysentric cordinates
 
-    ballPosition = mMatrix.getPosition2D(); //Get the current position of the ball
-    //qDebug() << "x: " << ballPosition.x << "y: " << ballPosition.y;
-//    a = GroundObject.kantA
-//    b = GroundObject.kantB
-//    c = GroundObject.kantC
+//    ballPosition = mMatrix.getPosition2D(); //Get the current position of the ball
+//    //qDebug() << "x: " << ballPosition.x << "y: " << ballPosition.y;
+//    a = closestTriangleToPoint.x;
+//    b = closestTriangleToPoint.y;
+//    c = closestTriangleToPoint.z;
 
-    //Calculate Barycentric cordiantes
-//    QVector2D v0 = b - a, v1 = c - a, v2 = ballPosition - a;
+//    //Calculate Barycentric cordiantes
+//    gsml::Vector2d v0 = b - a, v1 = c - a, v2 = ballPosition - a;
 //    float d00 = Dot(v0, v0);
 //    float d01 = Dot(v0, v1);
 //    float d11 = Dot(v1, v1);
@@ -117,6 +125,6 @@ gsml::Vector3d RollingBall::getBarysentricCordinates(gsml::Vector3d closestTrian
 //    w = (d00 * d21 - d01 * d20) / denom;
 //    u = 1.0f - v - w;
 
-    gsml::Vector3d BaricentricCordinates = {u, v, w};
-    return BaricentricCordinates;
-}
+//    gsml::Vector3d BaricentricCordinates = {u, v, w};
+//    return BaricentricCordinates;
+//}
