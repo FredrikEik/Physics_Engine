@@ -24,10 +24,19 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
             A[i][j] = 0.0f;
 }
 
-Vector3d Matrix4x4::getPosition()
+Vec3 Matrix4x4::getPosition()
 {
-
-        return gsml::Vector3d(matrix[3], matrix[7], matrix[11]);
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
 }
 
 void Matrix4x4::setToIdentity()
@@ -293,20 +302,7 @@ Vector4d Matrix4x4::operator * ( Vector4d& v) const
     return x;
 }
 
-void Matrix4x4::translate(Vector3d positionIn)
-{
-    Matrix4x4 T;
-    T.setToIdentity();
-    //T.A[0][3] = tx;
-    //T.A[1][3] = ty;
-    //T.A[2][3] = tz;
-    T(0,3) = positionIn.getX();
-    T(1,3) = positionIn.getY();
-    T(2,3) = positionIn.getZ();
 
-    // Translerer - multipliserer med translasjonsmatrisen
-    mult(T);
-}
 void Matrix4x4::translate(float tx, float ty, float tz)
 {
     // Lager translasjonssmatrise
@@ -399,8 +395,6 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     /*
     */
 }
-
-
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {
@@ -461,9 +455,6 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
         for (int j=0; j<n; j++)
             A[i][j] = 0.0f;
 }
-
-
-
 
 void Matrix4x4::setToIdentity()
 {
@@ -561,22 +552,6 @@ Matrix4x4 Matrix4x4::operator * (const Matrix4x4& M) const
                 AA.A[i][j] += A[i][k]*M.A[k][j];
                 //AA(i,j) += A[i][k]*M(k,j);
     return AA;
-}
-
-void Matrix4x4::translate(Vector3d positionIn)
-{
-    // Lager translasjonssmatrise
-    Matrix4x4 T;
-    T.setToIdentity();
-    //T.A[0][3] = tx;
-    //T.A[1][3] = ty;
-    //T.A[2][3] = tz;
-    T(0,3) = positionIn.getX();
-    T(1,3) = positionIn.getY();
-    T(2,3) = positionIn.getZ();
-
-    // Translerer - multipliserer med translasjonsmatrisen
-    mult(T);
 }
 
 // Pivotering, jukser litt og bruker en Vector4d til å lagre permutasjoner

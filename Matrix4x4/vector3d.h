@@ -26,83 +26,6 @@ struct Vector3d {
         z = v.z;
         return *this;
     }*/
-    
-    GLfloat getY() const
-    {
-        return y;
-    }
-    GLfloat getX() const
-    {
-        return x;
-    }
-    GLfloat getZ() const
-    {
-        return z;
-    }
-
-    void setX(const GLfloat &value)
-    {
-        x = value;
-    }
-    void setY(const GLfloat &value)
-    {
-        y = value;
-    }
-    void setZ(const GLfloat &value)
-    {
-        z = value;
-    }
-    
-    static Vector3d cross(const Vector3d &v1, const Vector3d &v2)
-    {
-        return {((v1.getY() * v2.getZ()) - (v1.getZ() * v2.getY())), ((v1.getZ() * v2.getX()) - (v1.getX() * v2.getZ())), ((v1.getX() * v2.getY()) - (v1.getY() * v2.getX()))};
-    }
-    
-    static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
-    {
-        return ((v1.getX() * v2.getX()) + (v1.getY() * v2.getY()) + (v1.getZ() * v2.getZ()));
-    }
-    
-    const Vector3d& operator=(const Vector3d &rhs)
-    {
-        x = rhs.getX();
-        y = rhs.getY();
-        z = rhs.getZ();
-
-        return *this;
-    }
-    Vector3d normalized()
-        {
-            Vector3d normalized;
-            GLfloat l = length();
-
-            if (l > 0.f)
-            {
-                normalized.setX(x / l);
-                normalized.setY(y / l);
-                normalized.setZ(z / l);
-            }
-
-            return normalized;
-        }
-
-    bool  operator!=(const Vector3d &rhs)
-    {
-        return (x!=rhs.x || y!=rhs.y || z!=rhs.z);
-    }
-    bool operator==(const Vector3d &rhs)
-    {
-        return (x==rhs.x && y==rhs.y && z==rhs.z);
-    }
-
-    Vector3d& operator+=(const Vector3d &rhs)
-    {
-        x += rhs.getX();
-        y += rhs.getY();
-        z += rhs.getZ();
-
-        return *this;
-    }
 
     Vector3d operator + (const Vector3d& v) const {
         Vector3d u;
@@ -173,6 +96,8 @@ struct Vector3d {
         return i;
     }
 
+
+
     //!
     //! \brief barycentricCoordinates()
     //! \param p1 (x,y,0) coordinates for point 1 (z-value is neglected)
@@ -204,17 +129,17 @@ struct Vector3d {
         Vector3d p = p2 - *this;
         Vector3d q = p3 - *this;
         n = p^q;
-        baryc.x = n.length()/areal_123;
+        baryc.x = n.z/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
         n = p^q;
-        baryc.y = n.length()/areal_123;
+        baryc.y = n.z/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
         n = p^q;
-        baryc.z = n.length()/areal_123;
+        baryc.z = n.z/areal_123;
 
         return baryc;
     }
@@ -227,6 +152,8 @@ struct Vector3d {
 };
 
 typedef Vector3d Vec3;
+
+
 
 /*
 std::istream& operator>> (std::istream& is, Vector3d& v)
@@ -304,6 +231,7 @@ struct Vector2d
             //u.z = z - v.z;
             return u;
         }
+
 
 
         Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
@@ -417,41 +345,6 @@ struct Vector3d {
         return w;
     }
 
-    GLfloat getX() const
-    {
-        return x;
-    }
-
-
-    void setX(const GLfloat &value)
-    {
-        x = value;
-    }
-
-
-    GLfloat getY() const
-    {
-        return y;
-    }
-
-
-    void setY(const GLfloat &value)
-    {
-        y = value;
-    }
-
-
-    GLfloat getZ() const
-    {
-        return z;
-    }
-
-
-    void setZ(const GLfloat &value)
-    {
-        z = value;
-    }
-
     //! Length
     float length() {
         return sqrt(x*x+y*y+z*z);
@@ -623,46 +516,46 @@ struct Vector2d
         }
 
 
-Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
-{
-    Vector2d p12 = p2-p1;
-    Vector2d p13 = p3-p1;
+//Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
+//{
+//    Vector2d p12 = p2-p1;
+//    Vector2d p13 = p3-p1;
 
-    Vector3d n = p12^p13;
-    float areal_123 = n.length(); // dobbelt areal
+//    Vector3d n = p12^p13;
+//    float areal_123 = n.length(); // dobbelt areal
 
-    Vector3d baryc; // til retur. Husk
-    // u
-    Vector2d p = p2 - *this;
-    Vector2d q = p3 - *this;
-    n = p^q;
-    baryc.x = n.z/areal_123;
-    // v
-    p = p3 - *this;
-    q = p1 - *this;
-    n = p^q;
-    baryc.y = n.z/areal_123;
-    // w
-    p = p1 - *this;
-    q = p2 - *this;
-    n = p^q;
-    baryc.z = n.z/areal_123;
+//    Vector3d baryc; // til retur. Husk
+//    // u
+//    Vector2d p = p2 - *this;
+//    Vector2d q = p3 - *this;
+//    n = p^q;
+//    baryc.x = n.z/areal_123;
+//    // v
+//    p = p3 - *this;
+//    q = p1 - *this;
+//    n = p^q;
+//    baryc.y = n.z/areal_123;
+//    // w
+//    p = p1 - *this;
+//    q = p2 - *this;
+//    n = p^q;
+//    baryc.z = n.z/areal_123;
 
-    return baryc;
-}
-    void normalize()
-    {
-        GLfloat d = x*x+y*y;
-        d = sqrt(d);
-        if (d>0.0)
-        {
-            x=x/d;
-            y=y/d;
-        }
-    }
-    float length() {
-        return sqrt(x*x+y*y);
-    }
+//    return baryc;
+//}
+//    void normalize()
+//    {
+//        GLfloat d = x*x+y*y;
+//        d = sqrt(d);
+//        if (d>0.0)
+//        {
+//            x=x/d;
+//            y=y/d;
+//        }
+//    }
+//    float length() {
+//        return sqrt(x*x+y*y);
+//    }
 
 };
 typedef Vector2d Vec2;

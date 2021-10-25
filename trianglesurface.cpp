@@ -74,6 +74,7 @@ void TriangleSurface::init(GLint matrixUniform)
     mMatrixUniform = matrixUniform;
     initializeOpenGLFunctions();
 
+
     //Vertex Array Object - VAO
     glGenVertexArrays( 1, &mVAO );
     glBindVertexArray( mVAO );

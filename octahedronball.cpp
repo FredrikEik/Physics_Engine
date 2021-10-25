@@ -1,5 +1,5 @@
 #include "octahedronball.h"
-#include "matrix4x4\vertex.h"
+#include "vertex.h"
 
 //! - n is the recursion level (number of repeated subdivisions)
 //!
