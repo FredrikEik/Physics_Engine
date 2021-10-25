@@ -16,6 +16,19 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
 
+    gsml::Vector3d barycentricCoords;
+    gsml::Vector3d ballPosition = mPosition.get_position();
+
+    for (int i; i < vertices.size(); i+= 3)
+    {
+        gsml::Vector3d p1, p2, p3;
+        p1 = gsml::Vector3d(vertices[i].getXYZ());
+        p2 = gsml::Vector3d(vertices[i+1].getXYZ());
+        p3 = gsml::Vector3d(vertices[i+2].getXYZ());
+        qDebug() << "p1= " << p1.x << p1.y << p1.z << " p2= " << p2.x << p2.y << p2.z << " p3= " << p3.x << p3.y << p3.z;
+    }
+
+//    barycentricCoords = ballPosition.barycentricCoordinates(p1, p2, p3);
 }
 
 void RollingBall::init(GLint matrixUniform)
