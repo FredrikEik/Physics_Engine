@@ -137,9 +137,9 @@ void RollingBall::move(float dt)
     for (size_t i=0; i<vertices.size(); i++)
     {
         if(i<=2)
-            m_index = i;
+            m_index = 1;
         else
-            m_index++;
+            m_index = 2;
         //qDebug() << "ground size: " << vertices.size();
         gsml::Vector3d p1 = vertices[i].getXYZ();
         gsml::Vector3d p2 = vertices[++i].getXYZ();
@@ -158,35 +158,36 @@ void RollingBall::move(float dt)
             //qDebug() << "translating" << barycentricHeight(Get_position(), p1,p2,p3);
             gsml::Vector3d p12 = p2-p1;
             gsml::Vector3d p13 = p3-p1;
-            gsml::Vector3d n = p12^p13;
-            n.normalize();
-            m_normal = n;
-            mAcceleration = gsml::Vector3d(n.x * n.z, n.y * n.z, (n.z*n.z)-1) * lilleG;
+            m = p12^p13;
+            m.normalize();
+            mAcceleration = gsml::Vector3d(m.x * m.z, m.y * m.z, (m.z*m.z)-1) * lilleG;
             mVelocity = mVelocity + mAcceleration * dt;
             gsml::Vector3d mPos = (oldVelocity + mVelocity) * (dt/2);
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
             setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+            qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             if(m_index != old_index)
             {
-                gsml::Vector3d p12 = p2-p1;
-                gsml::Vector3d p13 = p3-p1;
-                gsml::Vector3d m = p12^p13;
-                m.normalize();
+                //                gsml::Vector3d p12 = p2-p1;
+                //                gsml::Vector3d p13 = p3-p1;
+                //                m = p12^p13;
+                //                m.normalize();
 
                 m_normal = m + old_normal;
                 m_normal.normalize();
 
                 mVelocity = m_normal * gsml::Vector3d::dot(mVelocity, m_normal);
                 mVelocity = oldVelocity - mVelocity * 2;
-                gsml::Vector3d mPos = (oldVelocity + mVelocity) * (dt/2);
-                mPosition.translate(mPos.x, mPos.y, mPos.z);
-                mMatrix = mPosition * mScale;
-                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+                //                gsml::Vector3d mPos = (oldVelocity + mVelocity) * (dt/2);
+                //                mPosition.translate(mPos.x, mPos.y, mPos.z);
+                //                mMatrix = mPosition * mScale;
+                //                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
             }
             oldVelocity = mVelocity;
+            old_normal = m;
             old_index = m_index;
-            old_normal = m_normal;
+            qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             //gsml::Vector3d translation = {(0),(0), (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z)};
             //mMatrix.translate(0,0, (p1.z * bary.x) + (p2.z * bary.y) + (p3.z * bary.z));
             break;
