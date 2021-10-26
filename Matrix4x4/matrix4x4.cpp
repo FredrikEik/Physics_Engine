@@ -426,9 +426,10 @@ QVector4D Matrix4x4::row(int r) const
     return QVector4D(A[0][r], A[1][r], A[2][r], A[3][r]);
 }
 
-QVector3D Matrix4x4::getPosition() const
+gsml::Vector3d Matrix4x4::getPosition() const
 {
-    return row(3).toVector3D();
+    QVector3D temp = row(3).toVector3D();
+    return gsml::Vector3d(temp.x(), temp.y(), temp.z());
 }
 
 void Matrix4x4::setPosition(gsml::Vector3d NewPos)

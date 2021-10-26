@@ -57,7 +57,7 @@ public:
     const float * constData() const;
 
     QVector4D row(int r) const;
-    QVector3D getPosition() const;
+    gsml::Vector3d getPosition() const;
 
     void setPosition(gsml::Vector3d NewPos);
     void setPosition(float x, float y, float z);

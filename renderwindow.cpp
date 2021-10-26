@@ -168,27 +168,6 @@ void RenderWindow::render()
     ball->draw();
 
 
-
-
-
-
-
-
-
-
-
-
-
-    //xyz.draw();
-    //mia.draw();
-    //fx.draw();
-   // tetraeder->draw();
-    //disc->move(0.017);
-    //disc->draw();
-    //vogn->move(0.017f);
-    //vogn->draw();
-    //cylinder->draw();
-    //toppen->draw();
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();
@@ -297,16 +276,16 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
     if (event->key() == Qt::Key_A)
         //mia.move(0.1,0,0);
-        help.x -= 0.1;
+        help.x -= 0.1f;
     if (event->key() == Qt::Key_D)
-        help.x += 0.1;
+        help.x += 0.1f;
     if (event->key() == Qt::Key_W)
-        help.y += 0.1;
+        help.y += 0.1f;
     if (event->key() == Qt::Key_S)
-        help.y -= 0.1;
+        help.y -= 0.1f;
     if (event->key() == Qt::Key_Q)
-        help.z += 0.1;
+        help.z += 0.1f;
     if (event->key() == Qt::Key_Z)
-        help.z -= 0.1;
+        help.z -= 0.1f;
     qDebug() << help.x << help.y << help.z;
 }

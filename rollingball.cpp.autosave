@@ -84,7 +84,7 @@ void RollingBall::calculateMovement(const gsml::Vector3d& p, const gsml::Vector3
 
 void RollingBall::checkForCollition()
 {
-
+    
 }
 
 void RollingBall::init(GLint matrixUniform)
