@@ -5,7 +5,7 @@
 class Vertex;
 typedef gsml::Vector3d Vec3;
 class OctahedronBall : public VisualObject {
-private:
+public:
    int m_rekursjoner;
    int m_indeks;               // brukes i rekursjon, til å bygge m_vertices
    void lagTriangel(const Vec3& v1, const Vec3& v2, const Vec3& v3);

@@ -51,7 +51,58 @@ struct Vector3d {
         w.z =  x*v.y - y*v.x;
         return w;
     }
-   Vector3d cross (const Vector3d& v) const {
+
+    GLfloat getX() const
+    {
+        return x;
+    }
+    GLfloat getY() const
+    {
+        return y;
+    }
+    GLfloat getZ() const
+    {
+        return z;
+    }
+
+
+    Vector3d& operator+=(const Vector3d &rhs)
+    {
+        x += rhs.getX();
+        y += rhs.getY();
+        z += rhs.getZ();
+
+        return *this;
+    }
+
+    Vector3d& operator-=(const Vector3d &rhs)
+    {
+        x -= rhs.getX();
+        y -= rhs.getY();
+        z -= rhs.getZ();
+
+        return *this;
+    }
+
+
+    bool operator==(const Vector3d &rhs)
+    {
+        return (x==rhs.x && y==rhs.y && z==rhs.z);
+    }
+
+    void setX(const GLfloat &value)
+    {
+        x = value;
+    }
+    void setY(const GLfloat &value)
+    {
+        y = value;
+    }
+    void setZ(const GLfloat &value)
+    {
+        z = value;
+    }
+    Vector3d cross (const Vector3d& v) const {
         Vector3d w;
         w.x =  y*v.z - z*v.y;
         w.y =  z*v.x - x*v.z;
@@ -75,6 +126,34 @@ struct Vector3d {
         return {((v1.getY() * v2.getZ()) - (v1.getZ() * v2.getY())),
                     ((v1.getZ() * v2.getX()) - (v1.getX() * v2.getZ())),
                     ((v1.getX() * v2.getY()) - (v1.getY() * v2.getX()))};
+    }
+
+    Vector3d normalized()
+    {
+        Vector3d normalized;
+        GLfloat l = length();
+
+        if (l > 0.f)
+        {
+            normalized.setX(x / l);
+            normalized.setY(y / l);
+            normalized.setZ(z / l);
+        }
+
+        return normalized;
+    }
+
+    static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
+    {
+        return ((v1.getX() * v2.getX()) + (v1.getY() * v2.getY()) + (v1.getZ() * v2.getZ()));
+    }
+    static Vector3d cross(const Vector3d &v1, const Vector3d &v2)
+    {
+        return {((v1.getY() * v2.getZ()) - (v1.getZ() * v2.getY())), ((v1.getZ() * v2.getX()) - (v1.getX() * v2.getZ())), ((v1.getX() * v2.getY()) - (v1.getY() * v2.getX()))};
+    }
+    bool operator!=(const Vector3d &rhs)
+    {
+        return (x!=rhs.x || y!=rhs.y || z!=rhs.z);
     }
 
     //! Length
