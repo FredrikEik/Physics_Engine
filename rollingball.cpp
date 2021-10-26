@@ -3,9 +3,9 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1.,1.,0);
+    mPosition.translate(1.5,1.5,1);
     mScale.scale(0.25,0.25,0.25);
-    gKraft = gAkselerasjon*masseIKG;
+    gKraft = gAkselerasjon*masseIKG;        //regner ut gkraften til ballen
 }
 RollingBall::~RollingBall()
 {
@@ -15,81 +15,68 @@ void RollingBall::move(float dt)
 {
 
     mMatrix = mPosition * mScale;
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-
-
+    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();             //skaffer vertices
 
 
     for (int i=0; i < vertices.size()-2; i+=3){
-
-        gsml::Vector3d v0,v1,v2;
         v0 = gsml::Vector3d(vertices[i].getXYZ());
         v1 = gsml::Vector3d(vertices[i+1].getXYZ());
         v2 = gsml::Vector3d(vertices[i+2].getXYZ());
 
 
-        gsml::Vector3d playerPos = mPosition.getPosition();
+        gsml::Vector3d playerPos = mPosition.getPosition();                 //skaffer posisjonen til ballen
 
-        gsml::Vector3d temp = (1,0,0.55);
 
-        barycentricCord = playerPos.barycentricCoordinates(vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
-       // qDebug() << barycentricCord.x << barycentricCord.y << barycentricCord.z;
+        barycentricCord = playerPos.barycentricCoordinates(
+                    vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());  //kalkulerer barisentriske kordinater
 
         if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0 &&
-                barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){
-            //qDebug() << "you are inside";
-
-            gsml::Vector3d normalvektor =0;
-            gsml::Vector3d playerNorm = mPosition.getPosition();
-            gsml::Vector3d avstand = 0;
-            gsml::Vector3d projeksjon=0;
-            gsml::Vector3d newPosition;
-
-            normalvektor = (v1-v0)^(v2-v0);
-             //qDebug()<<normalvektor.x << normalvektor.y << normalvektor.z;
-            normalvektor.normalize();
+                barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){   //sjekker at ballen er innafor trianglene
+            qDebug() << "The ball is inside";
 
 
+            //gsml::Vector3d avstand = 0;
+            //gsml::Vector3d projeksjon=0;
+            //gsml::Vector3d distanseFlyttet =0;
+            //gsml::Vector3d distanseFlyttetNM =0;
+            //gsml::Vector3d temp = (1,0,0.55);
+            //qDebug() << i;
+
+            normalvektor = (v1-v0)^(v2-v0);                                             //regner ut normalvektoren til planet
+            normalvektor.normalize();                                                   //normaliserer normalvektoren
+            akselerasjon = gKraft ^ normalvektor ^ gsml::Vector3d (0,0,normalvektor.z); //regner ut akselerasjon
+            hastighet = hastighet + akselerasjon * dt;                                  //regner ut hastighet
 
 
-            if(i==3){
-
-                akselerasjon = gKraft ^ normalvektor * normalvektor.z;
-                qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            hastighet = hastighet + akselerasjon * dt;
-           // hastighet.y = hastighet.x;
-                            qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            newPosition = playerPos + hastighet;
-            newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-            //qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            //qDebug() << hastighet.x << hastighet.y << hastighet.z;
-            }
-            else if (i==0){
+            //if(i==3){
 
 
-                akselerasjon = gKraft ^ normalvektor * normalvektor.z;
-            hastighet = hastighet + akselerasjon * dt;
-            //hastighet.y = hastighet.x;
-                        qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            newPosition = playerPos + hastighet;
-            newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
 
-            }
-            //for (int i=0; i < vertices.size()-3; i+=3){
-            //playerNorm.normalize();
+            nyPosisjon = playerPos + hastighet;                                         //oppdaterer posisjonen
+            nyPosisjon.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;   //bruker barysentriske kordinatene til å bestemme nye z posisjonen
+            mPosition.setPosition(nyPosisjon.x, nyPosisjon.y, nyPosisjon.z+radius);      //setter den nye posisjonen, plusser også på radiusen på z'en til ballen så den ligger oppå planet
+           // }
 
-            //avstand = (temp-vertices[0].getXYZ())*normalvektor;
-            //qDebug() << avstand.x << avstand.y << avstand.z;
-            //projeksjon = normalvektor*(avstand*normalvektor);
-            //qDebug() << projeksjon.x << projeksjon.y << projeksjon.z;
+//            else if (i==0){
+//            newPosition = playerPos + hastighet* dt;
+//            newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
+//            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+//            }
 
+                    //work in progress
+            //avstand = (temp-vertices[0].getXYZ())^normalvektor;
+            //projeksjon = normalvektor^(avstand^normalvektor);
+            //distanseFlyttet = hastighet * dt;
+            //distanseFlyttetNM = normalvektor^(distanseFlyttet ^normalvektor);
+            //mPosition.setPosition(hastighet.x, hastighet.y, nyPosisjon.z+radius);
 
-            if (newPosition.z > playerPos.z){
-                hastighet = hastighet - akselerasjon * dt;
-            }
-
+                    //Test greier
+            //qDebug() << pow(normalvektor.z,2)-1;
+            //qDebug() << nyPosisjon.z;
+            //qDebug() << distanseFlyttet.x << distanseFlyttet.y << distanseFlyttet.z;
+            //qDebug() << distanseFlyttetNM.x << distanseFlyttetNM.y << distanseFlyttetNM.z;
+           // qDebug() << avstand.x << avstand.y << avstand.z;
+           // qDebug() << projeksjon.x << projeksjon.y << projeksjon.z;
 
             //ting som trengs for akselerasjonsvektor og posisjon
             // *******************************************************
@@ -99,55 +86,14 @@ void RollingBall::move(float dt)
             //negativt = under, må flytte tilbake posisjon med d=r-y langs normalvektor til planet,
             // må også flytte samme distansen d langs nye hastighetsvektoren
 
-
-            //}
-
         }
-        else {
-           //qDebug() << "You are outside";
+        else if (barycentricCord.x < 0 && barycentricCord.y < 0 && barycentricCord.z < 0 &&     //sjekker at ballen ikke er innenfor trianglene
+                 barycentricCord.x > 1 && barycentricCord.y > 1 && barycentricCord.z > 1) {
+           qDebug() << "The ball is outside";
         }
     }
-
-
-//mPosition.translate(0,0,0);
-
 }
 
-void RollingBall::barycentricCoordinates()
-{
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // If player is within the bounds of triangle (1/2), else the player is within the bounds of triangle (2/2)
-//    if (barycCoords.x() > 0 && barycCoords.y() > 0 && barycCoords.z() > 0){
-//        // Calculate player's height at current position
-//        // Then turn it into an additive value.
-//        // The movement function adds previous position to new one, but I want the height to stay exact (so I "reverse" it here).
-//        nextYPos = collidingQuad[2].y() * barycCoords.z() + collidingQuad[1].y() * barycCoords.y() + collidingQuad[0].y() * barycCoords.x();
-//        nextYPos -= mtransform->position.y;
-//    }
-
-//    else {
-//
-
-        // Calculate player's height at current position
-        // Then turn it into an additive value.
-        // The movement function adds previous position to new one, but I want the height to stay exact (so I "reverse" it here).
-        //nextYPos = collidingQuad[5].y() * barycCoords.z() + collidingQuad[4].y() * barycCoords.y() + collidingQuad[3].y() * barycCoords.x();
-        //nextYPos -= mtransform->position.y;
-//    }
-
-}
 
 void RollingBall::init(GLint matrixUniform)
 {
