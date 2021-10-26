@@ -3,7 +3,7 @@
 
 #include "octahedronball.h"
 #include "trianglesurface.h"
-#include "vector3d.h" //for barycentric cordinates in gsml
+//#include "vector3d.h" //for barycentric cordinates in gsml
 
 class RollingBall : public OctahedronBall
 {
