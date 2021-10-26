@@ -28,8 +28,12 @@ class Matrix4x4
 {
 public:
     Matrix4x4();
+
     void setToIdentity();
     void read(std::string filnavn);
+        Matrix4x4(std::initializer_list<GLfloat> values);
+
+
     void print() const;
     void set(int i, int j, float x);
     void set_dim(int rader, int kolonner);
@@ -48,6 +52,7 @@ public:
     void set(int j, Vector4d &v);
     Vector4d operator * (Vector4d &v) const;
 
+    void translate(Vector3d positionIn);
     void translate(float tx, float ty, float tz);
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);
@@ -70,6 +75,9 @@ protected:
 
     void mult(const Matrix4x4 &M);
     void pivot(int k);
+
+private:
+    GLfloat matrix[16];
 };
 
 }
@@ -93,6 +101,7 @@ class Matrix4x4
 {
 public:
     Matrix4x4();
+
     void setToIdentity();
     void read(std::string filnavn);
     void print() const;
@@ -136,6 +145,9 @@ protected:
 
     void mult(const Matrix4x4 &M);
     void pivot(int k);
+
+private:
+
 };
 
 }
