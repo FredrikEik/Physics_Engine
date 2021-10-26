@@ -23,10 +23,14 @@ void RollingBall::move(float dt)
     gsml::Vector3d newPos = pos + velocity * dt;
     newPos.z = height;
 
-
+    if(current_index != old_index)
+        doCollition();
 
     mPosition.setPosition(newPos);
     mMatrix = mPosition * mScale;
+
+    old_index = current_index;
+    old_normal = current_normal;
 }
 
 bool RollingBall::findTriangle(unsigned int index, gsml::Vector3d &position, gsml::Vector3d &outBaryCords, gsml::Vector3d &outP, gsml::Vector3d &outQ, gsml::Vector3d &outR) const
@@ -60,6 +64,7 @@ float RollingBall::getHeight(gsml::Vector3d& positon)
     {
         if (findTriangle(i, positon, BaryCords, p, q, r))
         {
+            current_index = i;
             RollingBall::calculateMovement(p, q, r);
             break;
         }
@@ -76,15 +81,17 @@ void RollingBall::calculateMovement(const gsml::Vector3d& p, const gsml::Vector3
     gsml::Vector3d pr = r - p;
     gsml::Vector3d normal = pq ^ pr;
     normal.normalize();
+    current_normal = normal;
 
     //qDebug() << normal.x << " " << normal.y << " " << normal.z;
 
     acceleration = gsml::Vector3d((normal.x * normal.z) * -gravity, (normal.y * normal.z) * -gravity, (normal.z * normal.z - 1) * -gravity);
 }
 
-void RollingBall::checkForCollition()
+void RollingBall::doCollition()
 {
-
+    gsml::Vector3d collisonNormal = (old_normal + current_normal)/(old_normal.length() + current_normal.length());
+    velocity = velocity - collisonNormal * 2.f * (velocity * collisonNormal);
 }
 
 void RollingBall::init(GLint matrixUniform)

@@ -17,13 +17,14 @@ public:
     bool findTriangle(unsigned int index, gsml::Vector3d& position, gsml::Vector3d& outBaryCords, gsml::Vector3d& outP, gsml::Vector3d& outQ, gsml::Vector3d& outR) const;
     float getHeight(gsml::Vector3d& positon);
     void calculateMovement(const gsml::Vector3d& p, const gsml::Vector3d& q, const gsml::Vector3d& r);
-    void checkForCollition();
+    void doCollition();
 protected:
     VisualObject* triangle_surface;
 private:
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
-    int old_index{0};
-    int current_index{0};
+    gsml::Vector3d current_normal{};
+    unsigned int old_index{0};
+    unsigned int current_index{0};
 
     gsml::Vector3d velocity{};
     gsml::Vector3d acceleration{};

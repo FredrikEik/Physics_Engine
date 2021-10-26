@@ -45,6 +45,14 @@ struct Vector3d {
         return u;
     }
 
+    Vector3d operator / (const float& f) const {
+        Vector3d u;
+        u.x = x / f;
+        u.y = y / f;
+        u.z = z / f;
+        return u;
+    }
+
     //! Cross product
     Vector3d operator ^ (const Vector3d& v) const {
         Vector3d w;
