@@ -48,6 +48,7 @@ void RollingBall::move(float dt)
 
 void RollingBall::barycentricCords2(float dt)
 {
+    //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     if (mTime == 0)
     {mVelocity = {0.f, 0.f, 0.f};
@@ -56,7 +57,7 @@ void RollingBall::barycentricCords2(float dt)
     mTime += dt;
     int index{0};
 
-
+    qDebug() << "utenfor forloop";
     for (unsigned int i{0}; i < mTriangleSurface->mTriangles.size(); i++)
     {
         //searches for current triangle with barycentric coordinates
@@ -108,6 +109,8 @@ void RollingBall::barycentricCords2(float dt)
         //calculates velocity and moves the ball
         mVelocity += akselerasjon * dt * mMass;
         mMatrix.translate(mVelocity);
+
+        qDebug() << "inni forloop";
     }
 
 
@@ -137,9 +140,6 @@ void RollingBall::barycentricCords(float dt)
 
         if(barCords.x >= 0 && barCords.y >= 0 && barCords.z >= 0 &&
                 barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
-
-
-            //normalvektor = (pos2-pos1)^(pos3-pos1);
 
             normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
             normalvektor.normalize();
