@@ -3,8 +3,10 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(0,0,0.25);
+
+    mPosition.translate(-0.5,-0.5,0.0);
     mScale.scale(0.25,0.25,0.25);
+    baseForce = baseAcceleration * mass;
 }
 RollingBall::~RollingBall()
 {
@@ -14,9 +16,15 @@ void RollingBall::move(float dt)
 {
     //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
-    mMatrix = mPosition * mScale;
-    gsml::Vector3d pos(mPosition.row(3).toVector3D()); //use for function call for bary.
+    gsml::Vector3d pos = mPosition.getPosition(); //use for function call for bary.
+    float height = getHeight(pos);
 
+    velocity = velocity + acceleration * dt;
+    gsml::Vector3d newPos = pos + velocity * dt;
+    newPos.y = height;
+    mPosition.setPosition(newPos);
+
+    mMatrix = mPosition * mScale;
 }
 
 bool RollingBall::findTriangle(unsigned int index, gsml::Vector3d &position, gsml::Vector3d &outBaryCords, gsml::Vector3d &outP, gsml::Vector3d &outQ, gsml::Vector3d &outR) const
@@ -41,19 +49,33 @@ bool RollingBall::findTriangle(unsigned int index, gsml::Vector3d &position, gsm
     return false;
 }
 
-float RollingBall::getHeight(gsml::Vector3d& positon) const
+float RollingBall::getHeight(gsml::Vector3d& positon)
 {
-    gsml::Vector3d BaryCords{}, p, q, r;
+    gsml::Vector3d BaryCords, p, q, r;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     for (unsigned int i{}; i < vertices.size(); i += 3)
     {
         if (findTriangle(i, positon, BaryCords, p, q, r))
+        {
+            RollingBall::calculateMovement(p, q, r);
             break;
+        }
     }
 
     return BaryCords.x * p.y + BaryCords.y * q.y + BaryCords.z * r.y;
 
+}
+
+void RollingBall::calculateMovement(const gsml::Vector3d& p, const gsml::Vector3d& q, const gsml::Vector3d& r)
+{
+    //Normal
+    gsml::Vector3d pq = q - p;
+    gsml::Vector3d pr = r - p;
+    gsml::Vector3d normal = pq ^ pr;
+    normal.normalize();
+
+    acceleration = baseForce * normal * normal.y;
 }
 
 void RollingBall::init(GLint matrixUniform)

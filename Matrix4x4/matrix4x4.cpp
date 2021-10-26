@@ -426,6 +426,25 @@ QVector4D Matrix4x4::row(int r) const
     return QVector4D(A[0][r], A[1][r], A[2][r], A[3][r]);
 }
 
+QVector3D Matrix4x4::getPosition() const
+{
+    return row(3).toVector3D();
+}
+
+void Matrix4x4::setPosition(gsml::Vector3d NewPos)
+{
+    A[0][3] = NewPos.x;
+    A[1][3] = NewPos.y;
+    A[2][3] = NewPos.z;
+}
+
+void Matrix4x4::setPosition(float x, float y, float z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
 
 }
 namespace gs2019 {

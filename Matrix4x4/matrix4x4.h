@@ -57,6 +57,10 @@ public:
     const float * constData() const;
 
     QVector4D row(int r) const;
+    QVector3D getPosition() const;
+
+    void setPosition(gsml::Vector3d NewPos);
+    void setPosition(float x, float y, float z);
 
 protected:
     static const int M=4;
