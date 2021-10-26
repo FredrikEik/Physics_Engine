@@ -44,16 +44,16 @@ void RollingBall::move(float dt)
 
     if (closestTrianglePoint[0].x < comparePoint.x && closestTrianglePoint[0].y < comparePoint.y && closestTrianglePoint[0].z < comparePoint.z)
     {
-        closestTrianglePoint[0] = (triangleVertices[0].getXYZ().x, triangleVertices[0].getXYZ().y, triangleVertices[0].getXYZ().z);
-        closestTrianglePoint[1] = (triangleVertices[1].getXYZ().x, triangleVertices[1].getXYZ().y, triangleVertices[1].getXYZ().z);
-        closestTrianglePoint[2] = (triangleVertices[2].getXYZ().x, triangleVertices[2].getXYZ().x, triangleVertices[2].getXYZ().z);
+        closestTrianglePoint[0] = triangleVertices[0].getXYZ();
+        closestTrianglePoint[1] = triangleVertices[1].getXYZ();
+        closestTrianglePoint[2] = triangleVertices[2].getXYZ();
         //qDebug() << "First triangle closest and its 3 corners stored";
     }
         else
     {
-        closestTrianglePoint[0] = (triangleVertices[3].getXYZ().x, triangleVertices[3].getXYZ().y, triangleVertices[3].getXYZ().z);
-        closestTrianglePoint[1] = (triangleVertices[4].getXYZ().x, triangleVertices[4].getXYZ().y, triangleVertices[4].getXYZ().z);
-        closestTrianglePoint[2] = (triangleVertices[5].getXYZ().x, triangleVertices[5].getXYZ().y, triangleVertices[5].getXYZ().z);
+        closestTrianglePoint[0] = triangleVertices[3].getXYZ();
+        closestTrianglePoint[1] = triangleVertices[4].getXYZ();
+        closestTrianglePoint[2] = triangleVertices[5].getXYZ();
         qDebug() << "Second triangle closest and its 3 corners stored";
     }
 
@@ -61,21 +61,21 @@ void RollingBall::move(float dt)
     gsml::Vector2d ballPosition2d = mMatrix.getPosition2D(); //Get position of ball in x,y space
     //qDebug() << ballPosition2d.x << ballPosition2d.y;
 
-//doublechecking the variables sent into barycentricCordinates() function;
+//    doublechecking the variables sent into barycentricCordinates() function;
 //    qDebug() << "ballPosition2d" << ballPosition2d.x          << ballPosition2d.y
 //             << "Triangle vert 1" << triangleVertices[0].getXYZ().x << triangleVertices[0].getXYZ().y << triangleVertices[0].getXYZ().z
 //             << "Triangle vert 2" << triangleVertices[1].getXYZ().x << triangleVertices[1].getXYZ().y << triangleVertices[1].getXYZ().z
 //             << "Triangle vert 3" << triangleVertices[2].getXYZ().x << triangleVertices[2].getXYZ().y << triangleVertices[2].getXYZ().z;
 
-    //doublechecking the variables sent into barycentricCordinates() function;
-    qDebug()<< "ballPosition2d" << ballPosition2d.x          << ballPosition2d.y
-            << "Closest vert 1" << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z
-            << "Closest vert 2" << closestTrianglePoint[1].x << closestTrianglePoint[1].y << closestTrianglePoint[1].z
-            << "Closest vert 3" << closestTrianglePoint[2].x << closestTrianglePoint[2].y << closestTrianglePoint[2].z;
+//    doublechecking the variables sent into barycentricCordinates() function;
+//    qDebug()<< "ballPosition2d" << ballPosition2d.x          << ballPosition2d.y
+//            << "Closest vert 1" << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z
+//            << "Closest vert 2" << closestTrianglePoint[1].x << closestTrianglePoint[1].y << closestTrianglePoint[1].z
+//            << "Closest vert 3" << closestTrianglePoint[2].x << closestTrianglePoint[2].y << closestTrianglePoint[2].z;
 
     gsml::Vector3d baryCordinates;
     baryCordinates = ballPosition2d.barycentricCoordinates(closestTrianglePoint[0], closestTrianglePoint[1], closestTrianglePoint[2]);
-    //qDebug() << "Barycentric cordinates to closest triangle" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    qDebug() << "Barycentric cordinates to closest triangle" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //    if(baryCordinates >= (0.0f, 0.0f, 0.0f) && baryCordinates <= (1.0f, 1.0f, 1.0f))
 //    {
