@@ -166,6 +166,7 @@ void RenderWindow::render()
     surf2->draw();
     ball->move(0.017f);
     ball->draw();
+    xyz.draw();
 
 
 

@@ -32,6 +32,7 @@ public:
     void read(std::string filnavn);
     void print() const;
     void set(int i, int j, float x);
+    void setPosition(gsml::Vector3d vec);
     void set_dim(int rader, int kolonner);
     Dimension get_dim() const;
     void operator =(const Matrix4x4& M);
@@ -51,6 +52,7 @@ public:
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);
     void frustum(float left, float right, float bottom, float top, float near, float far);
+    Vector3d getPosition();
 
     void perspective(float fovy, float aspectRatio, float nearPlane, float farPlane);
 
