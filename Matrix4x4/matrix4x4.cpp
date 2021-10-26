@@ -34,6 +34,19 @@ void Matrix4x4::setToIdentity()
         A[i][i] = 1.0f;
     }
 }
+
+void gsml::Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
+Vector3d Matrix4x4::getPosition()
+{
+    return gsml::Vector3d(A[0][3], A[1][3], A[2][3]);
+}
+
 void Matrix4x4::read(std::string filnavn)
 {
     std::ifstream inn(filnavn.c_str()); // Åpne eksisterende fil

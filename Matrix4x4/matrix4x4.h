@@ -29,6 +29,10 @@ class Matrix4x4
 public:
     Matrix4x4();
     void setToIdentity();
+
+    void setPosition(GLfloat x, GLfloat y, GLfloat z);
+    Vector3d getPosition();
+
     void read(std::string filnavn);
     void print() const;
     void set(int i, int j, float x);
