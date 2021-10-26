@@ -20,17 +20,19 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
 
-    gsml::Vector3d closestTrianglePoints[3] {(0.0f, 0.0f, 0.0f), (0.0f, 0.0f, 0.0f), (0.0f, 0.0f, 0.0f) };
+    gsml::Vector3d closestTrianglePoints[3];
 
-    for(int i = 0; i < vertices.size(); i++)
+    for(int i = 0; i < vertices.size()/2; i++)
     {
-//        gsml::Vector2d ballPosition = mMatrix.getPosition2D();
-//        closestTrianglePoints[i] = getClosestTriangleToBall(vertices);
-        qDebug() << "Triangle nr" << i << "is at" << closestTrianglePoints[i].x << closestTrianglePoints[i].y << closestTrianglePoints[i].z;
+        gsml::Vector2d ballPosition = mMatrix.getPosition2D();
+//        qDebug() << ballPosition.x << ballPosition.y;
 
-//        gsml::Vector3d baryCordinates;
-//        baryCordinates = ballPosition.barycentricCoordinates(closestTrianglePoints[i], closestTrianglePoints[i], closestTrianglePoints[i]);
-//        qDebug() << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+        closestTrianglePoints[i] = getClosestTriangleToBall(vertices);
+//        qDebug() << "Point nr" << i+1 << "is at" << closestTrianglePoints[i].x << closestTrianglePoints[i].y << closestTrianglePoints[i].z;
+
+        gsml::Vector3d baryCordinates;
+        baryCordinates = ballPosition.barycentricCoordinates(closestTrianglePoints[i], closestTrianglePoints[i], closestTrianglePoints[i]);
+//        qDebug() << "Bar-cords to closest triangle" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //        if(baryCordinates >= (0.0f, 0.0f, 0.0f) && baryCordinates <= (1.0f, 1.0f, 1.0f))
 //        {
@@ -82,21 +84,21 @@ void RollingBall::draw()
 
 gsml::Vector3d RollingBall::getClosestTriangleToBall(std::vector<gsml::Vertex> vertices)
 {
-//    gsml::Vector3d ballPosition = mMatrix.getPosition3D();
+    gsml::Vector3d ballPosition = mMatrix.getPosition3D();
 //    qDebug() << ballPosition.x << ballPosition.y << ballPosition.z;
 
-//    gsml::Vector3d closestTrianglePoint[3];
-//    gsml::Vector3d distance[6]; //using vertices.size() instead of hardcoding 6 would be better. On to more difficult things.
+    gsml::Vector3d closestTrianglePoint[3];
+    gsml::Vector3d distance[6]; //using vertices.size() instead of hardcoding 6 would be better. On to more difficult things.
 
-//    //Run through the vertices
-//    for (int i = 0; i < vertices.size(); i += 3)
-//    {
-//        //Find distance between the balls position and the vertices of the ground-triangles
-//        distance[i]   = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
-//        distance[i+1] = ballPosition - gsml::Vector3d (vertices[i+1].getXYZ());
-//        distance[i+2] = ballPosition - gsml::Vector3d (vertices[i+2].getXYZ());
-//        qDebug() << i << "X" << distance[i].x << "Y" << distance[i+1].y << "Z" << distance[i+2].z;
-//    }
+    //Run through the vertices
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        //Find distance between the balls position and the vertices of the ground-triangles
+        distance[i] = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
+        distance[i] = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
+        distance[i] = ballPosition - gsml::Vector3d (vertices[i].getXYZ());
+        qDebug() << "Distance" << i << "X" << distance[i].x << "Y" << distance[i].y << "Z" << distance[i].z;
+    }
 
 //    for (int i = 0; i < vertices.size(); i += 3)
 //    {
