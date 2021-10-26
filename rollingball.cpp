@@ -14,7 +14,6 @@ RollingBall::~RollingBall()
 
 void RollingBall::move(float dt)
 {
-    gsml::Vector3d BallSpeed;
     std::vector<gsml::Vertex>& triangleVertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
     //qDebug() << vertices.size();
 
@@ -24,9 +23,10 @@ void RollingBall::move(float dt)
     gsml::Vector3d ballPosition3d = mMatrix.getPosition3D();
     //qDebug() << "Ballposition3d:" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;;
 
-    gsml::Vector3d distanceBetweenBallAndVert[6]; //using vertices.size() instead of hardcoding 6 would be better.
+
 
 //Run through the vertices of the trianglesurface
+    gsml::Vector3d distanceBetweenBallAndVert[6]; //using vertices.size() instead of hardcoding 6 would be better.
     for (int i = 0; i < triangleVertices.size(); i++)
     {
         //Find distance between the balls position and the vertices of the ground-triangles
@@ -37,6 +37,8 @@ void RollingBall::move(float dt)
     }
 
     gsml::Vector3d closestTrianglePoint[3]; //Used to store the three points of the closest triangle
+
+
 
 //Keep the three closest points
     closestTrianglePoint[0] =     distanceBetweenBallAndVert[0] + distanceBetweenBallAndVert[1] + distanceBetweenBallAndVert[3];
@@ -57,6 +59,8 @@ void RollingBall::move(float dt)
         qDebug() << "Second triangle closest and its 3 corners stored";
     }
 
+
+
 //get barycentric cordinates from ball to triangle
     gsml::Vector2d ballPosition2d = mMatrix.getPosition2D(); //Get position of ball in x,y space
     //qDebug() << ballPosition2d.x << ballPosition2d.y;
@@ -75,17 +79,15 @@ void RollingBall::move(float dt)
 
     gsml::Vector3d baryCordinates;
     baryCordinates = ballPosition2d.barycentricCoordinates(closestTrianglePoint[0], closestTrianglePoint[1], closestTrianglePoint[2]);
-    qDebug() << "Barycentric cordinates to closest triangle" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    //qDebug() << "Barycentric cordinates to closest triangle" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
-//    if(baryCordinates >= (0.0f, 0.0f, 0.0f) && baryCordinates <= (1.0f, 1.0f, 1.0f))
-//    {
 
-//    }
-
-    //h = v0t+1/2 gt^2 - formula for "hastighet" given freefall. Simplified in code.
-    //BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
-    //qDebug << "ball is moving";
-
+    gsml::Vector3d BallSpeed;
+    if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
+    {
+        BallSpeed =+ -9.2*dt, 0*dt, 0*dt; //Accumulative ballspeed, framerate-independendt using tickrate. Dag set dt at a 60-ish hz rate at 0.017
+        qDebug() << "ball is moving";
+    }
 mPosition.translate(BallSpeed.x, BallSpeed.y, BallSpeed.z); //Based on calculations in either collision or free-fall apply translation to ball.
 }
 
