@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1.5,0,0);
+    mPosition.translate(1.,1.,0);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gAkselerasjon*masseIKG;
 }
@@ -44,23 +44,34 @@ void RollingBall::move(float dt)
             gsml::Vector3d avstand = 0;
             gsml::Vector3d projeksjon=0;
             gsml::Vector3d newPosition;
+
             normalvektor = (v1-v0)^(v2-v0);
+             //qDebug()<<normalvektor.x << normalvektor.y << normalvektor.z;
             normalvektor.normalize();
 
-            akselerasjon = gKraft * normalvektor * normalvektor.z;
 
 
 
             if(i==3){
+
+                akselerasjon = gKraft ^ normalvektor * normalvektor.z;
+                qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
             hastighet = hastighet + akselerasjon * dt;
+           // hastighet.y = hastighet.x;
+                            qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
             newPosition = playerPos + hastighet;
             newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-            qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            qDebug() << hastighet.x << hastighet.y << hastighet.z;
+            //qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
+            //qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
-            else{
-            hastighet = hastighet - akselerasjon * dt;
+            else if (i==0){
+
+
+                akselerasjon = gKraft ^ normalvektor * normalvektor.z;
+            hastighet = hastighet + akselerasjon * dt;
+            //hastighet.y = hastighet.x;
+                        qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
             newPosition = playerPos + hastighet;
             newPosition.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
