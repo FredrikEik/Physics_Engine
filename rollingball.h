@@ -22,6 +22,6 @@ private:
     gsml::Vec3 acceleration{0.0,0.0,0.0};
     gsml::Vec3 gForce{0.0,0.0,0.0};
     gsml::Vec3 gAcceleration{0.0,0.0,9.8};
-    float mass = 1;
+    float mass = 0.01;
 };
 #endif // ROLLINGBALL_H

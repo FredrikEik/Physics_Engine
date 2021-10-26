@@ -44,20 +44,20 @@ void RollingBall::move(float dt)
         gsml::Vec3 p12 = p2-p1;
         gsml::Vec3 p13 = p3-p1;
         gsml::Vec3 planeNormal = p12^p13;
+        //qDebug()<< planeNormal.x << planeNormal.y << planeNormal.z;
         planeNormal.normalize();
         //qDebug()<< planeNormal.x << planeNormal.y << planeNormal.z;
         //gForce = gsml::Vec3(abs(gForce.x), abs(gForce.y), abs(gForce.z));
-        acceleration = gForce * planeNormal * planeNormal.x;
+        acceleration = gForce ^ planeNormal ^ gsml::Vec3(0,0,planeNormal.z);
         //qDebug()<< gForce.x << gForce.y << gForce.z;
         qDebug()<< acceleration.x << acceleration.y << acceleration.z;
         //if(i==0){velocity = velocity - acceleration * 0.00017;}
         //else{velocity = velocity + acceleration * 0.00017;}
-        velocity = velocity + acceleration * 0.00017;
+        velocity = velocity + acceleration * 0.17;
         //qDebug()<< velocity.x << velocity.y << velocity.z;
         gsml::Vec3 newPos = ballPos + velocity;
         newPos.z = (baryCoords.x * p1.z + baryCoords.y * p2.z + baryCoords.z * p3.z)+0.25;
         mPosition.setPosition(newPos.x,newPos.y,newPos.z);
-
 
         //mPosition.translate(velocity.x,velocity.y,velocity.z);
         }
