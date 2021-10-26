@@ -21,8 +21,8 @@ public:
     ~VisualObject();
     virtual void init(GLint matrixUniform)=0;
     virtual void draw()=0;
-    virtual void move(float dt) { }
-    virtual void move(float dx, float dy, float dz) { }
+    virtual void move(float dt) { Q_UNUSED(dt); }
+    virtual void move(float dx, float dy, float dz) { Q_UNUSED(dx) ;Q_UNUSED(dy); Q_UNUSED(dz); }
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};
