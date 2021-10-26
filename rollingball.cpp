@@ -52,32 +52,34 @@ void RollingBall::barycentricCords(float dt)
                 barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
 
 
-            normalvektor = (pos2-pos1)^(pos3-pos1);
-            normalvektor.normalize();
-          //  normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
 
-            akselerasjon = gKraft * normalvektor * normalvektor.z;
+            normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
+            normalvektor.normalize();
+
+
+            velocity = gKraft * normalvektor * normalvektor.z;
 
 
 
             if(i==3){
-            hastighet = hastighet + akselerasjon * dt;
-            newPosition = BallPosition + hastighet;
+            speed = speed + velocity * dt;
+            newPosition = BallPosition + speed ;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-            qDebug() << akselerasjon.x << akselerasjon.y << akselerasjon.z;
-            qDebug() << hastighet.x << hastighet.y << hastighet.z;
+            qDebug() << velocity.x << velocity.y << velocity.z;
+            qDebug() << speed.x << speed.y << speed.z;
             }
             else{
-            hastighet = hastighet - akselerasjon * dt;
-            newPosition = BallPosition + hastighet;
+            speed = speed - velocity * dt;
+            newPosition = BallPosition + speed ;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-
+            qDebug() << velocity.x << velocity.y << velocity.z;
+            qDebug() << speed.x << speed.y << speed.z;
             }
 
             if (newPosition.z > BallPosition.z){
-                hastighet = hastighet - akselerasjon * dt;
+                speed = speed - velocity * dt;
             }
 
         }
