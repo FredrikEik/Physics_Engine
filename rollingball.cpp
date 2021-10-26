@@ -43,6 +43,8 @@ void RollingBall::move(float dt)
 
         gsml::Vec3 p12 = p2-p1;
         gsml::Vec3 p13 = p3-p1;
+        //qDebug()<< p12.x << p12.y << p12.z;
+        qDebug()<< p13.x << p13.y << p13.z;
         gsml::Vec3 planeNormal = p12^p13;
         //qDebug()<< planeNormal.x << planeNormal.y << planeNormal.z;
         planeNormal.normalize();
@@ -50,7 +52,7 @@ void RollingBall::move(float dt)
         //gForce = gsml::Vec3(abs(gForce.x), abs(gForce.y), abs(gForce.z));
         acceleration = gForce ^ planeNormal ^ gsml::Vec3(0,0,planeNormal.z);
         //qDebug()<< gForce.x << gForce.y << gForce.z;
-        qDebug()<< acceleration.x << acceleration.y << acceleration.z;
+        //qDebug()<< acceleration.x << acceleration.y << acceleration.z;
         //if(i==0){velocity = velocity - acceleration * 0.00017;}
         //else{velocity = velocity + acceleration * 0.00017;}
         velocity = velocity + acceleration * 0.17;
