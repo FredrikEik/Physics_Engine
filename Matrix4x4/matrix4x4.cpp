@@ -81,6 +81,19 @@ Dimension Matrix4x4::get_dim() const
     return Dimension(m, n);
 }
 
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
+Vector3d Matrix4x4::getPosition()
+{
+    Vec3 pos = Vec3(A[0][3], A[1][3], A[2][3]);
+    return pos;
+}
+
 // Det er ikke veldig elegant å skrive M.A[i][j]
 // gjentatte ganger. Et alternativ er å overlaste
 // en () operator for klassen

@@ -71,5 +71,5 @@ void MainWindow::init()
 void MainWindow::on_pushButton_clicked()
 {
     qDebug() << "Button clicked";
+    mRenderWindow->toMove();
 }
-

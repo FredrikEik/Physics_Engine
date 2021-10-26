@@ -34,6 +34,10 @@ public:
     void set(int i, int j, float x);
     void set_dim(int rader, int kolonner);
     Dimension get_dim() const;
+
+    void setPosition(GLfloat x, GLfloat y, GLfloat z);
+    Vector3d getPosition();
+
     void operator =(const Matrix4x4& M);
     Matrix4x4 operator * (const Matrix4x4& M) const;
     float& operator () (int i, int j) {return A[i][j]; }
