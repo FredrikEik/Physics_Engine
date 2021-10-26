@@ -1,7 +1,3 @@
-// Dag Nylund
-// Lager et nytt namespace gsml
-// Bruker dette etter 5/11/20
-
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 #include <cmath>
@@ -127,17 +123,17 @@ struct Vector3d {
         Vector3d p = p2 - *this;
         Vector3d q = p3 - *this;
         n = p^q;
-        baryc.x = n.length()/areal_123;
+        baryc.x = n.z/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
         n = p^q;
-        baryc.y = n.length()/areal_123;
+        baryc.y = n.z/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
         n = p^q;
-        baryc.z = n.length()/areal_123;
+        baryc.z = n.z/areal_123;
 
         return baryc;
     }
@@ -395,8 +391,11 @@ struct Vector3d {
 
     Vector3d barycentricCoordinates(const Vector3d& p1, const Vector3d& p2, const Vector3d& p3)
     {
+
+
         Vector3d p12 = p2-p1;
         Vector3d p13 = p3-p1;
+
         // Ikke bruk z-koordinatene. Vi jobber med trekanter i 2D her og projiserer
         p12.z = 0.0;
         p13.z = 0.0;
@@ -407,16 +406,22 @@ struct Vector3d {
         // u
         Vector3d p = p2 - *this;
         Vector3d q = p3 - *this;
+        p.z = 0.0f;
+        q.z = 0.0f;
         n = p^q;
         baryc.x = n.length()/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
+        p.z = 0.0f;
+        q.z = 0.0f;
         n = p^q;
         baryc.y = n.length()/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
+        p.z = 0.0f;
+        q.z = 0.0f;
         n = p^q;
         baryc.z = n.length()/areal_123;
 

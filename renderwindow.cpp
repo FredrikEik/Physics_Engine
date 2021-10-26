@@ -52,6 +52,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     gsmVMatrix->setToIdentity();
     gsmPMatrix = new gsml::Matrix4x4;
     gsmPMatrix->setToIdentity();
+
+    ballMove = false;
 }
 
 RenderWindow::~RenderWindow()
@@ -164,7 +166,13 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+
+    if(ballMove)
+    {
+        ball->move(0.017f);
+    }
+    else
+        ball->move(0.f);
     ball->draw();
 
 
@@ -223,6 +231,17 @@ void RenderWindow::exposeEvent(QExposeEvent *)
         mRenderTimer->start(16);
         mTimeStart.start();
     }
+}
+
+void RenderWindow::toMove()
+{
+    //ballMove = move;
+    if(ballMove)
+    {
+        ballMove = false;
+    }
+    else
+        ballMove = true;
 }
 
 //The way this is set up is that we start the clock before doing the draw call,

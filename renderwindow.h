@@ -32,12 +32,16 @@ public:
 
     void exposeEvent(QExposeEvent *) override;
 
+    void toMove();
+
 //    void error(const QString &msg);
 
 private slots:
     void render();
 
 private:
+    bool ballMove;
+
     void init();
     XYZ xyz;
     TriangleSurface surf;

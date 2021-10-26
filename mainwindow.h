@@ -21,6 +21,8 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+    //void on_pushButton_toggled(bool checked);
+
 private:
     void init();
     Ui::MainWindow *ui;

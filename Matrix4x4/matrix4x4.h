@@ -47,6 +47,9 @@ public:
     void set(int j, Vector4d &v);
     Vector4d operator * (Vector4d &v) const;
 
+    void setPosition(float x, float y, float z);
+    Vector3d getPosition();
+
     void translate(float tx, float ty, float tz);
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);

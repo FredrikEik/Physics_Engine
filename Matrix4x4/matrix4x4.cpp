@@ -76,6 +76,22 @@ void Matrix4x4::set_dim(int rader, int kolonner)
     m = rader; n = kolonner;
 }
 
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
+Vector3d Matrix4x4::getPosition()
+{
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
 Dimension Matrix4x4::get_dim() const
 {
     return Dimension(m, n);
