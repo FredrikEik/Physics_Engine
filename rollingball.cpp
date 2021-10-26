@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(-1,0.5,1);
+    mPosition.translate(-1.0,0.0,1);
     mScale.scale(0.25,0.25,0.25);
     gForce = gAcceleration * mass;
 }
@@ -33,7 +33,7 @@ void RollingBall::move(float dt)
     if(baryCoords.x >= 0 && baryCoords.y >= 0 && baryCoords.z >= 0)
         {
         //qDebug() << ballPos.x << ballPos.y << ballPos.z;
-        qDebug() << velocity.x << velocity.y << velocity.z;
+        //qDebug() << velocity.x << velocity.y << velocity.z;
         //qDebug()<< i;
         /*
         p1.x = abs(p1.x); p1.y = abs(p1.y); p1.z = abs(p1.z);
@@ -45,16 +45,20 @@ void RollingBall::move(float dt)
         gsml::Vec3 p13 = p3-p1;
         gsml::Vec3 planeNormal = p12^p13;
         planeNormal.normalize();
-
-        acceleration = gForce * planeNormal * planeNormal.z;
-        if(i==0){velocity = velocity - acceleration * 0.00017;}
-        else{velocity = velocity + acceleration * 0.00017;}
-
+        //qDebug()<< planeNormal.x << planeNormal.y << planeNormal.z;
+        //gForce = gsml::Vec3(abs(gForce.x), abs(gForce.y), abs(gForce.z));
+        acceleration = gForce * planeNormal * planeNormal.x;
+        //qDebug()<< gForce.x << gForce.y << gForce.z;
+        qDebug()<< acceleration.x << acceleration.y << acceleration.z;
+        //if(i==0){velocity = velocity - acceleration * 0.00017;}
+        //else{velocity = velocity + acceleration * 0.00017;}
+        velocity = velocity + acceleration * 0.00017;
+        //qDebug()<< velocity.x << velocity.y << velocity.z;
         gsml::Vec3 newPos = ballPos + velocity;
         newPos.z = (baryCoords.x * p1.z + baryCoords.y * p2.z + baryCoords.z * p3.z)+0.25;
         mPosition.setPosition(newPos.x,newPos.y,newPos.z);
 
-        //qDebug()<< velocity.x << velocity.y << velocity.z;
+
         //mPosition.translate(velocity.x,velocity.y,velocity.z);
         }
     }
