@@ -129,21 +129,21 @@ struct Vector3d {
         p.z = 0.0f;
         q.z = 0.0f;
         n = p^q;
-        baryc.x = n.length()/areal_123;
+        baryc.x = n.z/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
         p.z = 0.0f;
         q.z = 0.0f;
         n = p^q;
-        baryc.y = n.length()/areal_123;
+        baryc.y = n.z/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
         p.z = 0.0f;
         q.z = 0.0f;
         n = p^q;
-        baryc.z = n.length()/areal_123;
+        baryc.z = n.z/areal_123;
 
         return baryc;
     }
@@ -248,17 +248,17 @@ struct Vector2d
         Vector2d p = p2 - *this;
         Vector2d q = p3 - *this;
         n = p^q;
-        baryc.x = n.z/areal_123;
+        baryc.x = n.length()/areal_123;
         // v
         p = p3 - *this;
         q = p1 - *this;
         n = p^q;
-        baryc.y = n.z/areal_123;
+        baryc.y = n.length()/areal_123;
         // w
         p = p1 - *this;
         q = p2 - *this;
         n = p^q;
-        baryc.z = n.z/areal_123;
+        baryc.z = n.length()/areal_123;
 
         return baryc;
     }

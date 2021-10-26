@@ -4,7 +4,7 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
 
-    mPosition.translate(0.5,0.5,0.52);
+    mPosition.translate(0.5,0.5,0.5);
     mScale.scale(0.25,0.25,0.25);
     gForce = gAcceleration * massKg;
 }
@@ -20,7 +20,7 @@ void RollingBall::move(float dt)
     gsml::Vector3d barycentricCoords;
     gsml::Vector3d ballPosition = mPosition.get_position();
 
-    for (unsigned long long i; i < vertices.size() - 2; i+= 3)
+    for (int i = 0; i < vertices.size() - 2; i+= 3)
     {
         gsml::Vector3d p1, p2, p3;
         p1 = gsml::Vector3d(vertices[i].getXYZ());
@@ -39,9 +39,10 @@ void RollingBall::move(float dt)
 
 //            qDebug() << "pNormal not normalized: " << pNormal.x << pNormal.y << pNormal.z;
             pNormal.normalize();
-            qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
+//            qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
 
-            acceleration = gForce * pNormal * pNormal.x;
+//            acceleration = gForce * pNormal * pNormal.z;
+            acceleration = gAcceleration * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
             if (i == 0) {acceleration = gsml::Vector3d(-acceleration.x, -acceleration.y, -acceleration.z);}
 
             velocity = velocity - acceleration * dt;

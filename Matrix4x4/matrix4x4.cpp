@@ -76,6 +76,22 @@ void Matrix4x4::set_dim(int rader, int kolonner)
     m = rader; n = kolonner;
 }
 
+void gsml::Matrix4x4::setPosition(float x, float y, float z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
+Vector3d Matrix4x4::get_position()
+{
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
 Dimension Matrix4x4::get_dim() const
 {
     return Dimension(m, n);
@@ -287,21 +303,7 @@ Vector4d Matrix4x4::operator * ( Vector4d& v) const
     return x;
 }
 
-void gsml::Matrix4x4::setPosition(float x, float y, float z)
-{
-    x = A[0][3];
-    y = A[1][3];
-    z = A[2][3];
-}
 
-Vector3d Matrix4x4::get_position()
-{
-    Vec3 temp;
-    temp.x = A[0][3];
-    temp.y = A[1][3];
-    temp.z = A[2][3];
-    return temp;
-}
 
 
 void Matrix4x4::translate(float tx, float ty, float tz)
