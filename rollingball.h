@@ -15,8 +15,7 @@ public:
     void move(float dt) override;
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
 
-    gsml::Vector3d getClosestTriangleToBall(std::vector<gsml::Vertex>);
-    //gsml::Vector3d getBarysentricCordinates(gsml::Vector3d closestTriangleToPoint);
+    //gsml::Vector3d getClosestTriangleToBall(std::vector<gsml::Vertex>);
 protected:
     VisualObject* triangle_surface;
 private:
