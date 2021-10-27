@@ -30,8 +30,10 @@ protected:
 private:
 
     float speed = 0.001f;
+
     float mMass{0.5};
     float mass = .01f;
+
     gsml::Vector3d velocity{};
     gsml::Vector3d acceleration{};
     gsml::Vector3d gravity{0,-9.81f,0};
@@ -41,10 +43,12 @@ private:
     int old_index{0};
     gsml::Vector3d prevTriangleNormal{0};
 
-    gsml::Vector3d speed{0.0f,0.0f,0.0f};
-    gsml::Vector3d velocity{0.0f,0.0f,0.0f};
-    gsml::Vector3d gAkselerasjon{0.0f,0.0f,-9.81f};
+    gsml::Vector3d hastighet{0.0f,0.0f,0.0f};
+    gsml::Vector3d akselerasjon{0.0f,0.0f,0.0f};
+    gsml::Vector3d gForce{0.0f,0.0f,-9.81f};
     gsml::Vector3d gKraft;
+
+    float friction{.005};
 
     bool notOnSurface = false;
 

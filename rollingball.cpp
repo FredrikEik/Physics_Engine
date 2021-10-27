@@ -5,7 +5,7 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     mPosition.translate(1.5,0,0);
     mScale.scale(0.25,0.25,0.25);
-    gKraft = gAkselerasjon*mass;
+    gKraft = gForce*mass;
 
 }
 
@@ -30,9 +30,8 @@ RollingBall::~RollingBall()
 void RollingBall::move(float dt)
 {
 
-    //velocity.setZ(5);
     mMatrix = mPosition * mScale;
-    //mPosition.translate(velocity);
+
 
     if(!switchVersion)
         barycentricCords(dt);
@@ -123,7 +122,6 @@ void RollingBall::barycentricCords(float dt)
     gsml::Vector3d newPosition = 0;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
-
     for (unsigned int i=0; i < vertices.size(); i+=3){
 
         gsml::Vector3d pos1;
@@ -133,7 +131,6 @@ void RollingBall::barycentricCords(float dt)
         pos2 = gsml::Vector3d(vertices[i+1].getXYZ());
         pos3 = gsml::Vector3d(vertices[i+2].getXYZ());
 
-
         gsml::Vector3d BallPosition = mPosition.getPosition();
         gsml::Vector3d barCords = BallPosition.barycentricCoordinates(vertices[i].getXYZ(),
                                                   vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
@@ -142,38 +139,31 @@ void RollingBall::barycentricCords(float dt)
                 barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
 
 
-
             normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
             normalvektor.normalize();
 
 
-            velocity = gKraft * normalvektor * normalvektor.z;
-
-
+            akselerasjon = gKraft * normalvektor * normalvektor.z;
 
             if(i==3){
-            speed = speed + velocity * dt;
-            newPosition = BallPosition + speed ;
+            hastighet = hastighet + akselerasjon * dt;
+            newPosition = BallPosition + hastighet;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
+            newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-            qDebug() << velocity.x << velocity.y << velocity.z;
-            qDebug() << speed.x << speed.y << speed.z;
+
+            qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
             else{
-            speed = speed - velocity * dt;
-            newPosition = BallPosition + speed ;
+            hastighet = hastighet - akselerasjon * dt;
+            newPosition = BallPosition + hastighet;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
-            qDebug() << velocity.x << velocity.y << velocity.z;
-            qDebug() << speed.x << speed.y << speed.z;
+            newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
 
-
+            qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
 
-            if (newPosition.z > BallPosition.z){
-                speed = speed - velocity * dt;
-            }
 
         }
 

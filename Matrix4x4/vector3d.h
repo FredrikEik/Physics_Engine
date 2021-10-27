@@ -102,30 +102,13 @@ struct Vector3d {
     {
         z = value;
     }
+
     Vector3d cross (const Vector3d& v) const {
         Vector3d w;
         w.x =  y*v.z - z*v.y;
         w.y =  z*v.x - x*v.z;
         w.z =  x*v.y - y*v.x;
         return w;
-    }
-    GLfloat getX() const
-    {
-        return x;
-    }
-    GLfloat getY() const
-    {
-        return y;
-    }
-    GLfloat getZ() const
-    {
-        return z;
-    }
-    static Vector3d cross(const Vector3d &v1, const Vector3d &v2)
-    {
-        return {((v1.getY() * v2.getZ()) - (v1.getZ() * v2.getY())),
-                    ((v1.getZ() * v2.getX()) - (v1.getX() * v2.getZ())),
-                    ((v1.getX() * v2.getY()) - (v1.getY() * v2.getX()))};
     }
 
     Vector3d normalized()
