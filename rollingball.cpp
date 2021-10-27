@@ -23,18 +23,14 @@ void RollingBall::move(float dt)
         v1 = gsml::Vector3d(vertices[i+1].getXYZ());
         v2 = gsml::Vector3d(vertices[i+2].getXYZ());
 
-
         gsml::Vector3d playerPos = mPosition.getPosition();                 //skaffer posisjonen til ballen
-
 
         barycentricCord = playerPos.barycentricCoordinates(
                     vertices[i].getXYZ(),vertices[i+1].getXYZ(), vertices[i+2].getXYZ());  //kalkulerer barisentriske kordinater
 
         if(barycentricCord.x > 0 && barycentricCord.y > 0 && barycentricCord.z > 0 &&
                 barycentricCord.x < 1 && barycentricCord.y < 1 && barycentricCord.z < 1){   //sjekker at ballen er innafor trianglene
-            qDebug() << "The ball is inside";
-
-
+            //qDebug() << "The ball is inside";
             //gsml::Vector3d avstand = 0;
             //gsml::Vector3d projeksjon=0;
             //gsml::Vector3d distanseFlyttet =0;
@@ -49,9 +45,6 @@ void RollingBall::move(float dt)
 
 
             //if(i==3){
-
-
-
             nyPosisjon = playerPos + hastighet;                                         //oppdaterer posisjonen
             nyPosisjon.z = v0.z*barycentricCord.x+v1.z*barycentricCord.y+v2.z*barycentricCord.z;   //bruker barysentriske kordinatene til å bestemme nye z posisjonen
             mPosition.setPosition(nyPosisjon.x, nyPosisjon.y, nyPosisjon.z+radius);      //setter den nye posisjonen, plusser også på radiusen på z'en til ballen så den ligger oppå planet
