@@ -17,7 +17,6 @@ void RollingBall::move(float dt)
     mMatrix = mPosition * mScale;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();             //skaffer vertices
 
-
     for (int i=0; i < vertices.size()-2; i+=3){
         v0 = gsml::Vector3d(vertices[i].getXYZ());
         v1 = gsml::Vector3d(vertices[i+1].getXYZ());
@@ -42,7 +41,6 @@ void RollingBall::move(float dt)
             normalvektor.normalize();                                                   //normaliserer normalvektoren
             akselerasjon = gKraft ^ normalvektor ^ gsml::Vector3d (0,0,normalvektor.z); //regner ut akselerasjon
             hastighet = hastighet + akselerasjon * dt;                                  //regner ut hastighet
-
 
             //if(i==3){
             nyPosisjon = playerPos + hastighet;                                         //oppdaterer posisjonen
@@ -78,7 +76,6 @@ void RollingBall::move(float dt)
             //Tyngdepunktet til ballen ligger enten over eller under planet (y->*n->)/||y->|| = +-1
             //negativt = under, må flytte tilbake posisjon med d=r-y langs normalvektor til planet,
             // må også flytte samme distansen d langs nye hastighetsvektoren
-
         }
         else if (barycentricCord.x < 0 && barycentricCord.y < 0 && barycentricCord.z < 0 &&     //sjekker at ballen ikke er innenfor trianglene
                  barycentricCord.x > 1 && barycentricCord.y > 1 && barycentricCord.z > 1) {
