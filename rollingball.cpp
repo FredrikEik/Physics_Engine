@@ -4,7 +4,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.setPosition(1,0,1.25);
+    mPosition.setPosition(-1.0,0.0,1);
     mScale.scale(0.25,0.25,0.25);
     gForce = gAcceleration * massKG;
 }
@@ -16,9 +16,6 @@ void RollingBall::move(float dt)
 {
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
-
-
-    gsml::Vector3d BaryCord;
     gsml::Vector3d BallPosition = mPosition.getPosition();
 
     for(unsigned long long i = 0; i < vertices.size() - 2; i+=3)
@@ -28,6 +25,7 @@ void RollingBall::move(float dt)
         p2 = gsml::Vector3d(vertices[i+1].getXYZ());
         p3 = gsml::Vector3d(vertices[i+2].getXYZ());
 
+        gsml::Vector3d BaryCord;
         BaryCord = BallPosition.barycentricCoordinates(p1, p2, p3);
 
         if(BaryCord.x >= 0 && BaryCord.y >= 0 && BaryCord.z >= 0)
@@ -41,22 +39,13 @@ void RollingBall::move(float dt)
             gForce.y = abs(gForce.y);
             gForce.z = abs(gForce.z);*/
 
-            acceleration = gForce * pNormal * pNormal.z;
-
-            if(i!=0)
-            {
-                velocity = velocity + acceleration * dt;
-            }
+            acceleration = gForce ^ pNormal ^ gsml::Vec3(0,0,pNormal.z);
+            velocity = velocity + acceleration * dt;
 
 
-            if(i == 0)
-            {
-                velocity = velocity - acceleration * dt;
-            }
-
-            gsml::Vector3d newPosition = mPosition.getPosition() + velocity*dt;
-            newPosition.z = p1.z*BaryCord.x + p2.z*BaryCord.y + p3.z*BaryCord.z;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+0.25);
+            gsml::Vector3d newPosition = mPosition.getPosition() + velocity;
+            newPosition.z = (p1.z*BaryCord.x + p2.z*BaryCord.y + p3.z*BaryCord.z)+0.25;
+            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z);
 
             BallPosition = mPosition.getPosition();
             qDebug() << "BallPosition: " << BallPosition.x << BallPosition.y << BallPosition.z;

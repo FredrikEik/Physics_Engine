@@ -164,7 +164,7 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf2->draw();
-    ball->move(0.017f);
+    ball->move(0.17f);
     ball->draw();
 
 
