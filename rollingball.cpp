@@ -19,12 +19,12 @@ void RollingBall::move(float dt)
     gsml::Vector3d pos = mPosition.getPosition(); //use for function call for bary.
     float height = getHeight(pos) + radius;
 
+    if(current_index != old_index)
+        doCollition();
+
     velocity = velocity + acceleration * dt;
     gsml::Vector3d newPos = pos + velocity * dt;
     newPos.z = height;
-
-    if(current_index != old_index)
-        doCollition();
 
     mPosition.setPosition(newPos);
     mMatrix = mPosition * mScale;
