@@ -60,6 +60,7 @@ public:
     void set_uv(GLfloat u, GLfloat v);
     void data(float v[]) const;
     gsml::Vector3d getXYZ() const;
+    gsml::Vector2d getXY() const;
     void operator = (const Vertex& v);
 };
 }

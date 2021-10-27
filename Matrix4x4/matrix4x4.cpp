@@ -65,6 +65,13 @@ void Matrix4x4::set(int i, int j, float x)
     A[i][j] = x;
 }
 
+void Matrix4x4::setPosition(Vector3d vec)
+{
+    A[0][3] = vec.x;
+    A[1][3] = vec.y;
+    A[2][3] = vec.z;
+}
+
 void Matrix4x4::set(int j, Vector4d &v)
 {
     for (int i=0; i<m; i++)
@@ -380,6 +387,16 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     /*
     */
 }
+
+Vector3d Matrix4x4::getPosition()
+{
+    gsml::Vector3d temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {

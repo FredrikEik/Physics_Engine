@@ -127,6 +127,11 @@ gsml::Vector3d Vertex::getXYZ() const
     return gsml::Vector3d{m_xyz[0], m_xyz[1], m_xyz[2]};
 }
 
+Vector2d Vertex::getXY() const
+{
+    return gsml::Vector2d{m_xyz[0], m_xyz[1]};
+}
+
 void Vertex::operator =(const Vertex &v)
 {
     for (int i=0; i<3; i++) {
