@@ -79,12 +79,16 @@ struct Vector3d {
     float operator * (const Vector3d& v) const{
         return x*v.x + y*v.y + z*v.z;
     }
-
     //! Scaling
     Vector3d operator * (float c) const {
         return Vector3d{x*c, y*c, z*c};
     }
 
+    /*
+    Vector3d operator * (const Vector3d& v) const{
+        return gsml::Vector3d(x*v.x, y*v.y, z*v.z);
+    }
+    */
     //! \brief indexForMinimum()
     //! \return the index for the minimum element i this
     //!

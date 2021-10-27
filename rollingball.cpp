@@ -5,7 +5,7 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
 
     mScale.scale(0.25,0.25,0.25);
-    mPosition.translate(-0.5,-0.5,0.0);
+    mPosition.translate(-0.75,-0.5,0.0);
     gForce = gAcceleration * massInKg;
 }
 RollingBall::~RollingBall()
@@ -38,17 +38,19 @@ void RollingBall::move(float dt)
 
             gsml::Vector3d p12 = p2-p1;
             gsml::Vector3d p13 = p3-p1;
+            qDebug() << "p12, p13" << p12.x << p12.y << p12.z << p13.x << p13.y << p13.z;
             gsml::Vector3d pNormal = p12^p13;
 
             //qDebug() << "pNormal not normalized: " << pNormal.x << pNormal.y << pNormal.z;
             pNormal.normalize();
-            //qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
+            qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
 
-            //gForce.z = abs(gForce.z);
-            acceleration = gForce * pNormal * pNormal.z;
+            gForce = gsml::Vector3d(abs(gForce.x), abs(gForce.y), abs(gForce.z));
+            //gsml::Vector3d pz{pNormal.z, pNormal.z, pNormal.z};
+
+            acceleration = gForce ^ pNormal ^ gsml::Vector3d(0, 0, pNormal.z);
             //acceleration = gAcceleration * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
-            if(i == 0) {acceleration = gsml::Vector3d(-acceleration.x, -acceleration.y, -acceleration.z);}
-
+            //acceleration = acceleration + friction;
             velocity = velocity + acceleration * dt;
 
             float zOffset = 0.25f;
