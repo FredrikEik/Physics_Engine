@@ -120,11 +120,17 @@ void RollingBall::barycentricCords(float dt)
 
     float rotspeed;
     gsml::Vector3d normalvektor = 0;
-    gsml::Vector3d newPosition = 0;
+    gsml::Vector3d newPos = 0;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
+    // Finne trekant
     for (unsigned int i=0; i < vertices.size(); i+=3){
 
+        /* Finn trekantvertices, v0,v1,v2
+         * finn ballens posisjon
+         * finne triangelet ballen er på med barysentriske koordinater
+
+         */
         gsml::Vector3d pos1;
         gsml::Vector3d pos2;
         gsml::Vector3d pos3;
@@ -132,13 +138,21 @@ void RollingBall::barycentricCords(float dt)
         pos2 = gsml::Vector3d(vertices[i+1].getXYZ());
         pos3 = gsml::Vector3d(vertices[i+2].getXYZ());
 
-        gsml::Vector3d BallPosition = mPosition.getPosition();
-        gsml::Vector3d barCords = BallPosition.barycentricCoordinates(vertices[i].getXYZ(),
+        gsml::Vector3d BallPos = mPosition.getPosition();
+        gsml::Vector3d barCords = BallPos.barycentricCoordinates(vertices[i].getXYZ(),
                                                   vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
 
         if(barCords.x >= 0 && barCords.y >= 0 && barCords.z >= 0 &&
                 barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
+            // beregne normal og akselerasjonsvektor
+            // oppdatere hastighet og posisjon
 
+            /*
+            Formula for kryssprodukt:
+            x = (Ay * Bz) - (By * Az)
+            y = (Az * Bx) - (Bz * Ax)
+            z = (Ax * By) - (Bx * Ay)
+            */
 
             normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
             normalvektor.normalize();
@@ -151,24 +165,29 @@ void RollingBall::barycentricCords(float dt)
 
             if(i==3){
 
+                //korriger posisjon oppover i normalens retning
+                //oppdaterer hastighet
+                //lagt til rotasjon
             hastighet = hastighet + akselerasjon * dt;
-            newPosition = BallPosition + hastighet;
-            newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
-            rotspeed += newPosition.x * gravitation;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+            newPos = BallPos + hastighet;
+            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
+            rotspeed += newPos.x * gravitation;
+            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
             mPosition.rotate(rotspeed, 1, 0, 0);
 
 
             qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
             if(i<3){
+                //ballen er over på ny trekant
+                //kalkulere ny hastighet og posisjon
             hastighet = hastighet - akselerasjon * dt;
-            newPosition = BallPosition + hastighet;
-            newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
-            rotspeed -= newPosition.x * gravitation;
-            mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+            newPos = BallPos + hastighet;
+            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
+            rotspeed -= newPos.x * gravitation;
+            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
             //mPosition.rotate(-rotspeed,0,1,0);
             mPosition.rotate(-rotspeed,1,0,0);
 
