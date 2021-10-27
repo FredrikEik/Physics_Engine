@@ -19,6 +19,13 @@ public:
 protected:
     VisualObject* triangle_surface;
 private:
+
+    gsml::Vector3d velocity{0.f, 0.f, 0.f};
+    gsml::Vector3d ballSpeed{0.f, 0.f, 0.f};
+    gsml::Vector3d gForce;
+    gsml::Vector3d gravity{0.f, 0.f, -9.80665f};
+    float massKg {2.f};
+
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int old_index{0};
 };
