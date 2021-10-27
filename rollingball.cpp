@@ -20,11 +20,11 @@ void RollingBall::move(float dt)
 
     for(int i = 0; i < vertices.size() - 2; i += 3)
     {
+        setBallPosition( mPosition.getPosition());
+
         point1 = vertices[i].getXYZ();
         point2 = vertices[i+1].getXYZ();
         point3 = vertices[i+2].getXYZ();
-
-        setBallPosition( mPosition.getPosition());
 
         BarycentricCoordinates = getBallPosition().barycentricCoordinates(point1, point2, point3);
 
@@ -44,9 +44,9 @@ void RollingBall::move(float dt)
 
         /** Oppdatere hastighet */
             if(i==0)
-                speed = speed - (acceleration * dt);
+                speed = speed - (acceleration * dt); //speed -= acceleration * deltaTime
             else
-                speed = speed + (acceleration * dt);
+                speed = speed + (acceleration * dt); //speed += acceleration * deltaTime
 
         /** Oppdatere posisjon */
             nextPos = BallPosition + speed;
