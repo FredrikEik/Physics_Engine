@@ -23,6 +23,41 @@ Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
         for (int j=0; j<n; j++)
             A[i][j] = 0.0f;
 }
+Matrix4x4::Matrix4x4(std::initializer_list<GLfloat> values)
+{
+    //Initializing the matrix class the same way as a 2d array
+    int i = 0;
+    for(auto value : values)
+        matrix[i++] = value;
+}
+
+Vec3 Matrix4x4::getPosition()
+{
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+void Matrix4x4::translate(Vector3d positionIn)
+{
+
+    Matrix4x4 matrix =
+    {
+        1.f, 0.f, 0.f, positionIn.getX(),
+        0.f, 1.f, 0.f, positionIn.getY(),
+        0.f, 0.f, 1.f, positionIn.getZ(),
+        0.f, 0.f, 0.f, 1.f
+    };
+
+    *this = (*this)*matrix;
+}
 
 void Matrix4x4::setToIdentity()
 {
@@ -33,14 +68,6 @@ void Matrix4x4::setToIdentity()
     for (int i=0; i<m; i++)
         A[i][i] = 1.0f;
     }
-}
-Vec3 Matrix4x4::getPosition()
-{
-    Vec3 temp;
-    temp.x = A[0][3];
-    temp.y = A[1][3];
-    temp.z = A[2][3];
-    return temp;
 }
 void Matrix4x4::read(std::string filnavn)
 {

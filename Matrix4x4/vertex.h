@@ -61,6 +61,33 @@ public:
     void data(float v[]) const;
     gsml::Vector3d getXYZ() const;
     void operator = (const Vertex& v);
+    void setX(float x)
+    {
+        mXYZ.x = x;
+    }
+    void setY(float y)
+    {
+        mXYZ.y = y;
+    }
+    void setZ(float z)
+    {
+        mXYZ.z = z;
+    }
+
+    float getX()
+    {
+        return mXYZ.x;
+    }
+    float getY()
+    {
+        return mXYZ.y;
+    }
+    float getZ()
+    {
+        return mXYZ.z;
+    }
+
+    gsml::Vector3d mXYZ;
 };
 }
 

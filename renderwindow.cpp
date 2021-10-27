@@ -43,6 +43,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     // Demo
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2->mMatrix.rotate(90, 0, 0, 0);
     ball = new RollingBall(3);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
@@ -165,7 +166,7 @@ void RenderWindow::render()
     // demo
     surf2->draw();
 //    ball->move(0.017f);
-    ball->move(1.f);
+    ball->move(0.017f);
     ball->draw();
 
 
