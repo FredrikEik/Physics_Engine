@@ -12,7 +12,6 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override;
-    //void setPosition(GLfloat x, GLfloat y, GLfloat z);
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
 
     //gsml::Vector3d calculateNewForce(gsml::Vector3d normal1, gsml::Vector3d normal2, float dt);

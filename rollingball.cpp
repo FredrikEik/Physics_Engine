@@ -52,10 +52,10 @@ void RollingBall::move(float dt)
 
                 velocity = velocity + accel * dt;
 
-                float zOffset = 0.25f;
+                //float zOffset = 0.25f;
                 gsml::Vector3d newPosition = mPosition.getPosition() + velocity * dt;
                 newPosition.z = p1.z*baryCoords.x + p2.z*baryCoords.y + p3.z*baryCoords.z;
-                mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z + zOffset);
+                mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z /*+ zOffset*/);
 
                 bPosition = mPosition.getPosition();
 
