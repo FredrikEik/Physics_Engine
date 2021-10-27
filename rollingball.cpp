@@ -19,7 +19,7 @@ void RollingBall::move(float dt)
     gsml::Vector3d baryCoords;
     gsml::Vector3d bPosition = mPosition.getPosition();
 
-    for(int i = 0; i < vertices.size() - 2; i+= 3)
+    for(int i = 0; i < vertices.size() - 2; i += 3)
         {
             gsml::Vector3d p1, p2, p3;
             p1 = gsml::Vector3d(vertices[i].getXYZ());
@@ -47,22 +47,19 @@ void RollingBall::move(float dt)
                 //gForce.z = abs(gForce.z);
                 accel = force * pNormal * pNormal.z;
                 //accel = gAccel * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
-                if(i == 0) {
-                    accel = gsml::Vector3d(-accel.x, -accel.y, -accel.z);}
+                if(i == 0)
+                {
+                    accel = gsml::Vector3d(-accel.x, -accel.y, -accel.z);
+                }
 
                 velocity = velocity + accel * dt;
 
-                //float zOffset = 0.25f;
+                float zOffset = 0.25f;
                 gsml::Vector3d newPosition = mPosition.getPosition() + velocity * dt;
                 newPosition.z = p1.z*baryCoords.x + p2.z*baryCoords.y + p3.z*baryCoords.z;
-                mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z /*+ zOffset*/);
+                mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z + zOffset);
 
                 bPosition = mPosition.getPosition();
-
-                //mPosition.translate(velocity.x, velocity.y, velocity.z);
-                //qDebug() << "pos after:    " << bPosition.x << bPosition.y << bPosition.z;
-                //qDebug() << "accel: " << accel.x << accel.y << accel.z;
-                //qDebug() << "velocity:     " << velocity.x << velocity.y << velocity.z;
             }
             //qDebug() << "ballpos: " << bPosition.x << bPosition.y << bPosition.z;
         }

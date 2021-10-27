@@ -25,8 +25,8 @@ private:
     gsml::Vector3d gAccel{0.0f, 0.0f, -9.80565f}; //gravity
     float kiloMass {2.0f};
 
-    gsml::Vector3d old_normal{0.0, 0.0, 1.0};
-    int old_index{0};
+    //gsml::Vector3d old_normal{0.0, 0.0, 1.0};
+    //int old_index{0};
 
 };
 #endif // ROLLINGBALL_H
