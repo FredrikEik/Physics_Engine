@@ -48,7 +48,7 @@ private:
     gsml::Vector3d gForce{0.0f,0.0f,-9.81f};
     gsml::Vector3d gKraft;
 
-    float friction{.005};
+    float friction{.006};
 
     bool notOnSurface = false;
 

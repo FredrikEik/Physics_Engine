@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1.5,0,0);
+    mPosition.translate(1.5,0,2);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gForce*mass;
 
@@ -118,6 +118,7 @@ void RollingBall::barycentricCords2(float dt)
 void RollingBall::barycentricCords(float dt)
 {
 
+    float rotspeed;
     gsml::Vector3d normalvektor = 0;
     gsml::Vector3d newPosition = 0;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
@@ -142,30 +143,44 @@ void RollingBall::barycentricCords(float dt)
             normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
             normalvektor.normalize();
 
+            old_normal = normalvektor;
+
+
 
             akselerasjon = gKraft * normalvektor * normalvektor.z;
 
             if(i==3){
+
             hastighet = hastighet + akselerasjon * dt;
             newPosition = BallPosition + hastighet;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
             newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
+            rotspeed += newPosition.x * gravitation;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+            mPosition.rotate(rotspeed, 1, 0, 0);
+
 
             qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
-            else{
+            if(i<3){
             hastighet = hastighet - akselerasjon * dt;
             newPosition = BallPosition + hastighet;
             newPosition.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
             newPosition.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
+            rotspeed -= newPosition.x * gravitation;
             mPosition.setPosition(newPosition.x, newPosition.y, newPosition.z+radius);
+            //mPosition.rotate(-rotspeed,0,1,0);
+            mPosition.rotate(-rotspeed,1,0,0);
+
 
             qDebug() << hastighet.x << hastighet.y << hastighet.z;
             }
 
 
+
         }
+
+
 
     }
 
