@@ -102,7 +102,7 @@ void RollingBall::move(float dt)
     {
         ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
 
-        float ballzOffset = -0.25f;
+        float ballzOffset = 0.25f;
         gsml::Vector3d newBallPosition = mMatrix.getPosition3D() - gravity * dt;
         newBallPosition = triangleNormal.z * baryCordinates.x +
                           triangleNormal.z * baryCordinates.y +
