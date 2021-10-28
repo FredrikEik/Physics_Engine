@@ -21,7 +21,7 @@ protected:
 private:
 
     gsml::Vector3d velocity{0.0f, 0.0f, 0.0f};
-    gsml::Vector3d gravity{0.f, 0.f, -9.80665f};
+    gsml::Vector3d gravity{0.f, 0.f, 9.8f};
 
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int old_index{0};
