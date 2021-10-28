@@ -91,8 +91,9 @@ void RollingBall::move(float dt)
     triangleNormal.y = tempNormal[0].z * tempNormal[1].x - tempNormal[0].x * tempNormal[1].z;
     triangleNormal.z = tempNormal[0].x * tempNormal[1].y - tempNormal[0].y * tempNormal[1].x;
 
-    triangleNormal.normalize();
     //qDebug() << "Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
+    triangleNormal.normalize();
+    //qDebug() << "Normalized Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
 
 
 
@@ -100,16 +101,15 @@ void RollingBall::move(float dt)
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
     {
         ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
-        velocity = velocity - gravity;
-        qDebug() << "ball is moving";
 
-        float ballzOffset = 0.25f;
-        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity * dt;
+        float ballzOffset = -0.25f;
+        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() - gravity * dt;
         newBallPosition = triangleNormal.z * baryCordinates.x +
                           triangleNormal.z * baryCordinates.y +
                           triangleNormal.z * baryCordinates.z;
 
         mPosition.translate(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballzOffset); //Based on calculations in either collision or free-fall apply translation to ball.
+        qDebug() << "ball is moving";
     }
 }
 
