@@ -96,7 +96,7 @@ void RollingBall::move(float dt)
     //qDebug() << "Normalized Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
 
 
-    //qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //Update ball speed across triangle
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
@@ -113,11 +113,8 @@ void RollingBall::move(float dt)
                             closestTrianglePoint[0].z * baryCordinates.y +
                             closestTrianglePoint[0].z * baryCordinates.z;
 
-//        newBallPosition.z = triangleNormal.z * baryCordinates.x +
-//                            triangleNormal.z * baryCordinates.y +
-//                            triangleNormal.z * baryCordinates.z;
-
         mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z); //Based on calculations in either collision or free-fall apply translation to ball.
+        qDebug() << "BaryCordinates before move" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
         qDebug() << "ball is moving";
     }
 //    else
