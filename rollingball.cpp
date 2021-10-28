@@ -15,7 +15,6 @@ RollingBall::~RollingBall()
 void RollingBall::move(float dt)
 {
     std::vector<gsml::Vertex>& triangleVertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-    //qDebug() << vertices.size();
 
     mMatrix = mPosition * mScale;
 
@@ -163,43 +162,4 @@ void RollingBall::draw()
    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
-
-//gsml::Vector3d RollingBall::getClosestTriangleToBall(std::vector<gsml::Vertex> triangleVertices)
-//{
-//    gsml::Vector3d ballPosition = mMatrix.getPosition3D();
-////    qDebug() << ballPosition.x << ballPosition.y << ballPosition.z;;
-
-//    gsml::Vector3d closestTrianglePoint;
-//    gsml::Vector3d distanceBetweenBallAndVert[6]; //using vertices.size() instead of hardcoding 6 would be better. On to more difficult things.
-
-//    //Run through the vertices of the trianglesurface
-//    for (int i = 0; i < triangleVertices.size(); i++)
-//    {
-//        qDebug() << "Vert nr" << i+1 << triangleVertices[i].getXYZ().x << triangleVertices[i].getXYZ().y << triangleVertices[i].getXYZ().z;
-
-//        //Find distance between the balls position and the vertices of the ground-triangles
-//        distanceBetweenBallAndVert[i] = ballPosition - gsml::Vector3d (triangleVertices[i].getXYZ());
-
-//        qDebug() << "Distance ball to vert nr" << i+1 << "X" << distanceBetweenBallAndVert[i].x << "Y" << distanceBetweenBallAndVert[i].y << "Z" << distanceBetweenBallAndVert[i].z;
-//    }
-
-////    for (int i = 0; i < vertices.size()/2; i++)
-////    {
-//        //Keep the three closest points
-//    closestTrianglePoint = distanceBetweenBallAndVert[0] + distanceBetweenBallAndVert[1] + distanceBetweenBallAndVert[2];
-//    gsml::Vector3d comparePoint = distanceBetweenBallAndVert[3] + distanceBetweenBallAndVert[4] + distanceBetweenBallAndVert[5];
-
-//        if (closestTrianglePoint.x <= comparePoint.x)
-//        {
-//            closestTrianglePoint = triangleVertices[0].getXYZ().x, triangleVertices[0].getXYZ().y, triangleVertices[0].getXYZ().z;
-//            qDebug() << "First triangle returned";
-//        }
-//            else
-//        {
-//            closestTrianglePoint = triangleVertices[0+3].getXYZ().x, triangleVertices[1+3].getXYZ().y, triangleVertices[2+3].getXYZ().z;
-//            qDebug() << "Second triangle returned";
-//        }
-////    }
-//return closestTrianglePoint;
-//}
 
