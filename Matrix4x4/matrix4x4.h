@@ -1,4 +1,4 @@
-// Dag Nylund 31/1/18 - 1/2/18 - 21/1/19 - 5/11/20
+﻿// Dag Nylund 31/1/18 - 1/2/18 - 21/1/19 - 5/11/20
 // Lager et nytt namespace gsml
 // Bruker dette etter 5/11/20
 #ifndef MATRIX4x4_H
@@ -59,6 +59,8 @@ public:
 
     Vector2d getPosition2D();
     Vector3d getPosition3D();
+
+    void setPosition(float x, float y, float z);
 
 protected:
     static const int M=4;

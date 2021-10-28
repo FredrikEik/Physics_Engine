@@ -1,4 +1,4 @@
-// Dag Nylund 31/1/18 - 1/2/18
+﻿// Dag Nylund 31/1/18 - 1/2/18
 // gsml fra 5/11/20
 // gs2019 ligger nederst
 #include "../Matrix4x4/Matrix4x4.h"
@@ -431,6 +431,13 @@ Vector3d gsml::Matrix4x4::Matrix4x4::getPosition3D()
     return Vector3d{A[0][3], A[1][3], A[2][3]};
 }
 
+
+void Matrix4x4::setPosition(float x, float y, float z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
 
 }
 
