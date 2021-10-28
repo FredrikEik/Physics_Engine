@@ -105,19 +105,18 @@ qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y <
         //ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
 
         velocity = velocity + (acceleration * 0.17);
-        float ballzOffset = 0.0f;
 
         gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
 
-        newBallPosition.z = closestTrianglePoint[0].z * baryCordinates.x +
-                            closestTrianglePoint[0].z * baryCordinates.y +
-                            closestTrianglePoint[0].z * baryCordinates.z;
+//        newBallPosition.z = closestTrianglePoint[0].z * baryCordinates.x +
+//                            closestTrianglePoint[0].z * baryCordinates.y +
+//                            closestTrianglePoint[0].z * baryCordinates.z;
 
-//        newBallPosition.z = triangleNormal.z * baryCordinates.x +
-//                            triangleNormal.z * baryCordinates.y +
-//                            triangleNormal.z * baryCordinates.z;
+        newBallPosition.z = triangleNormal.z * baryCordinates.x +
+                            triangleNormal.z * baryCordinates.y +
+                            triangleNormal.z * baryCordinates.z;
 
-        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballzOffset); //Based on calculations in either collision or free-fall apply translation to ball.
+        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z); //Based on calculations in either collision or free-fall apply translation to ball.
         qDebug() << "ball is moving";
     }
 }
