@@ -105,7 +105,7 @@ qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y <
         //ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
 
         velocity = velocity + (acceleration * 0.17);
-        float ballzOffset = 0.25f;
+        float ballzOffset = 0.0f;
 
         gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
 

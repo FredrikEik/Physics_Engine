@@ -148,7 +148,7 @@ void RenderWindow::render()
     gsmVMatrix->setToIdentity();
     //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
     //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(62, 4.0/3.0, 0.1, 10.0);
+    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
     //gsmPMatrix->print();
     //qDebug() << *mPMatrix;
     //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
