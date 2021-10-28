@@ -100,18 +100,36 @@ void RollingBall::move(float dt)
 //Update ball speed across triangle
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
     {
-        ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
+gsml::Vector3d acceleration = (gravity * 0.001f) ^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z);
 
+        //ballSpeed = triangleNormal * dt; //Ballspeed, framerate-dependent beacuse DT is set at 0.017 (in theory 16 1/3ms = 60hz)
+
+        velocity = velocity + (acceleration * 0.17);
         float ballzOffset = 0.25f;
-        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() - gravity * dt;
-        newBallPosition = triangleNormal.z * baryCordinates.x +
-                          triangleNormal.z * baryCordinates.y +
-                          triangleNormal.z * baryCordinates.z;
 
-        mPosition.translate(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballzOffset); //Based on calculations in either collision or free-fall apply translation to ball.
+        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
+
+//        newBallPosition.z = closestTrianglePoint[0].z * baryCordinates.x +
+//                            closestTrianglePoint[1].z * baryCordinates.y +
+//                            closestTrianglePoint[2].z * baryCordinates.z;
+
+        newBallPosition.z = triangleNormal.z * baryCordinates.x +
+                            triangleNormal.z * baryCordinates.y +
+                            triangleNormal.z * baryCordinates.z;
+
+        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballzOffset); //Based on calculations in either collision or free-fall apply translation to ball.
         qDebug() << "ball is moving";
     }
 }
+
+
+//gsml::Vec3 acceleration = (gravityForce * 0.001f) ^ planeNormal ^ gsml::Vec3(0,0,planeNormal.z);
+
+//velocity = velocity + (acceleration * 0.17);
+
+//gsml::Vec3 newPos = ballPos + velocity;
+//newPos.z = (baryCoords.x * p1.z + baryCoords.y * p2.z + baryCoords.z * p3.z) + offset;
+//mPosition.setPosition(newPos.x,newPos.y,newPos.z);
 
 void RollingBall::init(GLint matrixUniform)
 {
