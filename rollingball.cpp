@@ -55,6 +55,9 @@ void RollingBall::move(float dt)
     closestTrianglePoint[0] =     distanceBetweenBallAndVert[0] + distanceBetweenBallAndVert[1] + distanceBetweenBallAndVert[2];
     gsml::Vector3d comparePoint = distanceBetweenBallAndVert[3] + distanceBetweenBallAndVert[4] + distanceBetweenBallAndVert[5];
 
+    qDebug() << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z;
+    qDebug() << comparePoint.x << comparePoint.y << comparePoint.z;
+
     if (closestTrianglePoint[0].x <= comparePoint.x && closestTrianglePoint[0].y <= comparePoint.y && closestTrianglePoint[0].z <= comparePoint.z)
     {
         closestTrianglePoint[0] = triangleVertices[0].getXYZ();
@@ -71,13 +74,13 @@ void RollingBall::move(float dt)
     }
 
 //    //doublechecking the triangle vert variable sent into barycentricCordinates() function;
-    qDebug() << "ballPosition3d" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;
-    qDebug() << "First triangle vert  1:" << triangleVertices[0].getXYZ().x << triangleVertices[0].getXYZ().y << triangleVertices[0].getXYZ().z;
-    qDebug() << "First triangle vert  2:" << triangleVertices[1].getXYZ().x << triangleVertices[1].getXYZ().y << triangleVertices[1].getXYZ().z;
-    qDebug() << "First triangle vert  3:" << triangleVertices[2].getXYZ().x << triangleVertices[2].getXYZ().y << triangleVertices[2].getXYZ().z;
-    qDebug() << "Second triangle vert 1:" << triangleVertices[3].getXYZ().x << triangleVertices[3].getXYZ().y << triangleVertices[3].getXYZ().z;
-    qDebug() << "Second triangle vert 2:" << triangleVertices[4].getXYZ().x << triangleVertices[4].getXYZ().y << triangleVertices[4].getXYZ().z;
-    qDebug() << "Second triangle vert 3:" << triangleVertices[5].getXYZ().x << triangleVertices[5].getXYZ().y << triangleVertices[5].getXYZ().z;
+//    qDebug() << "ballPosition3d" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;
+//    qDebug() << "First triangle vert  1:" << triangleVertices[0].getXYZ().x << triangleVertices[0].getXYZ().y << triangleVertices[0].getXYZ().z;
+//    qDebug() << "First triangle vert  2:" << triangleVertices[1].getXYZ().x << triangleVertices[1].getXYZ().y << triangleVertices[1].getXYZ().z;
+//    qDebug() << "First triangle vert  3:" << triangleVertices[2].getXYZ().x << triangleVertices[2].getXYZ().y << triangleVertices[2].getXYZ().z;
+//    qDebug() << "Second triangle vert 1:" << triangleVertices[3].getXYZ().x << triangleVertices[3].getXYZ().y << triangleVertices[3].getXYZ().z;
+//    qDebug() << "Second triangle vert 2:" << triangleVertices[4].getXYZ().x << triangleVertices[4].getXYZ().y << triangleVertices[4].getXYZ().z;
+//    qDebug() << "Second triangle vert 3:" << triangleVertices[5].getXYZ().x << triangleVertices[5].getXYZ().y << triangleVertices[5].getXYZ().z;
 
 //    //doublechecking the closest triangle point variable sent into barycentricCordinates() function;
 //    qDebug()<< "ballPosition3d" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;
