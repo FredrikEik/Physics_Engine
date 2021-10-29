@@ -116,8 +116,8 @@ void RollingBall::move(float dt)
     //qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //Update ball speed across triangle
-    if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
-    {
+//    if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
+//    {
         //Setting up some variables to move ball
         gsml::Vector3d acceleration = (gravity * 0.001f) ^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z);
         velocity = velocity + (acceleration * 0.17f);
@@ -134,22 +134,22 @@ void RollingBall::move(float dt)
         mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset); //Based on calculations in either collision or free-fall apply translation to ball.
         //qDebug() << "BaryCordinates before move" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
         //qDebug() << "ball is moving";
-    }
-    else
-    {
-        gsml::Vector3d acceleration = (gravity * 0.001f) *-1 ^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z);
-        velocity = velocity + (acceleration * 0.17);
-        float ballZOffset = 0.25f;
+//    }
+//    else
+//    {
+//        gsml::Vector3d acceleration = (gravity * 0.001f) *-1 ^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z);
+//        velocity = velocity + (acceleration * 0.17);
+//        float ballZOffset = 0.25f;
 
-        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
+//        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
 
-        newBallPosition.z = (baryCordinates.x * closestTrianglePoint[0].z +
-                             baryCordinates.y * closestTrianglePoint[0].z +
-                             baryCordinates.z * closestTrianglePoint[0].z);
+//        newBallPosition.z = (baryCordinates.x * closestTrianglePoint[0].z +
+//                             baryCordinates.y * closestTrianglePoint[0].z +
+//                             baryCordinates.z * closestTrianglePoint[0].z);
 
-        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset);
-        //qDebug() << "ball is falling";
-    }
+//        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset);
+//        //qDebug() << "ball is falling";
+//    }
 }
 
 void RollingBall::init(GLint matrixUniform)
