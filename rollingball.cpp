@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(0, 0, 0.25);
+    mPosition.translate(1, 0, 0.55);
     mScale.scale(0.25, 0.25, 0.25);
 }
 
@@ -21,7 +21,7 @@ void RollingBall::move(float dt)
 
 //Find the three vector3d of the closest triangle
     gsml::Vector3d ballPosition3d = mMatrix.getPosition3D();
-    qDebug() << "Ballposition3d:            X" <<  ballPosition3d.x << "Y" << ballPosition3d.y << "Z" << ballPosition3d.z;
+    //qDebug() << "Ballposition3d:            X" <<  ballPosition3d.x << "Y" << ballPosition3d.y << "Z" << ballPosition3d.z;
 
 
 
@@ -32,8 +32,19 @@ void RollingBall::move(float dt)
     {
         distanceBetweenBallAndVert[i] = triangleVertices[i].getXYZ() - ballPosition3d;
 
-    qDebug() << "Vert nr                 " << i+1 << "X" << triangleVertices[i].getXYZ().x << "Y" << triangleVertices[i].getXYZ().y << "Z" << triangleVertices[i].getXYZ().z;
-    qDebug() << "Distance ball to vert nr" << i+1 << "X" << distanceBetweenBallAndVert[i].x << "Y" << distanceBetweenBallAndVert[i].y << "Z" << distanceBetweenBallAndVert[i].z;
+        //if the distance is a negative number, flip it. This makes sure that the lowest physical distance is selected, not the lowest number.
+        if (distanceBetweenBallAndVert[i].x < 0)
+                { distanceBetweenBallAndVert[i].x *= -1.0f; }
+
+        if (distanceBetweenBallAndVert[i].y < 0)
+                { distanceBetweenBallAndVert[i].y *= -1.0f; }
+
+        if (distanceBetweenBallAndVert[i].z < 0)
+                { distanceBetweenBallAndVert[i].z *= -1.0f; }
+
+
+    //qDebug() << "Vert nr                 " << i+1 << "X" << triangleVertices[i].getXYZ().x << "Y" << triangleVertices[i].getXYZ().y << "Z" << triangleVertices[i].getXYZ().z;
+    //qDebug() << "Distance ball to vert nr" << i+1 << "X" << distanceBetweenBallAndVert[i].x << "Y" << distanceBetweenBallAndVert[i].y << "Z" << distanceBetweenBallAndVert[i].z;
     }
 
 
@@ -49,7 +60,7 @@ void RollingBall::move(float dt)
         closestTrianglePoint[0] = triangleVertices[0].getXYZ();
         closestTrianglePoint[1] = triangleVertices[1].getXYZ();
         closestTrianglePoint[2] = triangleVertices[2].getXYZ();
-        //qDebug() << "First triangle closest and its 3 corners stored";
+        qDebug() << "First triangle closest and its 3 corners stored";
     }
         else
     {
@@ -59,17 +70,20 @@ void RollingBall::move(float dt)
         qDebug() << "Second triangle closest and its 3 corners stored";
     }
 
-//    doublechecking the triangle vert variable sent into barycentricCordinates() function;
-//    qDebug() << "ballPosition2d" << ballPosition2d.x          << ballPosition2d.y
-//             << "Triangle vert 1" << triangleVertices[0].getXYZ().x << triangleVertices[0].getXYZ().y << triangleVertices[0].getXYZ().z
-//             << "Triangle vert 2" << triangleVertices[1].getXYZ().x << triangleVertices[1].getXYZ().y << triangleVertices[1].getXYZ().z
-//             << "Triangle vert 3" << triangleVertices[2].getXYZ().x << triangleVertices[2].getXYZ().y << triangleVertices[2].getXYZ().z;
+//    //doublechecking the triangle vert variable sent into barycentricCordinates() function;
+//    qDebug() << "ballPosition3d" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;
+//    qDebug() << "Triangle vert 1:" << triangleVertices[0].getXYZ().x << triangleVertices[0].getXYZ().y << triangleVertices[0].getXYZ().z;
+//    qDebug() << "Triangle vert 2:" << triangleVertices[1].getXYZ().x << triangleVertices[1].getXYZ().y << triangleVertices[1].getXYZ().z;
+//    qDebug() << "Triangle vert 3:" << triangleVertices[2].getXYZ().x << triangleVertices[2].getXYZ().y << triangleVertices[2].getXYZ().z;
+//    qDebug() << "Triangle vert 4:" << triangleVertices[3].getXYZ().x << triangleVertices[3].getXYZ().y << triangleVertices[3].getXYZ().z;
+//    qDebug() << "Triangle vert 5:" << triangleVertices[4].getXYZ().x << triangleVertices[4].getXYZ().y << triangleVertices[4].getXYZ().z;
+//    qDebug() << "Triangle vert 6:" << triangleVertices[5].getXYZ().x << triangleVertices[5].getXYZ().y << triangleVertices[5].getXYZ().z;
 
 //    //doublechecking the closest triangle point variable sent into barycentricCordinates() function;
 //    qDebug()<< "ballPosition3d" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;
-//    qDebug()<< "Closest vert 1" << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z;
-//    qDebug()<< "Closest vert 2" << closestTrianglePoint[1].x << closestTrianglePoint[1].y << closestTrianglePoint[1].z;
-//    qDebug()<< "Closest vert 3" << closestTrianglePoint[2].x << closestTrianglePoint[2].y << closestTrianglePoint[2].z;
+//    qDebug()<< "Closest vert 1:" << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z;
+//    qDebug()<< "Closest vert 2:" << closestTrianglePoint[1].x << closestTrianglePoint[1].y << closestTrianglePoint[1].z;
+//    qDebug()<< "Closest vert 3:" << closestTrianglePoint[2].x << closestTrianglePoint[2].y << closestTrianglePoint[2].z;
 
 
 
@@ -96,7 +110,7 @@ void RollingBall::move(float dt)
     //qDebug() << "Normalized Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
 
 
-    //qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //Update ball speed across triangle
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
@@ -108,14 +122,15 @@ void RollingBall::move(float dt)
         velocity = velocity + (acceleration * 0.17f);
 
         gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
+        float ballZOffset = 0.25f;
 
         newBallPosition.z = closestTrianglePoint[0].z * baryCordinates.x +
                             closestTrianglePoint[0].z * baryCordinates.y +
                             closestTrianglePoint[0].z * baryCordinates.z;
 
-        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z); //Based on calculations in either collision or free-fall apply translation to ball.
-        qDebug() << "BaryCordinates before move" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
-        qDebug() << "ball is moving";
+        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset); //Based on calculations in either collision or free-fall apply translation to ball.
+        //qDebug() << "BaryCordinates before move" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+        //qDebug() << "ball is moving";
     }
 //    else
 //    {
