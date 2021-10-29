@@ -21,7 +21,7 @@ void RollingBall::move(float dt)
 
 //Find the three vector3d of the closest triangle
     gsml::Vector3d ballPosition3d = mMatrix.getPosition3D();
-    //qDebug() << "Ballposition3d:" << ballPosition3d.x << ballPosition3d.y << ballPosition3d.z;;
+    qDebug() << "Ballposition3d:            X" <<  ballPosition3d.x << "Y" << ballPosition3d.y << "Z" << ballPosition3d.z;
 
 
 
@@ -32,8 +32,8 @@ void RollingBall::move(float dt)
     {
         distanceBetweenBallAndVert[i] = triangleVertices[i].getXYZ() - ballPosition3d;
 
-    //qDebug() << "Vert nr                 " << i+1 << "X" << triangleVertices[i].getXYZ().x << "Y" << triangleVertices[i].getXYZ().y << "z" << triangleVertices[i].getXYZ().z;
-    //qDebug() << "Distance ball to vert nr" << i+1 << "X" << distanceBetweenBallAndVert[i].x << "Y" << distanceBetweenBallAndVert[i].y << "Z" << distanceBetweenBallAndVert[i].z;
+    qDebug() << "Vert nr                 " << i+1 << "X" << triangleVertices[i].getXYZ().x << "Y" << triangleVertices[i].getXYZ().y << "Z" << triangleVertices[i].getXYZ().z;
+    qDebug() << "Distance ball to vert nr" << i+1 << "X" << distanceBetweenBallAndVert[i].x << "Y" << distanceBetweenBallAndVert[i].y << "Z" << distanceBetweenBallAndVert[i].z;
     }
 
 
@@ -44,7 +44,7 @@ void RollingBall::move(float dt)
     closestTrianglePoint[0] =     distanceBetweenBallAndVert[0] + distanceBetweenBallAndVert[1] + distanceBetweenBallAndVert[2];
     gsml::Vector3d comparePoint = distanceBetweenBallAndVert[3] + distanceBetweenBallAndVert[4] + distanceBetweenBallAndVert[5];
 
-    if (closestTrianglePoint[0].x < comparePoint.x && closestTrianglePoint[0].y < comparePoint.y && closestTrianglePoint[0].z < comparePoint.z)
+    if (closestTrianglePoint[0].x <= comparePoint.x && closestTrianglePoint[0].y <= comparePoint.y && closestTrianglePoint[0].z <= comparePoint.z)
     {
         closestTrianglePoint[0] = triangleVertices[0].getXYZ();
         closestTrianglePoint[1] = triangleVertices[1].getXYZ();
@@ -96,7 +96,7 @@ void RollingBall::move(float dt)
     //qDebug() << "Normalized Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
 
 
-    qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    //qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //Update ball speed across triangle
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
