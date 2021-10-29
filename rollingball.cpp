@@ -55,10 +55,10 @@ void RollingBall::move(float dt)
     closestTrianglePoint[0] =     distanceBetweenBallAndVert[0] + distanceBetweenBallAndVert[1] + distanceBetweenBallAndVert[2];
     gsml::Vector3d comparePoint = distanceBetweenBallAndVert[3] + distanceBetweenBallAndVert[4] + distanceBetweenBallAndVert[5];
 
-    qDebug() << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z;
-    qDebug() << comparePoint.x << comparePoint.y << comparePoint.z;
+    //qDebug() << closestTrianglePoint[0].x << closestTrianglePoint[0].y << closestTrianglePoint[0].z;
+    //qDebug() << comparePoint.x << comparePoint.y << comparePoint.z;
 
-    if (closestTrianglePoint[0].x <= comparePoint.x && closestTrianglePoint[0].y <= comparePoint.y && closestTrianglePoint[0].z <= comparePoint.z)
+    if (closestTrianglePoint[0].x + closestTrianglePoint[0].y + closestTrianglePoint[0].z <= comparePoint.x + comparePoint.y + comparePoint.z)
     {
         closestTrianglePoint[0] = triangleVertices[0].getXYZ();
         closestTrianglePoint[1] = triangleVertices[1].getXYZ();
