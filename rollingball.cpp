@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1, 0, 0.55);
+    mPosition.translate(-1, 0, 0.55);
     mScale.scale(0.25, 0.25, 0.25);
 }
 
@@ -63,14 +63,14 @@ void RollingBall::move(float dt)
         closestTrianglePoint[0] = triangleVertices[0].getXYZ();
         closestTrianglePoint[1] = triangleVertices[1].getXYZ();
         closestTrianglePoint[2] = triangleVertices[2].getXYZ();
-        qDebug() << "First triangle closest and its 3 corners stored";
+        //qDebug() << "First triangle closest and its 3 corners stored";
     }
         else
     {
         closestTrianglePoint[0] = triangleVertices[3].getXYZ();
         closestTrianglePoint[1] = triangleVertices[4].getXYZ();
         closestTrianglePoint[2] = triangleVertices[5].getXYZ();
-        qDebug() << "Second triangle closest and its 3 corners stored";
+        //qDebug() << "Second triangle closest and its 3 corners stored";
     }
 
 //    //doublechecking the triangle vert variable sent into barycentricCordinates() function;
@@ -113,7 +113,7 @@ void RollingBall::move(float dt)
     //qDebug() << "Normalized Triangle normal is:" << triangleNormal.x << triangleNormal.y << triangleNormal.z;
 
 
-    qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
+    //qDebug() << "BaryCordinates before if" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
 
 //Update ball speed across triangle
     if(baryCordinates.x >= 0.0f && baryCordinates.y >= 0.0f && baryCordinates.z >= 0.0f)
@@ -129,22 +129,27 @@ void RollingBall::move(float dt)
                              baryCordinates.y * closestTrianglePoint[0].z +
                              baryCordinates.z * closestTrianglePoint[0].z);
 
-        qDebug() << newBallPosition.z << closestTrianglePoint[0].z;
+        //qDebug() << newBallPosition.z << closestTrianglePoint[0].z;
 
         mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset); //Based on calculations in either collision or free-fall apply translation to ball.
         //qDebug() << "BaryCordinates before move" << baryCordinates.x << baryCordinates.y << baryCordinates.z;
         //qDebug() << "ball is moving";
     }
-//    else
-//    {
-//        gsml::Vector3d acceleration = (gravity * 0.001f) *-1 /*^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z*/;
-//        velocity = velocity + (acceleration * 0.17);
+    else
+    {
+        gsml::Vector3d acceleration = (gravity * 0.001f) *-1 ^ triangleNormal ^ gsml::Vector3d(0, 0, triangleNormal.z);
+        velocity = velocity + (acceleration * 0.17);
+        float ballZOffset = 0.25f;
 
-//        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
+        gsml::Vector3d newBallPosition = mMatrix.getPosition3D() + velocity;
 
-//        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z);
-//        qDebug() << "ball is falling";
-//    }
+        newBallPosition.z = (baryCordinates.x * closestTrianglePoint[0].z +
+                             baryCordinates.y * closestTrianglePoint[0].z +
+                             baryCordinates.z * closestTrianglePoint[0].z);
+
+        mPosition.setPosition(newBallPosition.x, newBallPosition.y, newBallPosition.z + ballZOffset);
+        //qDebug() << "ball is falling";
+    }
 }
 
 void RollingBall::init(GLint matrixUniform)
