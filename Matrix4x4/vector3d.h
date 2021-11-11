@@ -20,7 +20,7 @@ struct Vector3d {
 
     float& operator [] (int i) { if(i==0) return x; else if (i==1) return y; else if(i==2) return z; }
 
-   /* const Vector3d& operator = (const Vector3d& v) {
+    /* const Vector3d& operator = (const Vector3d& v) {
         x = v.x;
         y = v.y;
         z = v.z;
@@ -81,9 +81,58 @@ struct Vector3d {
     }
 
     static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
-     {
-         return ((v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z));
-     }
+    {
+        return ((v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z));
+    }
+
+    const double PI_D = 3.141592653589793238462643383279502884;
+
+    inline double deg2rad(double deg)
+    {return deg * (PI_D / 180.0);}
+
+    void rotateX(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = deg2rad(angle);
+
+        dir.x = x;
+        dir.y = (y * std::cos(angle)) + (z * (-std::sin(angle)));
+        dir.z = (y * std::sin(angle)) + (z * std::cos(angle));
+
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
+    }
+
+
+    void rotateY(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = deg2rad(angle);
+
+        dir.x =((x * std::cos(angle)) + (z * std::sin(angle)));
+        dir.y = (y);
+        dir.z = ((x * (-std::sin(angle))) + (z * std::cos(angle)));
+
+        x = dir.getX();
+        y = dir.getY();
+        z = dir.getZ();
+    }
+
+
+    void rotateZ(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = gsml::deg2rad(angle);
+
+        dir.setX((x * std::cos(angle)) + (y * (-std::sin(angle))));
+        dir.setY((x * std::sin(angle)) + (y * std::cos(angle)));
+        dir.setZ(z);
+
+        x = dir.getX();
+        y = dir.getY();
+        z = dir.getZ();
+    }
 
     //! Scaling
     Vector3d operator * (float c) const {
@@ -204,63 +253,63 @@ Vector3d operator * (float c, const Vector3d& v)
 
 struct Vector2d
 {
-        GLfloat x;
-        GLfloat y;
+    GLfloat x;
+    GLfloat y;
 
-        float& operator[] (int i) { return (i==0) ? x : y; }
+    float& operator[] (int i) { return (i==0) ? x : y; }
 
-        //! Standard and parametric constructor
-        Vector2d(GLfloat a=0.0, GLfloat b=0.0) : x(a), y(b) { }
-        Vector2d(const Vector3d& v) { x=v.x; y=v.y; } // 8/4/19
-        Vector2d operator = (const Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
-        Vector2d operator = (Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
+    //! Standard and parametric constructor
+    Vector2d(GLfloat a=0.0, GLfloat b=0.0) : x(a), y(b) { }
+    Vector2d(const Vector3d& v) { x=v.x; y=v.y; } // 8/4/19
+    Vector2d operator = (const Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
+    Vector2d operator = (Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
 
-        //! Cross product
-        Vector3d operator ^ (const Vector2d& v) const
-        {
-            Vector3d w;
-            w.x =  0.0;
-            w.y =  0.0;
-            w.z =  x*v.y - y*v.x;
-            return w;
-        }
-        Vector2d operator - (const Vector2d& v) const /// Subtraction
-        {
-            Vector2d u;
-            u.x = x - v.x;
-            u.y = y - v.y;
-            //u.z = z - v.z;
-            return u;
-        }
+    //! Cross product
+    Vector3d operator ^ (const Vector2d& v) const
+    {
+        Vector3d w;
+        w.x =  0.0;
+        w.y =  0.0;
+        w.z =  x*v.y - y*v.x;
+        return w;
+    }
+    Vector2d operator - (const Vector2d& v) const /// Subtraction
+    {
+        Vector2d u;
+        u.x = x - v.x;
+        u.y = y - v.y;
+        //u.z = z - v.z;
+        return u;
+    }
 
 
-        Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
-        {
-            Vector2d p12 = p2-p1;
-            Vector2d p13 = p3-p1;
+    Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
+    {
+        Vector2d p12 = p2-p1;
+        Vector2d p13 = p3-p1;
 
-    Vector3d n = p12^p13;
-    float areal_123 = n.length(); // dobbelt areal
+        Vector3d n = p12^p13;
+        float areal_123 = n.length(); // dobbelt areal
 
-    Vector3d baryc; // til retur. Husk
-    // u
-    Vector2d p = p2 - *this;
-    Vector2d q = p3 - *this;
-    n = p^q;
-    baryc.x = n.z/areal_123;
-    // v
-    p = p3 - *this;
-    q = p1 - *this;
-    n = p^q;
-    baryc.y = n.z/areal_123;
-    // w
-    p = p1 - *this;
-    q = p2 - *this;
-    n = p^q;
-    baryc.z = n.z/areal_123;
+        Vector3d baryc; // til retur. Husk
+        // u
+        Vector2d p = p2 - *this;
+        Vector2d q = p3 - *this;
+        n = p^q;
+        baryc.x = n.z/areal_123;
+        // v
+        p = p3 - *this;
+        q = p1 - *this;
+        n = p^q;
+        baryc.y = n.z/areal_123;
+        // w
+        p = p1 - *this;
+        q = p2 - *this;
+        n = p^q;
+        baryc.z = n.z/areal_123;
 
-    return baryc;
-}
+        return baryc;
+    }
     void normalize()
     {
         GLfloat d = x*x+y*y;
@@ -310,7 +359,7 @@ struct Vector3d {
 
     float& operator [] (int i) { if(i==0) return x; else if (i==1) return y; else if(i==2) return z; }
 
-   /* const Vector3d& operator = (const Vector3d& v) {
+    /* const Vector3d& operator = (const Vector3d& v) {
         x = v.x;
         y = v.y;
         z = v.z;
@@ -490,63 +539,63 @@ Vector3d operator * (float c, const Vector3d& v)
 
 struct Vector2d
 {
-        GLfloat x;
-        GLfloat y;
+    GLfloat x;
+    GLfloat y;
 
-        float& operator[] (int i) { return (i==0) ? x : y; }
+    float& operator[] (int i) { return (i==0) ? x : y; }
 
-        //! Standard and parametric constructor
-        Vector2d(GLfloat a=0.0, GLfloat b=0.0) : x(a), y(b) { }
-        Vector2d(const Vector3d& v) { x=v.x; y=v.y; } // 8/4/19
-        Vector2d operator = (const Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
-        Vector2d operator = (Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
+    //! Standard and parametric constructor
+    Vector2d(GLfloat a=0.0, GLfloat b=0.0) : x(a), y(b) { }
+    Vector2d(const Vector3d& v) { x=v.x; y=v.y; } // 8/4/19
+    Vector2d operator = (const Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
+    Vector2d operator = (Vector3d& v) { x = v.x; y=v.y; return Vector2d{x,y};}
 
-        //! Cross product
-        Vector3d operator ^ (const Vector2d& v) const
-        {
-            Vector3d w;
-            w.x =  0.0;
-            w.y =  0.0;
-            w.z =  x*v.y - y*v.x;
-            return w;
-        }
-        Vector2d operator - (const Vector2d& v) const /// Subtraction
-        {
-            Vector2d u;
-            u.x = x - v.x;
-            u.y = y - v.y;
-            //u.z = z - v.z;
-            return u;
-        }
+    //! Cross product
+    Vector3d operator ^ (const Vector2d& v) const
+    {
+        Vector3d w;
+        w.x =  0.0;
+        w.y =  0.0;
+        w.z =  x*v.y - y*v.x;
+        return w;
+    }
+    Vector2d operator - (const Vector2d& v) const /// Subtraction
+    {
+        Vector2d u;
+        u.x = x - v.x;
+        u.y = y - v.y;
+        //u.z = z - v.z;
+        return u;
+    }
 
 
-Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
-{
-    Vector2d p12 = p2-p1;
-    Vector2d p13 = p3-p1;
+    Vector3d barycentricCoordinates(const Vector2d& p1, const Vector2d& p2, const Vector2d& p3)
+    {
+        Vector2d p12 = p2-p1;
+        Vector2d p13 = p3-p1;
 
-    Vector3d n = p12^p13;
-    float areal_123 = n.length(); // dobbelt areal
+        Vector3d n = p12^p13;
+        float areal_123 = n.length(); // dobbelt areal
 
-    Vector3d baryc; // til retur. Husk
-    // u
-    Vector2d p = p2 - *this;
-    Vector2d q = p3 - *this;
-    n = p^q;
-    baryc.x = n.z/areal_123;
-    // v
-    p = p3 - *this;
-    q = p1 - *this;
-    n = p^q;
-    baryc.y = n.z/areal_123;
-    // w
-    p = p1 - *this;
-    q = p2 - *this;
-    n = p^q;
-    baryc.z = n.z/areal_123;
+        Vector3d baryc; // til retur. Husk
+        // u
+        Vector2d p = p2 - *this;
+        Vector2d q = p3 - *this;
+        n = p^q;
+        baryc.x = n.z/areal_123;
+        // v
+        p = p3 - *this;
+        q = p1 - *this;
+        n = p^q;
+        baryc.y = n.z/areal_123;
+        // w
+        p = p1 - *this;
+        q = p2 - *this;
+        n = p^q;
+        baryc.z = n.z/areal_123;
 
-    return baryc;
-}
+        return baryc;
+    }
     void normalize()
     {
         GLfloat d = x*x+y*y;

@@ -42,9 +42,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+
+    //ball = new RollingBall(3);
+    //dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -121,8 +123,8 @@ void RenderWindow::init()
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
     surf2->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
-    //xyz.init(mMatrixUniform);
+//    ball->init(mMatrixUniform);
+    xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -135,9 +137,8 @@ void RenderWindow::render()
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //ball->move(0,0,3);
-    ball->move(0.017);
-    //ball->heightAt();
+//    ball->move(0.017);
+//    //ball->heightAt();
     // what shader to use
     glUseProgram(mShaderProgram->getProgram() );
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -168,10 +169,10 @@ void RenderWindow::render()
     // demo
     surf2->draw();
     //ball->move(0.017f);
-    ball->draw();
+//    ball->draw();
 
 
-    //xyz.draw();
+    xyz.draw();
     //mia.draw();
     //fx.draw();
     // tetraeder->draw();
