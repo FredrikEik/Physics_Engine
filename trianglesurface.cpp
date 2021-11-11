@@ -2,8 +2,11 @@
 #include <QImage>
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 #include "trianglesurface.h"
 #include "vertex.h"
+#include <QDebug>
+#include <string>
 
 TriangleSurface::TriangleSurface() : VisualObject()
 {
@@ -18,7 +21,7 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
-    readFile(filnavn);
+    readFile2(filnavn);
     //mMatrix.setToIdentity();
     //mMatrix.translate(0,0,5);
 }
@@ -46,6 +49,88 @@ void TriangleSurface::readFile(std::string filnavn)
              inn >> vertex;
              mVertices.push_back(vertex);
         }
+        inn.close();
+    }
+}
+
+void TriangleSurface::readFile2(std::string filename)
+{
+    std::vector<gsml::Vector3d> tempPos;
+    std::vector<gsml::Vector3d> sortedPos;
+
+    std::ifstream inn;
+    inn.open(filename.c_str());
+
+    if (inn.is_open())
+    {
+        int n; //antall punkter?
+        inn >> n;
+
+        std::string coord = "";
+
+        float x = 0.0f, y = 0.0f, z = 0.0f;
+        float xMin = 0.0f, xMax = 0.0f, yMin = 0.0f, yMax = 0.0f;
+
+        const int rows = 100;
+        const int cols = 100;
+
+        mVertices.reserve(n);
+        tempPos.reserve(n);
+
+        for (int i=0; i<n; i++)
+        {
+            inn >> x >> y >> z;
+
+            tempPos.push_back(gsml::Vector3d{x, y, z});
+
+//if i == 0, xMin and yMin is 0. result would be xMin and yMin == 0 at the end of loop
+            if(x < xMin || i == 0)
+                xMin = x;
+            if(y < yMin || i == 0)
+                yMin = y;
+            if(x > xMax || i == 0)
+                xMax = x;
+            if(y > yMax || i == 0)
+                yMax = y;
+        }
+        float xStep = (xMax-xMin)/rows; //avstanden mellom hvert hjørne i et kvadrant (i x-planet)
+        float yStep = (yMax-yMin)/cols; //avstanden mellom hvert hjørne i et kvadrant (i y-planet)
+        int vertexesInQuad[rows][cols]; //antall vertexer i kvadrant [x][y]
+        float tempForAvg[rows][cols];   //holder summen av z verdiene i kvadrant [x][y]
+        for (int y=0; y<cols; y++){
+            for (int x=0; x<rows; x++) {
+                tempForAvg[x][y]=0.0f;
+                vertexesInQuad[x][y]=0;
+             }
+        }
+        for (int i = 0; i < tempPos.size(); i++)
+        {
+            int x = (int)((tempPos[i].x-xMin) / xStep);
+            int y = (int)((tempPos[i].y-yMin) / yStep);
+            tempForAvg[x][y] += tempPos[i].z;
+            vertexesInQuad[x][y]++;
+        }
+        for (int y=0; y<cols; y++)
+        {
+            for (int x=0; x<rows; x++)
+            {
+                if(tempForAvg[x][y] != 0)
+                    sortedPos.push_back(gsml::Vector3d{ x*xStep + (xStep / 2), y*yStep + (yStep / 2), tempForAvg[x][y] / vertexesInQuad[x][y]});
+            }
+        }
+
+        int c = 0;
+        for(int i = 0; i<sortedPos.size()-rows-1; i++)
+        {
+            mVertices.push_back(gsml::Vertex{sortedPos[i].x, sortedPos[i].y, sortedPos[i].z, 0,0.5,0});
+            mVertices.push_back(gsml::Vertex{sortedPos[i+1].x, sortedPos[i+1].y, sortedPos[i+1].z, 0,0.5,0});
+            mVertices.push_back(gsml::Vertex{sortedPos[i+rows].x, sortedPos[i+rows].y, sortedPos[i+rows].z, 0,0.5,0});
+
+            mVertices.push_back(gsml::Vertex{sortedPos[i+rows].x, sortedPos[i+rows].y, sortedPos[i+rows].z, 0,0.5,0});
+            mVertices.push_back(gsml::Vertex{sortedPos[i+1].x, sortedPos[i+1].y, sortedPos[i+1].z, 0,0.5,0});
+            mVertices.push_back(gsml::Vertex{sortedPos[i+rows+1].x, sortedPos[i+rows+1].y, sortedPos[i+rows+1].z, 0,0.5,0});
+        }
+
         inn.close();
     }
 }

@@ -17,7 +17,8 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 3;
+//    help.x = 5; help.y = -5; help.z = 3; //original
+    help.x = -185.902; help.y = 8; help.z = 2000;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -42,7 +43,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/terrainFiles/test_las.txt");
+
     ball = new RollingBall(3);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
@@ -148,7 +151,7 @@ void RenderWindow::render()
     gsmVMatrix->setToIdentity();
     //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
     //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+    gsmPMatrix->perspective(180, 4.0/3.0, 0.1, 10000.0);
     //gsmPMatrix->print();
     //qDebug() << *mPMatrix;
     //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;

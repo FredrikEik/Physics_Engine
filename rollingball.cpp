@@ -33,14 +33,13 @@ void RollingBall::move(float dt)
            && BarycentricCoordinates.y < 1 && BarycentricCoordinates.y > 0
            && BarycentricCoordinates.z < 1 && BarycentricCoordinates.z > 0 )
         {
-//            qDebug() << BarycentricCoordinates.x << " " << BarycentricCoordinates.y << " " << BarycentricCoordinates.z << " ";
 
         /** Beregne Normal */
-            gsml::Vector3d Normal = (point2-point1).cross(point3-point2); //Cross product of points: 2-1 and 3-2.     == (2-1)^(3-2)
+            gsml::Vector3d Normal = (point2-point1).cross(point3-point2); //Cross product of point: 2-1 and 3-2.     == (2-1)^(3-2)
             Normal.normalize();
 
         /** Beregne akselerasjonsvektor */
-            acceleration = gForce * (Normal * Normal.z);
+            acceleration = gForce * Normal * Normal.z;
 
         /** Oppdatere hastighet */
             if(i==0)
@@ -50,12 +49,10 @@ void RollingBall::move(float dt)
 
         /** Oppdatere posisjon */
             nextPos = BallPosition + speed;
-            nextPos.z = point1.z*BarycentricCoordinates.x+point2.z*BarycentricCoordinates.y+point3.z*BarycentricCoordinates.z;
-            mPosition.setPosition(nextPos.x, nextPos.y, nextPos.z+radius);
-
+            nextPos.z = (point1.z * BarycentricCoordinates.x) + (point2.z * BarycentricCoordinates.y) + (point3.z * BarycentricCoordinates.z);
+            mPosition.setPosition(nextPos.x, nextPos.y, nextPos.z + radius);
         }
     }
-
 }
 
 void RollingBall::setBallPosition(gsml::Vector3d pos)

@@ -10,14 +10,20 @@ public:
     TriangleSurface();
     TriangleSurface(std::string filnavn);
     ~TriangleSurface() override;
+
     void readFile(std::string filnavn);
+    void readFile2(std::string filename);
     void writeFile(std::string filnavn);
+
     void init(GLint matrixUniform) override;
     void draw() override;
     void construct();
     void construct_cylinder();
     void construct_plane();
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
+
+private:
+    float xMin, xMax, yMin, yMax;
 };
 
 #endif // TRIANGLESURFACE_H
