@@ -12,7 +12,7 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override;
-    void move(float dx, float dy, float dz) override;
+   // void move(float dx, float dy, float dz) override;
     void setSurface(VisualObject* surface) { triangle_surface = surface; }
     gsml::Vector3d Get_position();
     void setPosition(gsml::Vector3d v);
@@ -22,20 +22,25 @@ public:
 protected:
     VisualObject* triangle_surface;
 private:
-    float lilleG = 9.81;
-    float mMass = 2;
+
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
     gsml::Vector3d mAcceleration{0.0, 0.0, -lilleG};
     gsml::Vector3d mVelocity = {0,0,0};
     gsml::Vector3d oldVelocity = {0,0,0};
     gsml::Vector3d mGravForce{0,0, -(lilleG * mMass)};
+    gsml::Vector3d m;
+
     int old_index{0};
     int m_index{0};
+    float lilleG = 9.81;
+    float mMass = 2;
+    float friction = 0.8;
 
 
 };
 #endif // ROLLINGBALL_H
+
 // Finne trekant
 //    for( /* indekser til flaten */ )
 //    {

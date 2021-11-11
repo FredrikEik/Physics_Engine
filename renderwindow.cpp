@@ -12,12 +12,12 @@
 #include "shader.h"
 #include "mainwindow.h"
 
-
+#include "rollingball.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = (615578+614581)/2; help.y = (6758759+6757299)/2; help.z = 0;
+    help.x = 5; help.y = -5; help.z = 3;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -39,13 +39,13 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
-   // qDebug() << v[0] <<v[1] << v[3] << v[2];
+    qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-//    ball = new RollingBall(3);
-//    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    ball = new RollingBall(3);
+    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -58,8 +58,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 RenderWindow::~RenderWindow()
 {
     //cleans up the GPU memory
-    //glDeleteVertexArrays( 1, &mVAO );
-    //glDeleteBuffers( 1, &mVBO );
+    glDeleteVertexArrays( 1, &mVAO );
+    glDeleteBuffers( 1, &mVBO );
 }
 
 /// Sets up the general OpenGL stuff and the buffers needed to render a triangle
@@ -120,10 +120,9 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
-//    surf2->init(mMatrixUniform);
-//    ball->init(mMatrixUniform);
-    xyz.init(mMatrixUniform);
-    Flate->init(mMatrixUniform);
+    surf2->init(mMatrixUniform);
+    ball->init(mMatrixUniform);
+    //xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -133,7 +132,6 @@ void RenderWindow::render()
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
     // initializeOpenGLFunctions();    //must call this every frame it seems...
-
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -165,11 +163,9 @@ void RenderWindow::render()
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
     // demo
-//    surf2->draw();
-//    ball->move(0.017f);
-//    ball->draw();
-    Flate->draw();
-    xyz.draw();
+    surf2->draw();
+    ball->move(0.017f);
+    ball->draw();
 
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
