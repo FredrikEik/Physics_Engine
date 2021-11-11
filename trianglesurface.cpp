@@ -14,6 +14,8 @@ TriangleSurface::TriangleSurface() : VisualObject()
     v.set_xyz(0,0,0); v.set_rgb(0,1,0); mVertices.push_back(v);
     v.set_xyz(0.5,0.5,0); v.set_rgb(1,0,0); mVertices.push_back(v);
     v.set_xyz(0,0.5,0); v.set_rgb(0,0,1); mVertices.push_back(v);
+
+
 }
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
@@ -37,17 +39,61 @@ void TriangleSurface::readFile(std::string filnavn)
 
     if (inn.is_open())
     {
-        int n;
+        long int n;
+        double x;
+        double y;
+        double z;
         gsml::Vertex vertex;
         inn >> n;
+        inn >> x >> y >> z;
+        xMaximum = x;
+        xMinimum = x;
+        yMaximum = y;
+        yMinimum = y;
+        zMaximum = z;
+        zMinimum = z;
         mVertices.reserve(n);
-        for (int i=0; i<n; i++)
+        for (int i=0; i<n; i)
         {
-             inn >> vertex;
-             mVertices.push_back(vertex);
+             inn >> x >> y >> z;
+
+             //mVertices.push_back(vertex);
+             if (x > xMaximum)
+                 xMaximum = x;
+             else if(x < xMinimum)
+                 xMinimum = x;
+             if (y > yMaximum)
+                 yMaximum = y;
+             else if(y < yMinimum)
+                 yMinimum = y;
+             if(z > zMaximum)
+                 zMaximum = z;
+             else if(z < zMinimum)
+                 zMinimum = z;
+             //qDebug() << x << y << z;
+
+
         }
         inn.close();
     }
+    qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
+
+//    if (inn.is_open())
+//    {
+//        long int n;
+//        gsml::Vertex vertex;
+//        inn >> n;
+//        mVertices.reserve(n);
+//        for (int i=0; i<n; i++)
+//        {
+//             inn >> vertex;
+//             mVertices.push_back(vertex);
+
+
+
+//        }
+//        inn.close();
+//    }
 }
 
 void TriangleSurface::writeFile(std::string filnavn)
@@ -96,6 +142,7 @@ void TriangleSurface::init(GLint matrixUniform)
     //enable the matrixUniform
     // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
 
+
     glBindVertexArray(0);
 }
 
@@ -109,7 +156,6 @@ void TriangleSurface::draw()
 
 void TriangleSurface::construct()
 {
-   float xmin=0.0f, xmax=1.0f, ymin=0.0f, ymax=1.0f, h=0.25f;
    for (auto x=xmin; x<xmax; x+=h)
        for (auto y=ymin; y<ymax; y+=h)
        {

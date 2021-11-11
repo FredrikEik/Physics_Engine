@@ -42,6 +42,7 @@ private:
     XYZ xyz;
     TriangleSurface surf;
     TriangleSurface* surf2;
+    TriangleSurface* surf3;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
