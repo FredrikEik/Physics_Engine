@@ -126,23 +126,23 @@ void RollingBall::move(float dt)
             setHeight(barycentricHeight(Get_position(), p1,p2,p3));
 
             // if( /* ny indeks != forrige indeks */ )
-//            if(m_index != old_index)
-//            {
-//                // Ballen har rullet over pa nytt triangel
-//                // Beregner normalen til kollisjonsplanet,
-//                // se ligning(9)
-//                m_normal = m + old_normal;
-//                m_normal.normalize();
+            if(m_index != old_index)
+            {
+                // Ballen har rullet over pa nytt triangel
+                // Beregner normalen til kollisjonsplanet,
+                // se ligning(9)
+                m_normal = m + old_normal;
+                m_normal.normalize();
 
-//                // Korrigere posisjon oppover i normalens retning
-//                // Oppdater hastighetsvektoren, se ligning(8)
-//                // Oppdatere posisjon i retning den nye
-//                // hastighetsvektoren
-//                mVelocity = m_normal * gsml::Vector3d::dot(oldVelocity, m_normal);
-//                mVelocity = oldVelocity - mVelocity * 2;
-//                mVelocity = mVelocity * friction;
-//                qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
-//            }
+                // Korrigere posisjon oppover i normalens retning
+                // Oppdater hastighetsvektoren, se ligning(8)
+                // Oppdatere posisjon i retning den nye
+                // hastighetsvektoren
+                mVelocity = m_normal * gsml::Vector3d::dot(oldVelocity, m_normal);
+                mVelocity = oldVelocity - mVelocity * 2;
+                mVelocity = mVelocity * friction;
+                qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+            }
             // Oppdater gammel normal og indeks
             oldVelocity = mVelocity;
             old_index = m_index;

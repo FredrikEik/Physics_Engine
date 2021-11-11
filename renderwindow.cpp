@@ -42,9 +42,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+//    ball = new RollingBall(3);
+//    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/testlas.txt");
 
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -120,9 +121,10 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
-    surf2->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
-    //xyz.init(mMatrixUniform);
+//    surf2->init(mMatrixUniform);
+//    ball->init(mMatrixUniform);
+    Flate->init(mMatrixUniform);
+    xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -162,10 +164,12 @@ void RenderWindow::render()
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
-    // demo
-    surf2->draw();
-    ball->move(0.017f);
-    ball->draw();
+
+//    surf2->draw();
+//    ball->move(0.017f);
+//    ball->draw();
+      xyz.draw();
+      Flate->draw();
 
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time

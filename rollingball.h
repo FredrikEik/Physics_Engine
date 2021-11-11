@@ -35,7 +35,7 @@ private:
     int m_index{0};
     float lilleG = 9.81;
     float mMass = 2;
-    float friction = 0.8;
+    float friction = 0.9;
 
 
 };
