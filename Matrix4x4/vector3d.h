@@ -75,6 +75,11 @@ struct Vector3d {
         }
     }
 
+    static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
+    {
+        return ((v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z));
+    }
+
     //! Dot product
     float operator * (const Vector3d& v) const{
         return x*v.x + y*v.y + z*v.z;
@@ -280,6 +285,10 @@ public:
     Vector4d() {v[0] = v[1] = v[2] = v[3] = 0.0f; }
     Vector4d(float a, float b, float c, float d) {v[0]=a; v[1]=b; v[2]=c; v[3]=d;}
     float& operator[] (int i) { return v[i]; }
+    float x(){return v[0];};
+    float y(){return v[1];};
+    float z(){return v[2];};
+    float w(){return v[3];};
 
 private:
     float v[4];
@@ -307,6 +316,8 @@ struct Vector3d {
         z = v.z;
         return *this;
     }*/
+
+
 
     Vector3d operator + (const Vector3d& v) const {
         Vector3d u;
@@ -339,6 +350,8 @@ struct Vector3d {
         w.z =  x*v.y - y*v.x;
         return w;
     }
+
+
 
     //! Length
     float length() {
@@ -428,6 +441,8 @@ struct Vector3d {
         output << "X = " << rhs.x << ", Y = " << rhs.y << ", Z = " << rhs.z;
         return output;
     }
+
+
 
 };
 

@@ -19,7 +19,6 @@ public:
     Vec4() {v[0] = v[1] = v[2] = v[3] = 0.0f; }
     Vec4(float a, float b, float c, float d) {v[0]=a; v[1]=b; v[2]=c; v[3]=d;}
     float& operator[] (int i) { return v[i]; }
-
 private:
     float v[4];
 };*/
@@ -51,11 +50,15 @@ public:
     void rotate(float degrees, float rx, float ry, float rz);
     void scale(float sx, float sy, float sz);
     void frustum(float left, float right, float bottom, float top, float near, float far);
+    void setPosition(float dx, float dy, float dz);
+    Vector4d getColumn(int index);
+    Vector3d getPosition();
 
     void perspective(float fovy, float aspectRatio, float nearPlane, float farPlane);
 
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
     const float * constData() const;
+
 
 protected:
     static const int M=4;
@@ -83,7 +86,6 @@ public:
     Vec4() {v[0] = v[1] = v[2] = v[3] = 0.0f; }
     Vec4(float a, float b, float c, float d) {v[0]=a; v[1]=b; v[2]=c; v[3]=d;}
     float& operator[] (int i) { return v[i]; }
-
 private:
     float v[4];
 };*/
@@ -120,6 +122,8 @@ public:
 
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
     const float * constData() const;
+
+
 
 protected:
     static const int M=4;
