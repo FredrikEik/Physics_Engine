@@ -85,7 +85,7 @@ struct Vector3d {
         return ((v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z));
     }
 
-    const double PI_D = 3.141592653589793238462643383279502884;
+    double PI_D = 3.141592653589793238462643383279502884;
 
     inline double deg2rad(double deg)
     {return deg * (PI_D / 180.0);}
@@ -114,24 +114,24 @@ struct Vector3d {
         dir.y = (y);
         dir.z = ((x * (-std::sin(angle))) + (z * std::cos(angle)));
 
-        x = dir.getX();
-        y = dir.getY();
-        z = dir.getZ();
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
     }
 
 
     void rotateZ(GLfloat angle)
     {
         Vector3d dir;
-        angle = gsml::deg2rad(angle);
+        angle = deg2rad(angle);
 
-        dir.setX((x * std::cos(angle)) + (y * (-std::sin(angle))));
-        dir.setY((x * std::sin(angle)) + (y * std::cos(angle)));
-        dir.setZ(z);
+        dir.x =((x * std::cos(angle)) + (y * (-std::sin(angle))));
+        dir.y = ((x * std::sin(angle)) + (y * std::cos(angle)));
+        dir.z = z;
 
-        x = dir.getX();
-        y = dir.getY();
-        z = dir.getZ();
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
     }
 
     //! Scaling

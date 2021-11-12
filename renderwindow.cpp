@@ -17,7 +17,6 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 3;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -40,13 +39,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
     qDebug() << v[0] <<v[1] << v[3] << v[2];
-
-    // Demo
-    //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
-
-    //ball = new RollingBall(3);
-    //dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -104,7 +96,7 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-
+    mCamera = new Camera;
     mShaderProgram = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
 
     //********************** Making the object to be drawn **********************
@@ -122,14 +114,26 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
-    surf2->init(mMatrixUniform);
-//    ball->init(mMatrixUniform);
+
+
+    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 600.f));
+    // Demo
+    //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+
+    //ball = new RollingBall(3);
+    //dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    surf->init(mMatrixUniform);
+    //    ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
 void RenderWindow::render()
 {
+    checkCamInp();
+    mCamera->update();
+
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
@@ -137,8 +141,8 @@ void RenderWindow::render()
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-//    ball->move(0.017);
-//    //ball->heightAt();
+    //    ball->move(0.017);
+    //    //ball->heightAt();
     // what shader to use
     glUseProgram(mShaderProgram->getProgram() );
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -148,28 +152,29 @@ void RenderWindow::render()
     // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
     // must be here to update each frame - if static object, it could be set only once
 
-    gsmPMatrix->setToIdentity();
-    gsmVMatrix->setToIdentity();
-    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
-    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
-    //gsmPMatrix->print();
-    //qDebug() << *mPMatrix;
-    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
-    //gsml::Vector3d eye{2.5,2.5,2};
-    gsml::Vector3d eye{help.x,help.y,help.z};
-    gsml::Vector3d at{0 ,0 , 0};
-    gsml::Vector3d up{0,0,1};
-    gsmVMatrix->lookAt(eye, at, up);
 
-    glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, gsmPMatrix->constData());
-    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
+    //    gsmPMatrix->setToIdentity();
+    //    gsmVMatrix->setToIdentity();
+    //    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
+    //    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
+    //    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+    //    //gsmPMatrix->print();
+    //    //qDebug() << *mPMatrix;
+    //    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
+    //    //gsml::Vector3d eye{2.5,2.5,2};
+    //    gsml::Vector3d eye{help.x,help.y,help.z};
+    //    gsml::Vector3d at{0 ,0 , 0};
+    //    gsml::Vector3d up{0,0,1};
+    //    gsmVMatrix->lookAt(eye, at, up);
+
+    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
+    glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
     // demo
-    surf2->draw();
+    surf->draw();
     //ball->move(0.017f);
-//    ball->draw();
+    //    ball->draw();
 
 
     xyz.draw();
@@ -216,6 +221,7 @@ void RenderWindow::exposeEvent(QExposeEvent *)
         mRenderTimer->start(16);
         mTimeStart.start();
     }
+    mCamera->calculateProjectionMatrix();
 }
 
 //The way this is set up is that we start the clock before doing the draw call,
@@ -282,24 +288,89 @@ void RenderWindow::startOpenGLDebugger()
     }
 }
 
+void RenderWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (inpRMB)
+    {
+        //Using mMouseXYlast as deltaXY so we don't need extra variables
+        mMouseXlast = event->pos().x() - mMouseXlast;
+        mMouseYlast = event->pos().y() - mMouseYlast;
+
+        if (mMouseXlast != 0)
+            mCamera->yaw(mCameraRotateSpeed * mMouseXlast);
+        if (mMouseYlast != 0)
+            mCamera->pitch(mCameraRotateSpeed * mMouseYlast);
+    }
+    mMouseXlast = event->pos().x();
+    mMouseYlast = event->pos().y();
+}
+
+void RenderWindow::checkCamInp()
+{
+    mCamera->setSpeed(0.f);
+
+    if(inpRMB == true)
+    {
+        if (inpA)
+            mCamera->moveRight(-mCameraSpeed);
+        if (inpD)
+            mCamera->moveRight(mCameraSpeed);
+        if (inpW)
+            mCamera->setSpeed(mCameraSpeed);
+        if (inpS)
+            mCamera->setSpeed(-mCameraSpeed);
+        if (inpQ)
+            mCamera->updateHeigth(mCameraSpeed);
+        if (inpE)
+            mCamera->updateHeigth(-mCameraSpeed);
+    }
+}
+
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
+    mCamera->setSpeed(0.f);
     if (event->key() == Qt::Key_Escape) //Shuts down whole program
     {
         mMainWindow->close();
     }
     if (event->key() == Qt::Key_A)
-        //mia.move(0.1,0,0);
-        help.x -= 0.1;
+        inpA = true;
     if (event->key() == Qt::Key_D)
-        help.x += 0.1;
+        inpD = true;
     if (event->key() == Qt::Key_W)
-        help.y += 0.1;
+        inpW = true;
     if (event->key() == Qt::Key_S)
-        help.y -= 0.1;
+        inpS = true;
     if (event->key() == Qt::Key_Q)
-        help.z += 0.1;
-    if (event->key() == Qt::Key_Z)
-        help.z -= 0.1;
-    qDebug() << help.x << help.y << help.z;
+        inpQ = true;
+    if (event->key() == Qt::Key_E)
+        inpE = true;
+}
+
+void RenderWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_A)
+        inpA = false;
+    if (event->key() == Qt::Key_D)
+        inpD = false;
+    if (event->key() == Qt::Key_W)
+        inpW = false;
+    if (event->key() == Qt::Key_S)
+        inpS = false;
+    if (event->key() == Qt::Key_Q)
+        inpQ = false;
+    if (event->key() == Qt::Key_E)
+        inpE = false;
+}
+
+void RenderWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+        inpRMB = true;
+}
+
+void RenderWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+        inpRMB = false;
 }

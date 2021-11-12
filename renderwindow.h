@@ -7,6 +7,7 @@
 #include <QElapsedTimer>
 #include <QMatrix4x4>
 #include <vector>
+#include "camera.h"
 #include "vertex.h"
 #include "xyz.h"
 #include "trianglesurface.h"
@@ -32,7 +33,7 @@ public:
 
     void exposeEvent(QExposeEvent *) override;
 
-//    void error(const QString &msg);
+    //    void error(const QString &msg);
 
 private slots:
     void render();
@@ -40,12 +41,13 @@ private slots:
 private:
     void init();
     XYZ xyz;
-    TriangleSurface surf;
-    TriangleSurface* surf2;
+    //TriangleSurface surf;
+    TriangleSurface* surf;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
     RollingBall* ball;
+    Camera* mCamera;
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;
@@ -72,14 +74,30 @@ private:
 
     void startOpenGLDebugger();
 
+    float mCameraSpeed{0.05f};
+    float mCameraRotateSpeed{0.1f};
+    float mPlayerSpeed{0.05f};
+    int mMouseXlast{0};
+    int mMouseYlast{0};
+    void checkCamInp();
+
+    bool inpW{false};
+    bool inpA{false};
+    bool inpS{false};
+    bool inpD{false};
+    bool inpQ{false};
+    bool inpE{false};
+    bool inpRMB{false};
+
 protected:
     //The QWindow that we inherit from has these functions to capture
     // mouse and keyboard. Uncomment to use
     //
-    //    void mousePressEvent(QMouseEvent *event) override{}
-    //    void mouseMoveEvent(QMouseEvent *event) override{}
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
-    //    void keyReleaseEvent(QKeyEvent *event) override{}
+    void keyReleaseEvent(QKeyEvent *event) override;
     //    void wheelEvent(QWheelEvent *event) override{}
 };
 

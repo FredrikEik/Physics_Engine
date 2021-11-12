@@ -54,13 +54,15 @@ void Camera::update()
     mYawMatrix.setToIdentity();
     mPitchMatrix.setToIdentity();
 
-    mPitchMatrix.rotateX(mPitch);
-    mYawMatrix.rotateY(mYaw);
+    mPitchMatrix.rotate(mPitch, 1, 0, 0);
+    mYawMatrix.rotate(mYaw, 0, 1, 0);
+    //mPitchMatrix.rotateX(mPitch);
+    //mYawMatrix.rotateY(mYaw);
 
-    mPosition -= mForward * mSpeed;
+    mPosition = mPosition - (mForward * mSpeed);
 
     mViewMatrix = mPitchMatrix* mYawMatrix;
-    mViewMatrix.translate(-mPosition);
+    mViewMatrix.translate(-mPosition.x, -mPosition.y, -mPosition.z);
 }
 
 void Camera::calculateProjectionMatrix()
@@ -90,7 +92,7 @@ void Camera::moveRight(float delta)
     //should be fixed thru correct right calculations!
     gsml::Vector3d right = mRight;
     right.y = 0.f;
-    mPosition += right * delta;
+    mPosition = mPosition + (right * delta);
 }
 
 gsml::Vector3d Camera::position() const

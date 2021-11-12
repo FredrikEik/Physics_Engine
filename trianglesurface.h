@@ -19,6 +19,7 @@ public:
     void construct_cylinder();
     void construct_plane();
     void makePlain();
+    float calcHeight(float x, float y);
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
 private:
     std::vector<gsml::Vector3d> points;

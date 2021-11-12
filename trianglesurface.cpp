@@ -77,17 +77,37 @@ void TriangleSurface::readPoints(std::string filnavn)
 
 void TriangleSurface::makePlain()
 {
-    float z = 0;
+    float f = 1;
     for(auto x = MapMin.x; x<MapMax.x; x+=n)
         for(auto y = MapMin.y; y<MapMax.y; y+=n)
         {
-            mVertices.push_back(gsml::Vertex{  x,   y, z,   1, 0, 0});
-            mVertices.push_back(gsml::Vertex{x+n,   y, z,   1, 0, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+n, z,   1, 0, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+n, z,   1, 0, 0});
-            mVertices.push_back(gsml::Vertex{x+n,   y, z,   1, 0, 0});
-            mVertices.push_back(gsml::Vertex{x+n, y+n, z,   1, 0, 0});
+            float z = calcHeight(x, y);
+            mVertices.push_back(gsml::Vertex{  x,   y, z,   f, 0, 0});
+            mVertices.push_back(gsml::Vertex{x+n,   y, z,   0, f, 0});
+            mVertices.push_back(gsml::Vertex{  x, y+n, z,   0, 0, f});
+            mVertices.push_back(gsml::Vertex{  x, y+n, z,   0, 0, f});
+            mVertices.push_back(gsml::Vertex{x+n,   y, z,   0, f, 0});
+            mVertices.push_back(gsml::Vertex{x+n, y+n, z,   f, 0, 0});
         }
+}
+
+float TriangleSurface::calcHeight(float x, float y)
+{
+    std::vector<float> mH;
+    float z = 0;
+    for(auto i{0}; i<(int)points.size(); i++)
+    {
+        if(points[i].x >= x && points[i].x < (x+n))
+            if(points[i].y >= y && points[i].y < (y+n))
+                mH.push_back(points[i].z);
+    }
+    int hSize = (int)mH.size();
+    if(hSize>0){
+        for(auto i{0}; i<hSize; i++)
+            z += mH[i];
+        z = z/hSize;}
+
+    return z;
 }
 
 void TriangleSurface::readFile(std::string filnavn)
