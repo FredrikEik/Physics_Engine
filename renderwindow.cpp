@@ -44,7 +44,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf3 = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
-    ball = new RollingBall(3);
+    //ball = new RollingBall(3);
     //dynamic_cast<RollingBall*>(ball)->setSurface(surf3);
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -121,7 +121,7 @@ void RenderWindow::init()
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
     //surf3->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
+    //ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
 }
 
@@ -165,8 +165,8 @@ void RenderWindow::render()
     // actual draw call
     // demo
     //surf3->draw();
-    ball->move(0.017f);
-    ball->draw();
+    //ball->move(0.017f);
+    //ball->draw();
 
 
 

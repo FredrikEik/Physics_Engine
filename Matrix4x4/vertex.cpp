@@ -122,6 +122,13 @@ void Vertex::data(float v[]) const
     for (int i=3; i<6; i++) v[i] = m_normal[i-3];
     for (int i=6; i<8; i++) v[i] = m_st[i-6];
 }
+
+void Vertex::swap(Vertex *x, Vertex *y)
+{
+    Vertex temp = *x;
+    *x = *y;
+    *y = temp;
+}
 gsml::Vector3d Vertex::getXYZ() const
 {
     return gsml::Vector3d{m_xyz[0], m_xyz[1], m_xyz[2]};

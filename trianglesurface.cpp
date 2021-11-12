@@ -37,13 +37,21 @@ void TriangleSurface::readFile(std::string filnavn)
     std::ifstream inn;
     inn.open(filnavn.c_str());
 
+    long int n;
+    long int linesRead = 0;
+    int j=0;
+    int l=0;
+    int min_index;
+    float x;
+    float y;
+    float z;
+    float a[245592];
+    float b[245592];
+    float c[245592];
+    gsml::Vertex vertex;
+
     if (inn.is_open())
     {
-        long int n;
-        double x;
-        double y;
-        double z;
-        gsml::Vertex vertex;
         inn >> n;
         inn >> x >> y >> z;
         xMaximum = x;
@@ -53,11 +61,15 @@ void TriangleSurface::readFile(std::string filnavn)
         zMaximum = z;
         zMinimum = z;
         mVertices.reserve(n);
-        for (int i=0; i<n; i)
+        vertex.set_xyz(x,y,z);
+       // mVertices.push_back(vertex[]);
+        for (int i=0; i<3; i++)
         {
              inn >> x >> y >> z;
-
-             //mVertices.push_back(vertex);
+                     linesRead++;
+         //qDebug() << x << y << z;
+         vertex.set_xyz(x,y,z);
+//         mVertices.push_back(vertex);
              if (x > xMaximum)
                  xMaximum = x;
              else if(x < xMinimum)
@@ -70,11 +82,25 @@ void TriangleSurface::readFile(std::string filnavn)
                  zMaximum = z;
              else if(z < zMinimum)
                  zMinimum = z;
-             //qDebug() << x << y << z;
+
+//             for (l = 0; l < n-1; l++)
+//             {
+//                 min_index = l;
+//                 for (j=i+1 ; j<n; j++)
+//                 {
+//                     if (vertex[j].getXYZ().x < vertex[min_index].getXYZ().x){
+//                      min_index = j;
+//                     }
+//                 }
+//                 vertex->swap(&vertex[min_index], &vertex[l]);
+//                 for(int i=0; i<5; i++)
+//                     qDebug () << vertex[l].getXYZ().x;
+//             }
 
 
         }
         inn.close();
+
     }
     qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
 
@@ -83,10 +109,24 @@ void TriangleSurface::readFile(std::string filnavn)
 //        long int n;
 //        gsml::Vertex vertex;
 //        inn >> n;
+//        inn >> vertex;
+//        xmin = vertex.getXYZ().x;
+//        xmax = vertex.getXYZ().x;
+//        ymin = vertex.getXYZ().y;
+//        ymax = vertex.getXYZ().y;
 //        mVertices.reserve(n);
 //        for (int i=0; i<n; i++)
 //        {
 //             inn >> vertex;
+//             if (xmin > vertex.getXYZ().x)
+//                 xmin = vertex.getXYZ().x;
+//             if (xmax < vertex.getXYZ().x)
+//                 xmax = vertex.getXYZ().x;
+//             if(ymin > vertex.getXYZ().y)
+//                 ymin = vertex.getXYZ().y;
+//             if(ymax < vertex.getXYZ().y)
+//                 ymax = vertex.getXYZ().y;
+
 //             mVertices.push_back(vertex);
 
 
@@ -94,6 +134,7 @@ void TriangleSurface::readFile(std::string filnavn)
 //        }
 //        inn.close();
 //    }
+//    qDebug() << xmin << xmax << ymin << ymax;
 }
 
 void TriangleSurface::writeFile(std::string filnavn)

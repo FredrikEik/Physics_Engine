@@ -59,6 +59,7 @@ public:
     void set_st(GLfloat s, GLfloat t);
     void set_uv(GLfloat u, GLfloat v);
     void data(float v[]) const;
+    void swap(Vertex *x , Vertex *y);
     gsml::Vector3d getXYZ() const;
     void operator = (const Vertex& v);
 };
