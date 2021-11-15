@@ -17,21 +17,35 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
+
     //readFile(filnavn);
     mMatrix.setToIdentity();
     //mMatrix.translate(0,0,5);
 
     readPoints(filnavn);
-    qDebug() << xMin << xMax << yMin << yMax;
-    MapMin.x = 614580; MapMax.x = 615580;
-    MapMin.y = 6757290; MapMax.y = 6758760;
+    //qDebug() << xMin << xMax << yMin << yMax;
 
-    makePlain();
 
     float tempX = MapMin.x + MapMax.x;
     tempX = tempX/2;
     float tempY = MapMin.y + MapMax.y;
     tempY = tempY/2;
+
+    float temp = MapMax.x-MapMin.x;
+    temp = temp/n;
+    int X = static_cast<int>(temp);
+    temp = MapMax.y-MapMin.y;
+    temp = temp/n;
+    int Y = static_cast<int>(temp);
+    myMap = new struct Map(X, Y);
+
+
+    //    MapMin.x = MapMin.x - tempX;
+    //    MapMax.x = MapMax.x - tempX;
+    //    MapMin.y = MapMin.y - tempY;
+    //    MapMax.y = MapMax.y - tempY;
+
+    makePlain();
     mMatrix.setPosition(-tempX, -tempY, 0);
     //move(-tempX, -tempY, 0);
 }
@@ -73,10 +87,20 @@ void TriangleSurface::readPoints(std::string filnavn)
         if(points[i].y > yMax)
             yMax = points[i].y;
     }
+    MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
+    MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
 }
 
 void TriangleSurface::makePlain()
 {
+    float temp = MapMax.x-MapMin.x;
+    temp = temp/n;
+    int X = static_cast<int>(temp);
+    temp = MapMax.y-MapMin.y;
+    temp = temp/n;
+    int Y = static_cast<int>(temp);
+    std::vector<gsml::Vector3d> myMap[X][Y];
+
     float f = 1;
     for(auto x = MapMin.x; x<MapMax.x; x+=n)
         for(auto y = MapMin.y; y<MapMax.y; y+=n)
@@ -106,6 +130,7 @@ float TriangleSurface::calcHeight(float x, float y)
         for(auto i{0}; i<hSize; i++)
             z += mH[i];
         z = z/hSize;}
+    z = z-500;
 
     return z;
 }

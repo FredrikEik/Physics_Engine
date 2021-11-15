@@ -114,7 +114,7 @@ void RollingBall::move(float dt)
             m.normalize();
 
             mAcceleration = gsml::Vector3d(m.x * m.z, m.y * m.z, (m.z*m.z)-1) * lilleG;
-            mVelocity = mVelocity + mAcceleration * dt;
+            mVelocity = oldVelocity + mAcceleration * dt;
             mPos = (oldVelocity + mVelocity) * (dt/2);
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;

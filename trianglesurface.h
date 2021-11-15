@@ -4,6 +4,17 @@
 #include "visualobject.h"
 #include "vector3d.h"
 
+struct Map
+{
+    const int X;
+    const int Y;
+    Map(int dX, int dY) :X(dX), Y(dY)
+    {
+        std::vector<gsml::Vector3d> map[X][Y];
+    };
+    std::vector<gsml::Vector3d> map[X][Y];;
+};
+
 class TriangleSurface : public VisualObject
 {
 public:
@@ -22,7 +33,6 @@ public:
     float calcHeight(float x, float y);
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
 private:
-    std::vector<gsml::Vector3d> points;
     float xMin = 9000000;
     float xMax = 0;
     float yMin = 9000000;
@@ -30,6 +40,9 @@ private:
     gsml::Vector2d MapMin;
     gsml::Vector2d MapMax;
     int n = 5;
+    Map* myMap;
 };
+
+
 
 #endif // TRIANGLESURFACE_H
