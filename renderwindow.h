@@ -13,6 +13,7 @@
 #include "matrix4x4.h"
 #include "rollingball.h"
 #include "flatefil.h"
+#include "camera.h"
 
 class QOpenGLContext;
 class Shader;
@@ -48,6 +49,8 @@ private:
     gsml::Vector3d help;
     RollingBall* ball;
     FlateFil *Flate;
+     Camera* mCamera;
+
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;
@@ -64,6 +67,26 @@ private:
     QTimer *mRenderTimer;     //timer that drives the gameloop
     QElapsedTimer mTimeStart;       //time variable that reads the actual FPS
 
+
+    void checkCamInp();
+    float mCameraSpeed{0.05f};
+    float mCameraRotateSpeed{0.1f};
+    float mPlayerSpeed{0.05f};
+    int mMouseXlast{0};
+    int mMouseYlast{0};
+
+    bool inpW{false};
+    bool inpA{false};
+    bool inpS{false};
+    bool inpD{false};
+    bool inpQ{false};
+    bool inpE{false};
+    bool inpRMB{false};
+
+
+
+
+
     MainWindow *mMainWindow;    //points back to MainWindow to be able to put info in StatusBar
 
     class QOpenGLDebugLogger *mOpenGLDebugLogger{nullptr};
@@ -78,10 +101,11 @@ protected:
     //The QWindow that we inherit from has these functions to capture
     // mouse and keyboard. Uncomment to use
     //
-    //    void mousePressEvent(QMouseEvent *event) override{}
-    //    void mouseMoveEvent(QMouseEvent *event) override{}
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
-    //    void keyReleaseEvent(QKeyEvent *event) override{}
+    void keyReleaseEvent(QKeyEvent *event) override;
     //    void wheelEvent(QWheelEvent *event) override{}
 };
 

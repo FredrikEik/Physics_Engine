@@ -12,6 +12,7 @@ HEADERS += \
     Matrix4x4/matrix4x4.h \
     Matrix4x4/vector3d.h \
     Matrix4x4/vertex.h \
+    camera.h \
     flatefil.h \
     mainwindow.h \
     octahedronball.h \
@@ -25,6 +26,7 @@ HEADERS += \
 SOURCES += \
     Matrix4x4/matrix4x4.cpp \
     Matrix4x4/vertex.cpp \
+    camera.cpp \
     flatefil.cpp \
     main.cpp \
     mainwindow.cpp \

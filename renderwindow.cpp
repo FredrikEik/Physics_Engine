@@ -17,7 +17,6 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 3;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -45,7 +44,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 //    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
 //    ball = new RollingBall(3);
 //    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/testlas.txt");
+  //  Flate = new FlateFil("../VSIM101_H21_Rulleball_0/testlas.txt");
 
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -103,8 +102,9 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-
+    mCamera = new Camera;
     mShaderProgram = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
+
 
     //********************** Making the object to be drawn **********************
 
@@ -121,15 +121,22 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
+
+    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 600.f));
+    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
 //    surf2->init(mMatrixUniform);
 //    ball->init(mMatrixUniform);
     Flate->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
+
 }
 
 ///Called each frame - doing the rendering
 void RenderWindow::render()
 {
+    checkCamInp();
+    mCamera->update();
+
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
@@ -146,19 +153,19 @@ void RenderWindow::render()
     // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
     // must be here to update each frame - if static object, it could be set only once
 
-    gsmPMatrix->setToIdentity();
-    gsmVMatrix->setToIdentity();
-    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
-    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
-    //gsmPMatrix->print();
-    //qDebug() << *mPMatrix;
-    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
-    //gsml::Vector3d eye{2.5,2.5,2};
-    gsml::Vector3d eye{help.x,help.y,help.z};
-    gsml::Vector3d at{0 ,0 , 0};
-    gsml::Vector3d up{0,0,1};
-    gsmVMatrix->lookAt(eye, at, up);
+//    gsmPMatrix->setToIdentity();
+//    gsmVMatrix->setToIdentity();
+//    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
+//    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
+//    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+//    //gsmPMatrix->print();
+//    //qDebug() << *mPMatrix;
+//    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
+//    //gsml::Vector3d eye{2.5,2.5,2};
+//    gsml::Vector3d eye{help.x,help.y,help.z};
+//    gsml::Vector3d at{0 ,0 , 0};
+//    gsml::Vector3d up{0,0,1};
+//    gsmVMatrix->lookAt(eye, at, up);
 
     glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, gsmPMatrix->constData());
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
@@ -205,6 +212,8 @@ void RenderWindow::exposeEvent(QExposeEvent *)
         mRenderTimer->start(16);
         mTimeStart.start();
     }
+
+     mCamera->calculateProjectionMatrix();
 }
 
 //The way this is set up is that we start the clock before doing the draw call,
@@ -271,24 +280,125 @@ void RenderWindow::startOpenGLDebugger()
     }
 }
 
+void RenderWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    if (inpRMB)
+    {
+        //Using mMouseXYlast as deltaXY so we don't need extra variables
+        mMouseXlast = event->pos().x() - mMouseXlast;
+        mMouseYlast = event->pos().y() - mMouseYlast;
+
+        if (mMouseXlast != 0)
+            mCamera->yaw(mCameraRotateSpeed * mMouseXlast);
+        if (mMouseYlast != 0)
+            mCamera->pitch(mCameraRotateSpeed * mMouseYlast);
+    }
+    mMouseXlast = event->pos().x();
+    mMouseYlast = event->pos().y();
+}
+
+void RenderWindow::checkCamInp()
+{
+    mCamera->setSpeed(0.f);
+
+    if(inpRMB == true)
+    {
+        if (inpA)
+        {
+            mCamera->moveRight(-mCameraSpeed);
+            qDebug() << "Pressed A";
+        }
+        if (inpD)
+        {
+            mCamera->moveRight(mCameraSpeed);
+            qDebug() << "Pressed D";
+        }
+        if (inpW)
+        {
+            mCamera->setSpeed(mCameraSpeed);
+            qDebug() << "Pressed W";
+        }
+        if (inpS)
+        {
+            mCamera->setSpeed(-mCameraSpeed);
+            qDebug() << "Pressed S";
+        }
+        if (inpQ)
+        {
+            mCamera->updateHeigth(mCameraSpeed);
+            qDebug() << "Pressed Q";
+        }
+        if (inpE)
+        {
+            mCamera->updateHeigth(-mCameraSpeed);
+            qDebug() << "Pressed E";
+        }
+    }
+}
+
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
+    mCamera->setSpeed(0.f);
     if (event->key() == Qt::Key_Escape) //Shuts down whole program
     {
         mMainWindow->close();
     }
     if (event->key() == Qt::Key_A)
-        //mia.move(0.1,0,0);
-        help.x -= 0.1;
+    {
+        inpA = true;
+       // qDebug() << "Pressed A";
+    }
     if (event->key() == Qt::Key_D)
-        help.x += 0.1;
+    {
+        inpD = true;
+        //qDebug() << "Pressed D";
+    }
     if (event->key() == Qt::Key_W)
-        help.y += 0.1;
+    {
+        inpW = true;
+        //qDebug() << "Pressed W";
+    }
     if (event->key() == Qt::Key_S)
-        help.y -= 0.1;
+    {
+        inpS = true;
+        //qDebug() << "Pressed S";
+    }
     if (event->key() == Qt::Key_Q)
-        help.z += 0.1;
-    if (event->key() == Qt::Key_Z)
-        help.z -= 0.1;
-    qDebug() << help.x << help.y << help.z;
+    {
+        inpQ = true;
+        //qDebug() << "Pressed Q";
+    }
+    if (event->key() == Qt::Key_E)
+    {
+        inpE = true;
+        //qDebug() << "Pressed E";
+    }
+}
+
+void RenderWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_A)
+        inpA = false;
+    if (event->key() == Qt::Key_D)
+        inpD = false;
+    if (event->key() == Qt::Key_W)
+        inpW = false;
+    if (event->key() == Qt::Key_S)
+        inpS = false;
+    if (event->key() == Qt::Key_Q)
+        inpQ = false;
+    if (event->key() == Qt::Key_E)
+        inpE = false;
+}
+
+void RenderWindow::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+        inpRMB = true;
+}
+
+void RenderWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+        inpRMB = false;
 }

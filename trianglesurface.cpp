@@ -50,6 +50,8 @@ void TriangleSurface::readFile(std::string filnavn)
     }
 }
 
+
+
 void TriangleSurface::writeFile(std::string filnavn)
 {
     std::ofstream ut;
