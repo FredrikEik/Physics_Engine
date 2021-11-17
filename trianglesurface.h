@@ -3,17 +3,7 @@
 #include <iostream>
 #include "visualobject.h"
 #include "vector3d.h"
-
-struct Map
-{
-    const int X;
-    const int Y;
-    Map(int dX, int dY) :X(dX), Y(dY)
-    {
-        std::vector<gsml::Vector3d> map[X][Y];
-    };
-    std::vector<gsml::Vector3d> map[X][Y];;
-};
+#include "math.h"
 
 class TriangleSurface : public VisualObject
 {
@@ -40,7 +30,9 @@ private:
     gsml::Vector2d MapMin;
     gsml::Vector2d MapMax;
     int n = 5;
-    Map* myMap;
+    static const int X = 200; // (Max.x - Min.x) / n
+    static const int Y = 294; // (Max.y - Min.y) / n
+    std::vector<gsml::Vector3d> map[X][Y];
 };
 
 

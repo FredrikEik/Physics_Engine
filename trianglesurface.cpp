@@ -25,20 +25,10 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
     readPoints(filnavn);
     //qDebug() << xMin << xMax << yMin << yMax;
 
-
     float tempX = MapMin.x + MapMax.x;
     tempX = tempX/2;
     float tempY = MapMin.y + MapMax.y;
     tempY = tempY/2;
-
-    float temp = MapMax.x-MapMin.x;
-    temp = temp/n;
-    int X = static_cast<int>(temp);
-    temp = MapMax.y-MapMin.y;
-    temp = temp/n;
-    int Y = static_cast<int>(temp);
-    myMap = new struct Map(X, Y);
-
 
     //    MapMin.x = MapMin.x - tempX;
     //    MapMax.x = MapMax.x - tempX;
@@ -64,74 +54,70 @@ void TriangleSurface::readPoints(std::string filnavn)
 
     if (inn.is_open())
     {
-        int n;
+        int m;
         gsml::Vector3d temp;
-        inn >> n;
-        for (int i=0; i<n; i++)
-        {
+        inn >> m;
+        for (int i=0; i<m; i++){
             inn >> temp.x;
             inn >> temp.y;
             inn >> temp.z;
-            points.push_back(temp);
+
+            float fX = temp.x - 614580.f;
+            fX = fX/n;
+            fX = std::floor(fX);
+            float fY = (temp.y - 6757290.f);
+            fY = fY/n;
+            fY = std::floor(fY);
+            int tempX = static_cast<int>(fX);
+            int tempY = static_cast<int>(fY);
+            map[tempX][tempY].push_back(temp);
+
+            if(temp.x < xMin)
+                xMin = temp.x;
+            if(temp.x > xMax)
+                xMax = temp.x;
+            if(temp.y < yMin)
+                yMin = temp.y;
+            if(temp.y > yMax)
+                yMax = temp.y;
         }
         inn.close();
-    }
-
-    for(int i{0}; i<(int)points.size(); i++){
-        if(points[i].x < xMin)
-            xMin = points[i].x;
-        if(points[i].x > xMax)
-            xMax = points[i].x;
-        if(points[i].y < yMin)
-            yMin = points[i].y;
-        if(points[i].y > yMax)
-            yMax = points[i].y;
     }
     MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
     MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
 }
 
 void TriangleSurface::makePlain()
-{
-    float temp = MapMax.x-MapMin.x;
-    temp = temp/n;
-    int X = static_cast<int>(temp);
-    temp = MapMax.y-MapMin.y;
-    temp = temp/n;
-    int Y = static_cast<int>(temp);
-    std::vector<gsml::Vector3d> myMap[X][Y];
-
+{   
     float f = 1;
-    for(auto x = MapMin.x; x<MapMax.x; x+=n)
-        for(auto y = MapMin.y; y<MapMax.y; y+=n)
+    for(float x = 0; x<static_cast<float>(X); x++)
+        for(float y =0; y<static_cast<float>(Y); y++)
         {
-            float z = calcHeight(x, y);
-            mVertices.push_back(gsml::Vertex{  x,   y, z,   f, 0, 0});
-            mVertices.push_back(gsml::Vertex{x+n,   y, z,   0, f, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+n, z,   0, 0, f});
-            mVertices.push_back(gsml::Vertex{  x, y+n, z,   0, 0, f});
-            mVertices.push_back(gsml::Vertex{x+n,   y, z,   0, f, 0});
-            mVertices.push_back(gsml::Vertex{x+n, y+n, z,   f, 0, 0});
+            mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(x, y),   f, 0, 0});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1, y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1, y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(x, y+1),   f, 0, 0});
         }
 }
 
 float TriangleSurface::calcHeight(float x, float y)
 {
-    std::vector<float> mH;
+    int xInt = static_cast<int>(x);
+    int yInt = static_cast<int>(y);
     float z = 0;
-    for(auto i{0}; i<(int)points.size(); i++)
-    {
-        if(points[i].x >= x && points[i].x < (x+n))
-            if(points[i].y >= y && points[i].y < (y+n))
-                mH.push_back(points[i].z);
-    }
-    int hSize = (int)mH.size();
-    if(hSize>0){
-        for(auto i{0}; i<hSize; i++)
-            z += mH[i];
-        z = z/hSize;}
-    z = z-500;
+    if(map[xInt][yInt].empty())
+        z = 500;
+    else{
+        for(auto i = map[xInt][yInt].begin(); i<map[xInt][yInt].end(); i++)
+        {
+            z += i->z;
+        }
+        if(z>0)
+            z = z/map[xInt][yInt].size();}
 
+    z = z-500;
     return z;
 }
 
