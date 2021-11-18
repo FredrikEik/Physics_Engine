@@ -36,7 +36,7 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
     //    MapMax.y = MapMax.y - tempY;
 
     makePlain();
-    mMatrix.setPosition(-tempX, -tempY, 0);
+    mMatrix.setPosition(-X/2, -Y/2, 0);
     //move(-tempX, -tempY, 0);
 }
 
@@ -57,6 +57,7 @@ void TriangleSurface::readPoints(std::string filnavn)
         int m;
         gsml::Vector3d temp;
         inn >> m;
+        mVertices.reserve(m);
         for (int i=0; i<m; i++){
             inn >> temp.x;
             inn >> temp.y;
@@ -90,15 +91,15 @@ void TriangleSurface::readPoints(std::string filnavn)
 void TriangleSurface::makePlain()
 {   
     float f = 1;
-    for(float x = 0; x<static_cast<float>(X); x++)
-        for(float y =0; y<static_cast<float>(Y); y++)
+    for(float x = 0; x<static_cast<float>(X)-1; x+=1)
+        for(float y =0; y<static_cast<float>(Y)-1; y+=1)
         {
-            mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(x, y),   f, 0, 0});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1, y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(x, y+1),   0, 0, f});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(x, y+1),   0, 0, f});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1, y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(x, y+1),   f, 0, 0});
+            mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, 0, 0});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(  x, y+1),   f, 0, 0});
         }
 }
 
@@ -107,17 +108,19 @@ float TriangleSurface::calcHeight(float x, float y)
     int xInt = static_cast<int>(x);
     int yInt = static_cast<int>(y);
     float z = 0;
-    if(map[xInt][yInt].empty())
-        z = 500;
-    else{
-        for(auto i = map[xInt][yInt].begin(); i<map[xInt][yInt].end(); i++)
-        {
-            z += i->z;
-        }
-        if(z>0)
-            z = z/map[xInt][yInt].size();}
+    if(!map[xInt][yInt].empty())
+    {
 
-    z = z-500;
+        for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
+        {
+            z += (*it).z;
+        }
+        z = z/map[xInt][yInt].size();
+    }
+    else
+        z = 550;
+
+    z = z-600;
     return z;
 }
 

@@ -116,7 +116,7 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
 
 
-    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 600.f));
+    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 5.f));
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
