@@ -69,7 +69,7 @@ private:
 
 
     void checkCamInp();
-    float mCameraSpeed{0.05f};
+    float mCameraSpeed{0.5f};
     float mCameraRotateSpeed{0.1f};
     float mPlayerSpeed{0.05f};
     int mMouseXlast{0};
@@ -81,7 +81,10 @@ private:
     bool inpD{false};
     bool inpQ{false};
     bool inpE{false};
+    bool inpC{false};
+    bool inpX{false};
     bool inpRMB{false};
+    bool inpLMB{false};
 
 
 
