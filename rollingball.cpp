@@ -88,15 +88,13 @@ void RollingBall::move(float dt)
     gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
     for (size_t i=0; i<vertices.size(); i++)
     {
-        if(i<=2)
-            m_index = 1;
-        else
-            m_index = 2;
         //qDebug() << "ground size: " << vertices.size();
         gsml::Vector3d p1 = vertices[i].getXYZ();
         gsml::Vector3d p2 = vertices[++i].getXYZ();
         gsml::Vector3d p3 = vertices[++i].getXYZ();
         //qDebug() << "p1: " << p1.x << p1.y << p1.z << "p2: " << p2.x << p2.y << p2.z << "p3: " << p3.x << p3.y << p3.z;
+
+        m_index = static_cast<int>(i+1) /3;
 
         bary = barycentricCoords(gsml::Vector2d(p1.x, p1.y),
                                  gsml::Vector2d(p2.x, p2.y),

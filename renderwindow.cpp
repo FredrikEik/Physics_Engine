@@ -121,10 +121,11 @@ void RenderWindow::init()
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
 
-    //ball = new RollingBall(3);
-    //dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    ball = new RollingBall(3);
+    dynamic_cast<RollingBall*>(ball)->setSurface(surf);
+    ball->move(0.f, 0.f, 2.f);
     surf->init(mMatrixUniform);
-    //    ball->init(mMatrixUniform);
+    ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
 }
 
@@ -173,8 +174,8 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf->draw();
-    //ball->move(0.017f);
-    //    ball->draw();
+    ball->move(0.017f);
+    ball->draw();
 
 
     xyz.draw();
@@ -297,7 +298,7 @@ void RenderWindow::mouseMoveEvent(QMouseEvent *event)
         mMouseYlast = event->pos().y() - mMouseYlast;
 
         if (mMouseXlast != 0)
-            mCamera->yaw(mCameraRotateSpeed * mMouseXlast);
+            mCamera->yaw(-mCameraRotateSpeed * mMouseXlast);
         if (mMouseYlast != 0)
             mCamera->pitch(mCameraRotateSpeed * mMouseYlast);
     }
@@ -312,17 +313,17 @@ void RenderWindow::checkCamInp()
     if(inpRMB == true)
     {
         if (inpA)
-            mCamera->moveRight(-mCameraSpeed);
-        if (inpD)
             mCamera->moveRight(mCameraSpeed);
-        if (inpW)
-            mCamera->setSpeed(mCameraSpeed);
-        if (inpS)
-            mCamera->setSpeed(-mCameraSpeed);
+        if (inpD)
+            mCamera->moveRight(-mCameraSpeed);
         if (inpQ)
-            mCamera->updateHeigth(mCameraSpeed);
+            mCamera->setSpeed(mCameraSpeed);
         if (inpE)
+            mCamera->setSpeed(-mCameraSpeed);
+        if (inpW)
             mCamera->updateHeigth(-mCameraSpeed);
+        if (inpS)
+            mCamera->updateHeigth(mCameraSpeed);
     }
 }
 

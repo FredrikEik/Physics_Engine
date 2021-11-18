@@ -67,7 +67,7 @@ void Camera::update()
 
 void Camera::calculateProjectionMatrix()
 {
-    mProjectionMatrix.perspective(90, 1, 5, 100);
+    mProjectionMatrix.perspective(90, 1, 1, 500);
 }
 
 void Camera::setPosition(const gsml::Vector3d &position)

@@ -19,7 +19,6 @@ public:
     void setPosition(gsml::Vector3d v);
     void setHeight(float z);
     void heightAt();
-
 protected:
     VisualObject* triangle_surface;
 private:
@@ -33,7 +32,5 @@ private:
     gsml::Vector3d oldVelocity = {0,0,0};
     int m_index{0};
     int old_index{0};
-
-
 };
 #endif // ROLLINGBALL_H

@@ -74,7 +74,7 @@ private:
 
     void startOpenGLDebugger();
 
-    float mCameraSpeed{0.05f};
+    float mCameraSpeed{0.5f};
     float mCameraRotateSpeed{0.1f};
     float mPlayerSpeed{0.05f};
     int mMouseXlast{0};
