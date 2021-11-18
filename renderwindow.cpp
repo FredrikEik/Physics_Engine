@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 #include "rollingball.h"
+//nothing
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
