@@ -122,8 +122,6 @@ void TriangleSurface::readFile(std::string filnavn)
     double squareMinX = xMinimum;
     double squareMaxX = squareMinX +xOffset;
 
-       qDebug() << "squareminx" << squareMinX << "squareminy" << squareMinY;
-
     for (double j=squareMinY; j<=yMaximum-yOffset; j+=yOffset){
         //qDebug() << "hei";
 
@@ -135,9 +133,9 @@ void TriangleSurface::readFile(std::string filnavn)
             squarecounter++;
             for ( int k = 0 ; k<mVertices.size(); k++){
                 if ( mVertices[k].getXYZ().x < squareMaxX &&
-                     mVertices[k].getXYZ().x > squareMinX &&
+                     mVertices[k].getXYZ().x > i &&
                      mVertices[k].getXYZ().y < squareMaxY &&
-                     mVertices[k].getXYZ().y > squareMinY){
+                     mVertices[k].getXYZ().y > j){
                     ++numberofPointsInside;
 
                     tempX += mVertices[k].getXYZ().x;
@@ -159,8 +157,8 @@ void TriangleSurface::readFile(std::string filnavn)
                 vertex2.set_xyz(tempX, tempY, tempZ);
             }
 
-            qDebug() << squarecounter << xOffset << yOffset;
-            qDebug () << numberofPointsInside;
+            //qDebug() << squarecounter << xOffset << yOffset;
+             qDebug () << numberofPointsInside;
             //qDebug() << vertex2.getXYZ().x << vertex2.getXYZ().y << vertex2.getXYZ().z;
 
             Vertices.push_back(vertex2);
