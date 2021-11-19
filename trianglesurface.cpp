@@ -48,7 +48,6 @@ void TriangleSurface::readFile(std::string filnavn)
     //    float a[245592];
     //    float b[245592];
     //    float c[245592];
-    gsml::Vertex vertex;
 
     if (inn.is_open())
     {
@@ -110,6 +109,10 @@ void TriangleSurface::readFile(std::string filnavn)
         }
         inn.close();
     }
+
+        //minMaxScale();
+
+
     int squarecounter=0;
     float step = 10;
     float xOffset = (xMaximum-xMinimum)/step;
@@ -361,6 +364,16 @@ void TriangleSurface::construct_plane()
             mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
             mVertices.push_back(gsml::Vertex{x1,y1,0,0,0.5,0});
         }
+    }
+}
+
+void TriangleSurface::minMaxScale()
+{
+    for(int index=0; index<=mVertices.size(); index++){
+        mVertices[index].set_xyz((mVertices[index].getXYZ().x-xMinimum)*(valueMax-valueMin)/(xMaximum-xMinimum),
+                                 (mVertices[index].getXYZ().y-yMinimum)*(valueMax-valueMin)/(yMaximum-yMinimum),
+                                 mVertices[index].getXYZ().z);
+
     }
 }
 
