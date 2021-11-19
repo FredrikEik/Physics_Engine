@@ -3,8 +3,8 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1.5,1.5,3);
-    mScale.scale(0.25,0.25,0.25);
+    //mPosition.translate(1.5,1.5,3);
+    //mScale.scale(0.25,0.25,0.25);
     mMatrix = mPosition * mScale;
 }
 RollingBall::~RollingBall()
@@ -81,10 +81,22 @@ void RollingBall::move(float dx, float dy, float dz)
     mMatrix = mPosition * mScale;
 }
 
+void RollingBall::setSurface(VisualObject* surface)
+{
+    triangle_surface = surface;
+    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
+    gsml::Vector3d v1 =vertices.at(3).getXYZ();
+    gsml::Vector3d v2 =vertices.at(4).getXYZ();
+    gsml::Vector3d v3 =vertices.at(5).getXYZ();
+    gsml::Vector3d pos = (v1+v2+v3)*0.333;
+    pos.z += 0.5;
+    setPosition(pos);
+}
+
 void RollingBall::move(float dt)
 {
     gsml::Vector3d bary;
-    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
+    //std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
     gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
     for (size_t i=0; i<vertices.size(); i++)
     {

@@ -14,7 +14,7 @@ public:
     void move(float dt) override;
     void move(float dx, float dy, float dz) override;
     void baryMove(float x, float y, float z);
-    void setSurface(VisualObject* surface) { triangle_surface = surface; }
+    void setSurface(VisualObject* surface); //{ triangle_surface = surface; }
     gsml::Vector3d Get_position();
     void setPosition(gsml::Vector3d v);
     void setHeight(float z);
@@ -32,5 +32,6 @@ private:
     gsml::Vector3d oldVelocity = {0,0,0};
     int m_index{0};
     int old_index{0};
+    std::vector<gsml::Vertex> vertices;
 };
 #endif // ROLLINGBALL_H

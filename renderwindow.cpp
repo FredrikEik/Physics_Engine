@@ -116,7 +116,9 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
 
 
-    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 5.f));
+    mCamera->setPosition(gsml::Vector3d(10.f, 10.f, 50.f));
+    mCamera->pitch(90);
+    //mCamera->yaw(180);
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
@@ -316,14 +318,14 @@ void RenderWindow::checkCamInp()
             mCamera->moveRight(mCameraSpeed);
         if (inpD)
             mCamera->moveRight(-mCameraSpeed);
-        if (inpQ)
-            mCamera->setSpeed(mCameraSpeed);
-        if (inpE)
-            mCamera->setSpeed(-mCameraSpeed);
         if (inpW)
-            mCamera->updateHeigth(-mCameraSpeed);
+            mCamera->setSpeed(mCameraSpeed);
         if (inpS)
+            mCamera->setSpeed(-mCameraSpeed);
+        if (inpQ)
             mCamera->updateHeigth(mCameraSpeed);
+        if (inpE)
+            mCamera->updateHeigth(-mCameraSpeed);
     }
 }
 

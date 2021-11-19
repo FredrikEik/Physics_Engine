@@ -55,19 +55,19 @@ void Camera::update()
     mPitchMatrix.setToIdentity();
 
     mPitchMatrix.rotate(mPitch, 1, 0, 0);
-    mYawMatrix.rotate(mYaw, 0, 1, 0);
+    mYawMatrix.rotate(mYaw, 0, 0, 1);
     //mPitchMatrix.rotateX(mPitch);
     //mYawMatrix.rotateY(mYaw);
 
-    mPosition = mPosition - (mForward * mSpeed);
+    mPosition = mPosition + (mForward * mSpeed);
 
     mViewMatrix = mPitchMatrix* mYawMatrix;
-    mViewMatrix.translate(-mPosition.x, -mPosition.y, -mPosition.z);
+    mViewMatrix.translate(mPosition.x, mPosition.y, mPosition.z);
 }
 
 void Camera::calculateProjectionMatrix()
 {
-    mProjectionMatrix.perspective(90, 1, 1, 500);
+    mProjectionMatrix.perspective(60, 1, 1, 500);
 }
 
 void Camera::setPosition(const gsml::Vector3d &position)
@@ -82,7 +82,7 @@ void Camera::setSpeed(float speed)
 
 void Camera::updateHeigth(float deltaHeigth)
 {
-    mPosition.y += deltaHeigth;
+    mPosition.z += deltaHeigth;
 }
 
 void Camera::moveRight(float delta)

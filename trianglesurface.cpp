@@ -25,18 +25,9 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
     readPoints(filnavn);
     //qDebug() << xMin << xMax << yMin << yMax;
 
-    float tempX = MapMin.x + MapMax.x;
-    tempX = tempX/2;
-    float tempY = MapMin.y + MapMax.y;
-    tempY = tempY/2;
-
-    //    MapMin.x = MapMin.x - tempX;
-    //    MapMax.x = MapMax.x - tempX;
-    //    MapMin.y = MapMin.y - tempY;
-    //    MapMax.y = MapMax.y - tempY;
-
     makePlain();
-    mMatrix.setPosition(-X/2, -Y/2, 0);
+    //move(-X/2, -Y/2, 0);
+    //mMatrix.setPosition(-X/2, -Y/2, 0);
     //move(-tempX, -tempY, 0);
 }
 
@@ -116,11 +107,13 @@ float TriangleSurface::calcHeight(float x, float y)
             z += (*it).z;
         }
         z = z/map[xInt][yInt].size();
+
     }
     else
-        z = 550;
+        z = 560;
 
-    z = z-600;
+    z = z-550;
+    z = z*0.2;
     return z;
 }
 
