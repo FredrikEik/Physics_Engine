@@ -80,9 +80,9 @@ void RollingBall::setSurface(VisualObject* surface)
 {
     FalteFil = surface;
     vertices = FalteFil->get_vertices();
-    gsml::Vector3d v1 =vertices.at(0).getXYZ();
-    gsml::Vector3d v2 =vertices.at(1).getXYZ();
-    gsml::Vector3d v3 =vertices.at(2).getXYZ();
+    gsml::Vector3d v1 =vertices.at(10205).getXYZ();
+    gsml::Vector3d v2 =vertices.at(10206).getXYZ();
+    gsml::Vector3d v3 =vertices.at(10207).getXYZ();
     gsml::Vector3d pos = (v1+v2+v3)*0.333;
     setPosition(pos);
 
@@ -149,7 +149,7 @@ void RollingBall::move(float dt)
                 mVelocity = m_normal * gsml::Vector3d::dot(oldVelocity, m_normal);
                 mVelocity = oldVelocity - mVelocity * 2;
                 mVelocity = mVelocity * friction;
-                // qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+                 qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             }
             // Oppdater gammel normal og indeks
             oldVelocity = mVelocity;

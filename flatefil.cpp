@@ -109,7 +109,7 @@ float FlateFil::calcHeight(float x, float y)
     else
         z = 560;
     z = z-550;
-    z = z*0.2;
+    z = z*0.35;
     return z;
 
 

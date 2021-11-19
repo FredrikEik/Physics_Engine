@@ -69,8 +69,8 @@ private:
 
 
     void checkCamInp();
-    float mCameraSpeed{0.2f};
-    float mCameraRotateSpeed{0.1f};
+    float mCameraSpeed{0.5f};
+    float mCameraRotateSpeed{0.05f};
     float mPlayerSpeed{0.05f};
     int mMouseXlast{0};
     int mMouseYlast{0};
