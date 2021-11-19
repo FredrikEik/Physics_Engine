@@ -114,14 +114,14 @@ void TriangleSurface::readFile(std::string filnavn)
     float step = 10;
     float xOffset = (xMaximum-xMinimum)/step;
     float yOffset = (yMaximum-yMinimum)/step;
-    float squareMinY = yMinimum;
-    float squareMaxY = squareMinY+yOffset;
-    float squareMinX = xMinimum;
-    float squareMaxX = squareMinX +xOffset;
+    double squareMinY = yMinimum;
+    double squareMaxY = squareMinY+yOffset;
+    double squareMinX = xMinimum;
+    double squareMaxX = squareMinX +xOffset;
 
        qDebug() << "squareminx" << squareMinX << "squareminy" << squareMinY;
 
-    for (double j=squareMinY; j<=yMaximum; j+=yOffset){
+    for (double j=squareMinY; j<=yMaximum-yOffset; j+=yOffset){
         //qDebug() << "hei";
 
         for (double i =squareMinX; i<= xMaximum-xOffset; i+=xOffset){
