@@ -90,7 +90,7 @@ void RenderWindow::init()
     glEnable(GL_DEPTH_TEST);    //enables depth sorting - must use GL_DEPTH_BUFFER_BIT in glClear
     //    glEnable(GL_CULL_FACE);     //draws only front side of models - usually what you want -
     glClearColor(0.4f, 0.4f, 0.4f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
-    glClearColor(1.0f, 1.0f, 1.0f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
+    //glClearColor(1.0f, 1.0f, 1.0f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
@@ -116,8 +116,8 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
 
 
-    mCamera->setPosition(gsml::Vector3d(10.f, 10.f, 50.f));
     mCamera->pitch(90);
+    mCamera->setPosition(gsml::Vector3d(0.f, 0.f, 50.f));
     //mCamera->yaw(180);
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
@@ -125,7 +125,6 @@ void RenderWindow::init()
 
     ball = new RollingBall(3);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf);
-    ball->move(0.f, 0.f, 2.f);
     surf->init(mMatrixUniform);
     ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
@@ -176,6 +175,7 @@ void RenderWindow::render()
     // actual draw call
     // demo
     surf->draw();
+
     ball->move(0.017f);
     ball->draw();
 
@@ -302,7 +302,7 @@ void RenderWindow::mouseMoveEvent(QMouseEvent *event)
         if (mMouseXlast != 0)
             mCamera->yaw(-mCameraRotateSpeed * mMouseXlast);
         if (mMouseYlast != 0)
-            mCamera->pitch(mCameraRotateSpeed * mMouseYlast);
+            mCamera->pitch(-mCameraRotateSpeed * mMouseYlast);
     }
     mMouseXlast = event->pos().x();
     mMouseYlast = event->pos().y();

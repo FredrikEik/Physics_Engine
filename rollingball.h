@@ -4,6 +4,17 @@
 #include "octahedronball.h"
 #include "trianglesurface.h"
 
+//struct Physics
+//{
+//    float lilleG = 9.81;
+//    float friction = 0.8;
+//    float mass = 1;
+//    gsml::Vector3d mAcceleration{0.0, 0.0, -lilleG};
+//    gsml::Vector3d mForce{0.0,0.0,0.0};
+//    gsml::Vector3d mVelocity = {0,0,0};
+//    gsml::Vector3d oldVelocity = {0,0,0};
+//};
+
 class RollingBall : public OctahedronBall
 {
 public:
@@ -24,14 +35,21 @@ protected:
 private:
     float lilleG = 9.81;
     float friction = 0.8;
+    float mass = 1;
     gsml::Vector3d mAcceleration{0.0, 0.0, -lilleG};
-    gsml::Vector3d m;
-    gsml::Vector3d m_normal{0.0, 0.0, 1.0};
-    gsml::Vector3d old_normal{0.0, 0.0, 1.0};
+    gsml::Vector3d mForce{0.0,0.0,0.0};
     gsml::Vector3d mVelocity = {0,0,0};
     gsml::Vector3d oldVelocity = {0,0,0};
+    //Physics* ph;
+    gsml::Vector3d m;
+
+    gsml::Vector3d m_normal{0.0, 0.0, 1.0};
+    gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int m_index{0};
     int old_index{0};
     std::vector<gsml::Vertex> vertices;
 };
+
+
+
 #endif // ROLLINGBALL_H

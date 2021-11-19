@@ -35,7 +35,7 @@ protected:
     // Flyttet fra Disc 12/2/19
     gsml::Matrix4x4 mPosition;
     gsml::Matrix4x4 mRotation;
-    gsml::Vector3d mVelocity;
+    //gsml::Vector3d mVelocity;
     //
     gsml::Matrix4x4 mScale;
 };

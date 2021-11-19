@@ -35,9 +35,9 @@ public:
     gsml::Vector3d right() const;
 
 private:
-    gsml::Vector3d mForward{0.f, 0.f, -1.f};
+    gsml::Vector3d mForward{0.f, 1.f, 0.f};
     gsml::Vector3d mRight{1.f, 0.f, 0.f};
-    gsml::Vector3d mUp{0.f, 1.f, 0.f};
+    gsml::Vector3d mUp{0.f, 0.f, 1.f};
 
     gsml::Vector3d mPosition{0.f, 0.f, 0.f};
     float mPitch{0.f};

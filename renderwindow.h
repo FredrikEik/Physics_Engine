@@ -41,8 +41,8 @@ private slots:
 private:
     void init();
     XYZ xyz;
-    //TriangleSurface surf;
-    TriangleSurface* surf;
+    //TriangleSurface* surf;
+    VisualObject* surf;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
