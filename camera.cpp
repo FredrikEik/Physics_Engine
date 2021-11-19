@@ -55,7 +55,7 @@ void Camera::update()
     mPitchMatrix.setToIdentity();
 
     mPitchMatrix.rotate(mPitch, 1, 0, 0);
-    mYawMatrix.rotate(mYaw, 0, 1, 0);
+    mYawMatrix.rotate(mYaw, 0, 0, 1);
     //mPitchMatrix.rotateX(mPitch);
     //mYawMatrix.rotateY(mYaw);
 
@@ -67,7 +67,7 @@ void Camera::update()
 
 void Camera::calculateProjectionMatrix()
 {
-    mProjectionMatrix.perspective(90, 1, 5, 100);
+    mProjectionMatrix.perspective(60, 1, 1, 100);
 }
 
 void Camera::setPosition(const gsml::Vector3d &position)

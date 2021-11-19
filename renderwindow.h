@@ -48,8 +48,8 @@ private:
     bool mInitialized;
     gsml::Vector3d help;
     RollingBall* ball;
-    FlateFil *Flate;
-     Camera* mCamera;
+    VisualObject *Flate;
+    Camera* mCamera;
 
 
     Shader *mShaderProgram;
@@ -69,7 +69,7 @@ private:
 
 
     void checkCamInp();
-    float mCameraSpeed{0.5f};
+    float mCameraSpeed{0.2f};
     float mCameraRotateSpeed{0.1f};
     float mPlayerSpeed{0.05f};
     int mMouseXlast{0};

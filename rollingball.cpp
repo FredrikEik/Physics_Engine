@@ -2,8 +2,9 @@
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
-    mPosition.translate(1.5,1.5,3);
+    //mPosition.translate(1.5,1.5,10);
     mScale.scale(0.25,0.25,0.25);
+
 
 }
 RollingBall::~RollingBall()
@@ -75,24 +76,31 @@ void RollingBall::setHeight(float z)
     }
 }
 
+void RollingBall::setSurface(VisualObject* surface)
+{
+    FalteFil = surface;
+    vertices = FalteFil->get_vertices();
+    gsml::Vector3d v1 =vertices.at(0).getXYZ();
+    gsml::Vector3d v2 =vertices.at(1).getXYZ();
+    gsml::Vector3d v3 =vertices.at(2).getXYZ();
+    gsml::Vector3d pos = (v1+v2+v3)*0.333;
+    setPosition(pos);
+
+}
 
 void RollingBall::move(float dt)
 {
     gsml::Vector3d bary;
-    std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
     gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
     for (size_t i=0; i<vertices.size(); i++)
     {
-     // indekser til flaten
-        if(i<=2)
-            m_index = 1;
-        else
-            m_index = 2;
 
         // Finn trekantens vertices v0 , v1 , v2
         gsml::Vector3d p1 = vertices[i].getXYZ();
         gsml::Vector3d p2 = vertices[++i].getXYZ();
         gsml::Vector3d p3 = vertices[++i].getXYZ();
+
+        m_index = static_cast<int>(i+1)/3;
 
         //        // Finn ballens posisjon i xy=planet
         //        // Soek etter triangel som ballen er pa na
@@ -102,7 +110,7 @@ void RollingBall::move(float dt)
                                  gsml::Vector2d(p3.x, p3.y),
                                  ballPosXY);
 
-      //if( /* barysentriske koordinater mellom 0 og 1 */ )
+        //if( /* barysentriske koordinater mellom 0 og 1 */ )
         if (bary.x >=0 && bary.y >=0 && bary.z >=0)
         {
             // beregne normal
@@ -141,7 +149,7 @@ void RollingBall::move(float dt)
                 mVelocity = m_normal * gsml::Vector3d::dot(oldVelocity, m_normal);
                 mVelocity = oldVelocity - mVelocity * 2;
                 mVelocity = mVelocity * friction;
-                qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+                // qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             }
             // Oppdater gammel normal og indeks
             oldVelocity = mVelocity;

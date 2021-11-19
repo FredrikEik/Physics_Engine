@@ -11,18 +11,9 @@ FlateFil::FlateFil(std::string filnavn) : VisualObject()
     readPoints(filnavn);
     //qDebug() << xMin << xMax << yMin << yMax;
 
-    float tempX = MapMin.x + MapMax.x;
-    tempX = tempX/2;
-    float tempY = MapMin.y + MapMax.y;
-    tempY = tempY/2;
-
-    //    MapMin.x = MapMin.x - tempX;
-    //    MapMax.x = MapMax.x - tempX;
-    //    MapMin.y = MapMin.y - tempY;
-    //    MapMax.y = MapMax.y - tempY;
 
     makePlain();
-    mMatrix.setPosition(-X/2, -Y/2, 0);
+  // mMatrix.setPosition(-X/2, -Y/2, 0);
     //move(-tempX, -tempY, 0);
 
 }
@@ -30,16 +21,25 @@ FlateFil::FlateFil(std::string filnavn) : VisualObject()
 void FlateFil::makePlain()
 {
     float f = 1;
-      for(float x = 0; x<static_cast<float>(X)-1; x+=1)
-          for(float y =0; y<static_cast<float>(Y)-1; y+=1)
-          {
-              mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, 0, 0});
-              mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
-              mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-              mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-              mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
-              mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(  x+1, y+1),   f, 0, 0});
-          }
+    for(float x = 0; x<static_cast<float>(X)-1; x+=1)
+        for(float y =0; y<static_cast<float>(Y)-1; y+=1)
+        {
+            mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, f, 0});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, f});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(  x+1, y+1),   f, f, 0});
+
+            //              mVertices.push_back(gsml::Vertex{  x,   calcHeight(  x,   y), y,   f, 0, 0});
+            //              mVertices.push_back(gsml::Vertex{x+1,   calcHeight(x+1,   y), y,   0, f, 0});
+            //              mVertices.push_back(gsml::Vertex{  x, calcHeight(  x, y+1), y+1,   0, 0, f});
+            //              mVertices.push_back(gsml::Vertex{  x, calcHeight(  x, y+1), y+1,   0, 0, f});
+            //              mVertices.push_back(gsml::Vertex{x+1,   calcHeight(x+1,   y), y,   0, f, 0});
+            //              mVertices.push_back(gsml::Vertex{x+1, calcHeight(  x+1, y+1), y+1,   f, 0, 0});
+        }
+
+
 }
 
 
@@ -52,42 +52,42 @@ FlateFil::~FlateFil()
 void FlateFil::readPoints(std::string filnavn)
 {
     std::ifstream inn;
-      inn.open(filnavn.c_str());
+    inn.open(filnavn.c_str());
 
-      if (inn.is_open())
-      {
-          int m;
-          gsml::Vector3d temp;
-          inn >> m;
-          mVertices.reserve(m);
-          for (int i=0; i<m; i++){
-              inn >> temp.x;
-              inn >> temp.y;
-              inn >> temp.z;
+    if (inn.is_open())
+    {
+        int m;
+        gsml::Vector3d temp;
+        inn >> m;
+        mVertices.reserve(m);
+        for (int i=0; i<m; i++){
+            inn >> temp.x;
+            inn >> temp.y;
+            inn >> temp.z;
 
-              float fX = temp.x - 614580.f;
-              fX = fX/n;
-              fX = std::floor(fX);
-              float fY = (temp.y - 6757290.f);
-              fY = fY/n;
-              fY = std::floor(fY);
-              int tempX = static_cast<int>(fX);
-              int tempY = static_cast<int>(fY);
-              map[tempX][tempY].push_back(temp);
+            float fX = temp.x - 614580.f;
+            fX = fX/n;
+            fX = std::floor(fX);
+            float fY = (temp.y - 6757290.f);
+            fY = fY/n;
+            fY = std::floor(fY);
+            int tempX = static_cast<int>(fX);
+            int tempY = static_cast<int>(fY);
+            map[tempX][tempY].push_back(temp);
 
-              if(temp.x < xMin)
-                  xMin = temp.x;
-              if(temp.x > xMax)
-                  xMax = temp.x;
-              if(temp.y < yMin)
-                  yMin = temp.y;
-              if(temp.y > yMax)
-                  yMax = temp.y;
-          }
-          inn.close();
-      }
-      MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
-      MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
+            if(temp.x < xMin)
+                xMin = temp.x;
+            if(temp.x > xMax)
+                xMax = temp.x;
+            if(temp.y < yMin)
+                yMin = temp.y;
+            if(temp.y > yMax)
+                yMax = temp.y;
+        }
+        inn.close();
+    }
+    MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
+    MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
 }
 
 
@@ -95,22 +95,24 @@ void FlateFil::readPoints(std::string filnavn)
 float FlateFil::calcHeight(float x, float y)
 {
     int xInt = static_cast<int>(x);
-      int yInt = static_cast<int>(y);
-      float z = 0;
-      if(!map[xInt][yInt].empty())
-      {
+    int yInt = static_cast<int>(y);
+    float z = 0;
+    if(!map[xInt][yInt].empty())
+    {
 
-          for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
-          {
-              z += (*it).z;
-          }
-          z = z/map[xInt][yInt].size();
-      }
-      else
-          z = 550;
+        for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
+        {
+            z += (*it).z;
+        }
+        z = z/map[xInt][yInt].size();
+    }
+    else
+        z = 560;
+    z = z-550;
+    z = z*0.2;
+    return z;
 
-      z = z-600;
-      return z;
+
 }
 
 void FlateFil::init(GLint matrixUniform)

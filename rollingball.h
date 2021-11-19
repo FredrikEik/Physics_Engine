@@ -3,6 +3,7 @@
 
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "flatefil.h"
 
 class RollingBall : public OctahedronBall
 {
@@ -13,14 +14,16 @@ public:
     void draw() override;
     void move(float dt) override;
    // void move(float dx, float dy, float dz) override;
-    void setSurface(VisualObject* surface) { triangle_surface = surface; }
+    void setSurface(VisualObject* surface); //{ triangle_surface = surface; }
     gsml::Vector3d Get_position();
     void setPosition(gsml::Vector3d v);
     void setHeight(float z);
 
 
+
+
 protected:
-    VisualObject* triangle_surface;
+    VisualObject* FalteFil;
 private:
 
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
@@ -30,6 +33,7 @@ private:
     gsml::Vector3d oldVelocity = {0,0,0};
     gsml::Vector3d mGravForce{0,0, -(lilleG * mMass)};
     gsml::Vector3d m;
+    std::vector<gsml::Vertex> vertices;
 
     int old_index{0};
     int m_index{0};

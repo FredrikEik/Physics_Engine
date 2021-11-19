@@ -90,7 +90,7 @@ void RenderWindow::init()
     glEnable(GL_DEPTH_TEST);    //enables depth sorting - must use GL_DEPTH_BUFFER_BIT in glClear
     //    glEnable(GL_CULL_FACE);     //draws only front side of models - usually what you want -
     glClearColor(0.4f, 0.4f, 0.4f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
-    glClearColor(1.0f, 1.0f, 1.0f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
+    //glClearColor(1.0f, 1.0f, 1.0f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
@@ -117,7 +117,9 @@ void RenderWindow::init()
     glBindVertexArray( 0 );
 
     mCamera = new Camera;
-    mCamera->setPosition(gsml::Vector3d(1.f, .5f, 5.f));
+    mCamera->setPosition(gsml::Vector3d(10.f, .5f, 30.f));
+    mCamera->pitch(90);
+  //  mCamera->yaw(180);
 
 
 
@@ -129,14 +131,13 @@ void RenderWindow::init()
 //    ball->init(mMatrixUniform);
 
     //Oblig 3
-      Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
-//    ball = new RollingBall(3);
-//    dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
-      Flate->init(mMatrixUniform);
-//      ball->init(mMatrixUniform);
+    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
+    ball = new RollingBall(3);
+    dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
+    Flate->init(mMatrixUniform);
+    ball->init(mMatrixUniform);
 
-      xyz.init(mMatrixUniform);
-
+    xyz.init(mMatrixUniform);
 
 }
 
@@ -174,8 +175,8 @@ void RenderWindow::render()
 
 //    oblig 3
     Flate->draw();
-//    ball->move(0.017f);
-//    ball->draw();
+    ball->move(0.017f);
+    ball->draw();
 
     xyz.draw();
 
@@ -307,13 +308,13 @@ void RenderWindow::checkCamInp()
     if(inpRMB == true)
     {
         if (inpA)
-            mCamera->moveRight(mCameraSpeed);
-        if (inpD)
             mCamera->moveRight(-mCameraSpeed);
+        if (inpD)
+            mCamera->moveRight(mCameraSpeed);
         if (inpW)
-            mCamera->updateHeigth(-mCameraSpeed);
-        if (inpS)
             mCamera->updateHeigth(mCameraSpeed);
+        if (inpS)
+            mCamera->updateHeigth(-mCameraSpeed);
         if (inpQ)
             mCamera->setSpeed(-mCameraSpeed);
         if (inpE)
