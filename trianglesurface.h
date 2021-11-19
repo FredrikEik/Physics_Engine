@@ -19,8 +19,10 @@ public:
     void construct_plane();
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
     float xmin=0, xmax=1.0f, ymin=0.0f, ymax=1.0f, h=0.25f;
-    double xMinimum = 0, xMaximum = 1, yMinimum = 0, yMaximum=1, zMinimum = 0, zMaximum=1;
-    gsml::Vector3d vertices[100];
+    float xMinimum = 0, xMaximum = 1, yMinimum = 0, yMaximum=1, zMinimum = 0, zMaximum=1;
+    float numberofPointsInside;
+    gsml::Vertex vertex2;
+    std::vector<gsml::Vertex> Vertices;
 };
 
 #endif // TRIANGLESURFACE_H

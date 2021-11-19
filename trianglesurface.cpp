@@ -37,17 +37,17 @@ void TriangleSurface::readFile(std::string filnavn)
     std::ifstream inn;
     inn.open(filnavn.c_str());
 
-    long int n = 0;
-    long int linesRead = 0;
-//    int j=0;
-//    int l=0;
-//    int min_index = 0;
-    double x = 0;
-    double y = 0;
-    double z = 0;
-    float a[245592];
-    float b[245592];
-    float c[245592];
+    int n = 0;
+    int linesRead = 0;
+    //    int j=0;
+    //    int l=0;
+    //    int min_index = 0;
+    float x = 0;
+    float y = 0;
+    float z = 0;
+    //    float a[245592];
+    //    float b[245592];
+    //    float c[245592];
     gsml::Vertex vertex;
 
     if (inn.is_open())
@@ -60,165 +60,170 @@ void TriangleSurface::readFile(std::string filnavn)
         yMinimum = y;
         zMaximum = z;
         zMinimum = z;
-//        inn >> a[0] >> b[0] >> c[0];
-//        xMaximum = a[0];
-//        xMinimum = a[0];
-//        yMaximum = b[0];
-//        yMinimum = b[0];
-//        zMaximum = c[0];
-//        zMinimum = c[0];
+        //        inn >> a[0] >> b[0] >> c[0];
+        //        xMaximum = a[0];
+        //        xMinimum = a[0];
+        //        yMaximum = b[0];
+        //        yMinimum = b[0];
+        //        zMaximum = c[0];
+        //        zMinimum = c[0];
         mVertices.reserve(n);
         //vertex.set_xyz(x,y,z);
         //mVertices.push_back(vertex);
-       // vertex.set_xyz(a[0],b[0],c[0]);
-       //  mVertices.push_back(vertex);
+        // vertex.set_xyz(a[0],b[0],c[0]);
+        //  mVertices.push_back(vertex);
         for (int i=0; i<n; i++)
         {
             inn >> x >> y >> z;
-             //inn >> a[i] >> b[i] >> c[i];
-                     linesRead++;
-         //qDebug() << x << y << z;
-         vertex.set_xyz(x,y,z);
-           //vertex.set_xyz(a[i],b[i],c[i]);
-             mVertices.push_back(vertex);
-             if (x > xMaximum)
-                 xMaximum = x;
-             else if(x < xMinimum)
-                 xMinimum = x;
-             if (y > yMaximum)
-                 yMaximum = y;
-             else if(y < yMinimum)
-                 yMinimum = y;
-             if(z > zMaximum)
-                 zMaximum = z;
-             else if(z < zMinimum)
-                 zMinimum = z;
-//             if (x > xMaximum)
-//                 xMaximum = a[i];
-//             else if(x < xMinimum)
-//                 xMinimum = a[i];
-//             if (y > yMaximum)
-//                 yMaximum = b[i];
-//             else if(y < yMinimum)
-//                 yMinimum = b[i];
-//             if(z > zMaximum)
-//                 zMaximum = c[i];
-//             else if(z < zMinimum)
-//                 zMinimum = c[i];
+            //inn >> a[i] >> b[i] >> c[i];
+            linesRead++;
+            //qDebug() << x << y << z;
+            vertex.set_xyz(x,y,z);
+            //vertex.set_xyz(a[i],b[i],c[i]);
+            mVertices.push_back(vertex);
+            if (x > xMaximum)
+                xMaximum = x;
+            else if(x < xMinimum)
+                xMinimum = x;
+            if (y > yMaximum)
+                yMaximum = y;
+            else if(y < yMinimum)
+                yMinimum = y;
+            if(z > zMaximum)
+                zMaximum = z;
+            else if(z < zMinimum)
+                zMinimum = z;
+            //             if (x > xMaximum)
+            //                 xMaximum = a[i];
+            //             else if(x < xMinimum)
+            //                 xMinimum = a[i];
+            //             if (y > yMaximum)
+            //                 yMaximum = b[i];
+            //             else if(y < yMinimum)
+            //                 yMinimum = b[i];
+            //             if(z > zMaximum)
+            //                 zMaximum = c[i];
+            //             else if(z < zMinimum)
+            //                 zMinimum = c[i];
 
 
         }
         inn.close();
-
-
     }
+    int squarecounter=0;
+    float step = 10;
+    float xOffset = (xMaximum-xMinimum)/step;
+    float yOffset = (yMaximum-yMinimum)/step;
+    float squareMinY = yMinimum;
+    float squareMaxY = squareMinY+yOffset;
+    float squareMinX = xMinimum;
+    float squareMaxX = squareMinX +xOffset;
 
-    double squareMinY = yMinimum;
-    double squareMaxY = squareMinY+14.6f;
-    double squareMinX = xMinimum;
-    double squareMaxX = squareMinX +99.7f;
-    float xOffset = 99.7f;
-    float yOffset = 14.6f;
-    int squarenum=0;
-    for (float j=squareMinY; j<=xMaximum; j+=yOffset){
+       qDebug() << "squareminx" << squareMinX << "squareminy" << squareMinY;
 
+    for (double j=squareMinY; j<=yMaximum; j+=yOffset){
+        //qDebug() << "hei";
 
-     for (int i =squareMinX; i<= xMaximum; i+=xOffset){
-        int numberofPointsInside=0;
+        for (double i =squareMinX; i<= xMaximum-xOffset; i+=xOffset){
+            numberofPointsInside=0;
+            float tempX=0;
+            float tempY=0;
+            float tempZ=0;
+            squarecounter++;
+            for ( int k = 0 ; k<mVertices.size(); k++){
+                if ( mVertices[k].getXYZ().x < squareMaxX &&
+                     mVertices[k].getXYZ().x > squareMinX &&
+                     mVertices[k].getXYZ().y < squareMaxY &&
+                     mVertices[k].getXYZ().y > squareMinY){
+                    ++numberofPointsInside;
 
-    for ( int k = 0 ; k<mVertices.size(); k++){
-        float tempX=0;
-        float tempY=0;
-        float tempZ=0;
+                    tempX += mVertices[k].getXYZ().x;
+                    tempY += mVertices[k].getXYZ().y;
+                    tempZ += mVertices[k].getXYZ().z;
 
-        if ( mVertices[k].getXYZ().x < squareMaxX &&
-             mVertices[k].getXYZ().x > squareMinX &&
-             mVertices[k].getXYZ().y < squareMaxY &&
-             mVertices[k].getXYZ().y > squareMinY){
-            numberofPointsInside++;
-            tempX += mVertices[k].getXYZ().x;
-            tempY += mVertices[k].getXYZ().y;
-            tempZ += mVertices[k].getXYZ().z;
+                }
+
+            }
+            //qDebug () << numberofPointsInside;
+            if(numberofPointsInside <= 0){
+                vertex2.set_xyz(squareMinX + xOffset/2, squareMinY + yOffset/2, zMinimum+(zMaximum-zMinimum)/2);
+            }
+            else if(numberofPointsInside > 0)  {
+                tempX = tempX/numberofPointsInside;
+                tempY = tempY/numberofPointsInside;
+                tempZ = tempZ/numberofPointsInside;
+
+                vertex2.set_xyz(tempX, tempY, tempZ);
             }
 
-        tempX = tempX/numberofPointsInside;
-        tempY = tempY/numberofPointsInside;
-        tempZ = tempZ/numberofPointsInside;
+            qDebug() << squarecounter << xOffset << yOffset;
+            qDebug () << numberofPointsInside;
+            //qDebug() << vertex2.getXYZ().x << vertex2.getXYZ().y << vertex2.getXYZ().z;
 
-        vertices[squarenum] = (tempX, tempY, tempZ);
+            Vertices.push_back(vertex2);
 
 
-
+           // squareMinX = squareMinX +xOffset;
+            //squareMaxX = squareMaxX +xOffset;
         }
-    if(numberofPointsInside == 0){
-        vertices[squarenum] = (squareMinX + xOffset/2, squareMinY + yOffset/2, (zMaximum-zMinimum)/2);
-    }
-        squarenum++;
-        squareMinX = squareMinX +xOffset;
-        squareMaxX = squareMaxX +xOffset;
-       }
-     squareMinY = squareMinY +yOffset;
-     squareMaxY = squareMaxY +yOffset;
+       // squareMinY = squareMinY +yOffset;
+       // squareMaxY = squareMaxY +yOffset;
 
     }
 
-    mVertices.clear();
-    for(int l =0; l < squarenum ; l++){
-        //mVertices[l].set_xyz(vertices[l].x, vertices[l].y, vertices[l].z);
-        vertex.set_xyz(vertices[l].x, vertices[l].y, vertices[l].z);
-        mVertices.push_back(vertex);
-    }
-    qDebug() << squarenum << mVertices.size();
+
+    //qDebug() << Vertices.size();
 
 
-//    for (l = 0; l < n-1; l++)
-//    {
-//        min_index = l;
-//        for (j=l+1 ; j<n; j++)
-//        {
-//            if (a[j] < a[min_index]){
-//             min_index = j;
-//            }
-//        }
+    //    for (l = 0; l < n-1; l++)
+    //    {
+    //        min_index = l;
+    //        for (j=l+1 ; j<n; j++)
+    //        {
+    //            if (a[j] < a[min_index]){
+    //             min_index = j;
+    //            }
+    //        }
 
-//        vertex.swap(&mVertices[min_index], &mVertices[l]);
-//        for(int i=0; i<n; i++)
-//            qDebug () << mVertices[i].getXYZ().x;
-//    }
-    qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
-   // qDebug() << linesRead;
+    //        vertex.swap(&mVertices[min_index], &mVertices[l]);
+    //        for(int i=0; i<n; i++)
+    //            qDebug () << mVertices[i].getXYZ().x;
+    //    }
 
-//    if (inn.is_open())
-//    {
-//        long int n;
-//        gsml::Vertex vertex;
-//        inn >> n;
-//        inn >> vertex;
-//        xmin = vertex.getXYZ().x;
-//        xmax = vertex.getXYZ().x;
-//        ymin = vertex.getXYZ().y;
-//        ymax = vertex.getXYZ().y;
-//        mVertices.reserve(n);
-//        for (int i=0; i<n; i++)
-//        {
-//             inn >> vertex;
-//             if (xmin > vertex.getXYZ().x)
-//                 xmin = vertex.getXYZ().x;
-//             if (xmax < vertex.getXYZ().x)
-//                 xmax = vertex.getXYZ().x;
-//             if(ymin > vertex.getXYZ().y)
-//                 ymin = vertex.getXYZ().y;
-//             if(ymax < vertex.getXYZ().y)
-//                 ymax = vertex.getXYZ().y;
+    //qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
+    // qDebug() << linesRead;
 
-//             mVertices.push_back(vertex);
+    //    if (inn.is_open())
+    //    {
+    //        long int n;
+    //        gsml::Vertex vertex;
+    //        inn >> n;
+    //        inn >> vertex;
+    //        xmin = vertex.getXYZ().x;
+    //        xmax = vertex.getXYZ().x;
+    //        ymin = vertex.getXYZ().y;
+    //        ymax = vertex.getXYZ().y;
+    //        mVertices.reserve(n);
+    //        for (int i=0; i<n; i++)
+    //        {
+    //             inn >> vertex;
+    //             if (xmin > vertex.getXYZ().x)
+    //                 xmin = vertex.getXYZ().x;
+    //             if (xmax < vertex.getXYZ().x)
+    //                 xmax = vertex.getXYZ().x;
+    //             if(ymin > vertex.getXYZ().y)
+    //                 ymin = vertex.getXYZ().y;
+    //             if(ymax < vertex.getXYZ().y)
+    //                 ymax = vertex.getXYZ().y;
+
+    //             mVertices.push_back(vertex);
 
 
 
-//        }
-//        inn.close();
-//    }
-//    qDebug() << xmin << xmax << ymin << ymax;
+    //        }
+    //        inn.close();
+    //    }
+    //    qDebug() << xmin << xmax << ymin << ymax;
 }
 
 void TriangleSurface::writeFile(std::string filnavn)
