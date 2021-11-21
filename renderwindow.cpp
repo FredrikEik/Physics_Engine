@@ -119,9 +119,6 @@ void RenderWindow::init()
     mCamera = new Camera;
     mCamera->setPosition(gsml::Vector3d(10.f, .5f, 30.f));
     mCamera->pitch(90);
-  //  mCamera->yaw(180);
-
-
 
     //oblig 2
 //    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
@@ -132,12 +129,30 @@ void RenderWindow::init()
 
     //Oblig 3
     Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
-    ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
-    Flate->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
 
+    //ball = new RollingBall(3);
+   // dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
+    Flate->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
+
+    makeRain();
+
+
+
+}
+
+void RenderWindow::makeRain()
+{
+    RollingBall *ball{nullptr};
+    for(auto i{0}; i<10; i++)
+    {
+        ball = new RollingBall(3);
+        ball->setSurface(Flate);
+        ball->move(rand()%150, rand()%200, rand()%100);
+        ball->init(mMatrixUniform);
+        Rain.push_back(ball);
+
+    }
 
 }
 
@@ -173,12 +188,21 @@ void RenderWindow::render()
 //    ball->move(0.017f);
 //    ball->draw();
 
+
 //    oblig 3
     Flate->draw();
-    ball->move(0.017f);
-    ball->draw();
-
+//    ball->draw();
+//    ball->move(0.017f);
     xyz.draw();
+
+    if(!Rain.empty())
+    {
+        for(auto i{0}; i<Rain.size(); i++)
+           {
+               Rain[i]->move(0.017f);
+               Rain[i]->draw();
+           }
+    }
 
 
     // checkForGLerrors() because that takes a long time
@@ -188,7 +212,7 @@ void RenderWindow::render()
     // using our expanded OpenGL debugger to check if everything is OK.
     // checkForGLerrors();
 
-    // Qt require us to call this swapBuffers() -function.
+    // Qt require us to call this swapBuffers() -function.a
     // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
     // and wait for vsync.
     mContext->swapBuffers(this);

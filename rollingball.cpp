@@ -72,18 +72,44 @@ void RollingBall::setHeight(float z)
 
     if(z != mMatrix.getColumn(3).z())
     {
-        mMatrix.setPosition(Translation.x,Translation.y,Translation.z);
+        setPosition(Translation);
+        //mMatrix.setPosition(Translation.x,Translation.y,Translation.z);
     }
+}
+
+void RollingBall::makeItRain(VisualObject* surface)
+{
+    FalteFil = surface;
+    vertices = FalteFil->get_vertices();
+    for(int i = 0; i<50; i++)
+    {
+        for(int j = 0; j<50; j++)
+        {
+            gsml::Vector3d v1 =vertices.at(17205+100).getXYZ();
+            gsml::Vector3d v2 =vertices.at(17206+100).getXYZ();
+            gsml::Vector3d v3 =vertices.at(17207+100).getXYZ();
+            gsml::Vector3d pos = (v1+v2+v3)*0.333;
+            pos.z += 50;
+            setPosition(pos);
+        }
+    }
+}
+
+void RollingBall::move(float dx, float dy, float dz)
+{
+    mPosition.translate(dx, dy, dz);
+    mMatrix = mPosition;
 }
 
 void RollingBall::setSurface(VisualObject* surface)
 {
     FalteFil = surface;
     vertices = FalteFil->get_vertices();
-    gsml::Vector3d v1 =vertices.at(10205).getXYZ();
-    gsml::Vector3d v2 =vertices.at(10206).getXYZ();
-    gsml::Vector3d v3 =vertices.at(10207).getXYZ();
+    gsml::Vector3d v1 =vertices.at(17205).getXYZ();
+    gsml::Vector3d v2 =vertices.at(17206).getXYZ();
+    gsml::Vector3d v3 =vertices.at(17207).getXYZ();
     gsml::Vector3d pos = (v1+v2+v3)*0.333;
+    pos.z += 50;
     setPosition(pos);
 
 }
@@ -91,71 +117,68 @@ void RollingBall::setSurface(VisualObject* surface)
 void RollingBall::move(float dt)
 {
     gsml::Vector3d bary;
+    //std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
     gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
     for (size_t i=0; i<vertices.size(); i++)
     {
-
-        // Finn trekantens vertices v0 , v1 , v2
         gsml::Vector3d p1 = vertices[i].getXYZ();
         gsml::Vector3d p2 = vertices[++i].getXYZ();
         gsml::Vector3d p3 = vertices[++i].getXYZ();
 
-        m_index = static_cast<int>(i+1)/3;
+        m_index = static_cast<int>(i+1) /3;
 
-        //        // Finn ballens posisjon i xy=planet
-        //        // Soek etter triangel som ballen er pa na
-        //        // med barysentriske koordinater
         bary = barycentricCoords(gsml::Vector2d(p1.x, p1.y),
                                  gsml::Vector2d(p2.x, p2.y),
                                  gsml::Vector2d(p3.x, p3.y),
                                  ballPosXY);
 
-        //if( /* barysentriske koordinater mellom 0 og 1 */ )
         if (bary.x >=0 && bary.y >=0 && bary.z >=0)
         {
-            // beregne normal
             gsml::Vector3d mPos;
             gsml::Vector3d p12 = p2-p1;
             gsml::Vector3d p13 = p3-p1;
-            m = p12^p13;
-            m.normalize();
+            m_normal = p12^p13;
+            m_normal.normalize();
 
-
-            // beregn akselerasjonsvektor = ligning(7)
-            // Oppdaterer hastighet og posisjon
-            mAcceleration = gsml::Vector3d(m.x * m.z, m.y * m.z, (m.z*m.z)-1) * lilleG;
-            mVelocity = mVelocity + mAcceleration * dt;
-
+            float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
+            mHeight = sqrt(mHeight * mHeight);
+            if(mHeight > mRadius+0.2)
+            {
+                frittfall = true;
+                mAcceleration = gsml::Vector3d(0, 0, -lilleG);
+                mForce = mAcceleration * mass;
+                qDebug() << "Fritt Fall";
+                mN = m_normal;
+                mN.normalize();
+                m_index = -1;
+            }
+            else
+            {
+                if(frittfall == true)
+                    oldVelocity.z = 0;
+                frittfall = false;
+                mAcceleration = gsml::Vector3d(m_normal.x * m_normal.z, m_normal.y * m_normal.z, (m_normal.z*m_normal.z)-1) * lilleG;
+                mForce = mAcceleration * mass;
+                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+                mN = m_normal + old_normal;
+                mN.normalize();
+            }
+            mVelocity = oldVelocity + mAcceleration * dt;
             mPos = (oldVelocity + mVelocity) * (dt/2);
+
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
 
-            // Setter høyde, så ballen følger planet
-            setHeight(barycentricHeight(Get_position(), p1,p2,p3));
-
-            // if( /* ny indeks != forrige indeks */ )
             if(m_index != old_index)
             {
-                // Ballen har rullet over pa nytt triangel
-                // Beregner normalen til kollisjonsplanet,
-                // se ligning(9)
-                m_normal = m + old_normal;
-                m_normal.normalize();
-
-                // Korrigere posisjon oppover i normalens retning
-                // Oppdater hastighetsvektoren, se ligning(8)
-                // Oppdatere posisjon i retning den nye
-                // hastighetsvektoren
-                mVelocity = m_normal * gsml::Vector3d::dot(oldVelocity, m_normal);
+                mVelocity = mN * gsml::Vector3d::dot(oldVelocity, mN);
                 mVelocity = oldVelocity - mVelocity * 2;
                 mVelocity = mVelocity * friction;
-                 qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+                qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             }
-            // Oppdater gammel normal og indeks
             oldVelocity = mVelocity;
-            old_index = m_index;
             old_normal = m_normal;
-
+            old_index = m_index;
             break;
         }
     }

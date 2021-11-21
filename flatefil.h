@@ -3,8 +3,6 @@
 
 #include "visualobject.h"
 
-
-
 class FlateFil : public VisualObject
 {
 public:
@@ -29,7 +27,7 @@ private:
     static const int X = 200; // (Max.x - Min.x) / n
     static const int Y = 294; // (Max.y - Min.y) / n
     std::vector<gsml::Vector3d> map[X][Y];
-    gsml::Vector3d m[X][Y];
+  //  gsml::Vector3d m[X][Y];
     
 };
 

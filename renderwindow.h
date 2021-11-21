@@ -46,10 +46,13 @@ private:
     TriangleSurface* surf2;
     QOpenGLContext *mContext;
     bool mInitialized;
-    gsml::Vector3d help;
     RollingBall* ball;
     VisualObject *Flate;
     Camera* mCamera;
+    std::vector<RollingBall*> Rain;
+    void makeRain();
+
+
 
 
     Shader *mShaderProgram;

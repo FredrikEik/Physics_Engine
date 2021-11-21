@@ -15,6 +15,13 @@ VisualObject::~VisualObject()
     glDeleteBuffers( 1, &mVBO );
 }
 
+void VisualObject::move(float dx, float dy, float dz)
+{
+    mPosition.translate(dx, dy, dz);
+    mMatrix = mPosition;
+}
+
+
 gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position)
 {
     gsml::Vector2d p12 = p2-p1;
