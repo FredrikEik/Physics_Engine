@@ -117,7 +117,7 @@ void RenderWindow::init()
 
 
     mCamera->pitch(90);
-    mCamera->setPosition(gsml::Vector3d(0.f, 0.f, 50.f));
+    mCamera->setPosition(gsml::Vector3d(0.f, -100.f, -30.f));
     //mCamera->yaw(180);
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");

@@ -99,21 +99,20 @@ float TriangleSurface::calcHeight(float x, float y)
     int xInt = static_cast<int>(x);
     int yInt = static_cast<int>(y);
     float z = 0;
+
     if(!map[xInt][yInt].empty())
     {
-
         for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
         {
             z += (*it).z;
         }
         z = z/map[xInt][yInt].size();
-
     }
     else
-        z = 560;
+        z = 555;
 
     z = z-550;
-    z = z*0.2;
+    z = z*0.3;
     return z;
 }
 
