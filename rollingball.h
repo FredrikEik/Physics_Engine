@@ -43,7 +43,7 @@ struct Physics
         float dc = 0.47; //drag coefficient
         //airF = 1/2 * p * (u * u) * dc * A;
         airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        airF = airF * (1/2 * p);
+        airF = airF * (0.5 * p);
         airF = airF * dc;
         airF = airF * A;
 

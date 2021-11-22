@@ -11,6 +11,7 @@
 #include "vertex.h"
 #include "xyz.h"
 #include "trianglesurface.h"
+#include "filesurface.h"
 #include "matrix4x4.h"
 #include "rollingball.h"
 

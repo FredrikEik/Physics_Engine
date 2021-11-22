@@ -121,7 +121,7 @@ void RenderWindow::init()
     //mCamera->yaw(180);
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf = new FileSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
     surf->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
 }
@@ -160,9 +160,9 @@ void RenderWindow::render()
         {
             Rain[i]->move(0.017f);
             Rain[i]->draw();
-            if(i == 2){
-                qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
-                qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
+            //if(i == 2){
+            //    qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
+            //    qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
         }}
 
     xyz.draw();
@@ -308,11 +308,11 @@ void RenderWindow::checkCamInp()
 void RenderWindow::makeRain()
 {
     RollingBall* ball{nullptr};
-    for(auto i{0}; i<3; i++)
+    for(auto i{0}; i<10; i++)
     {
             ball = new RollingBall(3);
             ball->setSurface(surf);
-            ball->move(1+ rand()%199, 1 + rand()%293, 50+rand()%50);
+            //ball->move(1+ rand()%99, 1 + rand()%146, 50+rand()%50);
             ball->init(mMatrixUniform);
             Rain.push_back(ball);
             //Sleep(1000);

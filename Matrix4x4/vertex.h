@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
+#include <vector>
 #include "vector3d.h"
 typedef float GLfloat;
 
@@ -32,7 +33,7 @@ class Vertex
     friend std::istream& operator>> (std::istream&, Vertex&);
 
 private:
-     //GLfloat m_rgba[4];
+    //GLfloat m_rgba[4];
     float m_xyz[3];       // position i 3D
     float m_normal[3];    // normal in 3D or rgb colors
     /// Lager en anonym union siden vi aldri trenger både rgba og normal
@@ -60,6 +61,7 @@ public:
     void set_uv(GLfloat u, GLfloat v);
     void data(float v[]) const;
     gsml::Vector3d getXYZ() const;
+    std::vector<gsml::Vector3d> wNormals;
     void operator = (const Vertex& v);
 };
 }
@@ -75,7 +77,7 @@ class Vertex
     friend std::istream& operator>> (std::istream&, Vertex&);
 
 private:
-     //GLfloat m_rgba[4];
+    //GLfloat m_rgba[4];
     float m_xyz[3];       // position i 3D
     float m_normal[3];    // normal in 3D or rgb colors
     /// Lager en anonym union siden vi aldri trenger både rgba og normal

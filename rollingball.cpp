@@ -88,9 +88,12 @@ void RollingBall::setSurface(VisualObject* surface)
 {
     triangle_surface = surface;
     vertices = triangle_surface->get_vertices();
-    gsml::Vector3d v1 =vertices.at(17205).getXYZ();
-    gsml::Vector3d v2 =vertices.at(17206).getXYZ();
-    gsml::Vector3d v3 =vertices.at(17207).getXYZ();
+    int mT = static_cast<int>(vertices.size());
+    mT = rand()%mT;
+    qDebug() << mT;
+    gsml::Vector3d v1 =vertices.at(mT).getXYZ();
+    gsml::Vector3d v2 =vertices.at(mT+1).getXYZ();
+    gsml::Vector3d v3 =vertices.at(mT+2).getXYZ();
     gsml::Vector3d pos = (v1+v2+v3)*0.333;
     pos.z += 50;
     setPosition(pos);
@@ -128,8 +131,18 @@ void RollingBall::move(float dt)
 
             float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
             mHeight = sqrt(mHeight * mHeight);
-
+            bool isFalling{false};
             if(mHeight > p->radius+0.2)
+                isFalling = true;
+            else if(Get_position().x <= 0.25)
+                isFalling = true;
+            else if(Get_position().y <=0.25)
+                isFalling = true;
+            else
+                isFalling = false;
+
+
+            if(isFalling)
             {
                 p->freeFall();
                 //qDebug() << "Fritt Fall";

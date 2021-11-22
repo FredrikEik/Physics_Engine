@@ -15,105 +15,11 @@ TriangleSurface::TriangleSurface() : VisualObject()
     v.set_xyz(0,0.5,0); v.set_rgb(0,0,1); mVertices.push_back(v);
 }
 
-TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
-{
-
-    //readFile(filnavn);
-    mMatrix.setToIdentity();
-    //mMatrix.translate(0,0,5);
-
-    readPoints(filnavn);
-    //qDebug() << xMin << xMax << yMin << yMax;
-
-    makePlain();
-    //move(-X/2, -Y/2, 0);
-    //mMatrix.setPosition(-X/2, -Y/2, 0);
-    //move(-tempX, -tempY, 0);
-}
-
 TriangleSurface::~TriangleSurface()
 {
     //qDebug() << "TriangleSurface::~TriangleSurface()";
     //delete [] m_vertices;
     //qDebug() << "TriangleSurface::~TriangleSurface() - vertices deleted";
-}
-
-void TriangleSurface::readPoints(std::string filnavn)
-{
-    std::ifstream inn;
-    inn.open(filnavn.c_str());
-
-    if (inn.is_open())
-    {
-        int m;
-        gsml::Vector3d temp;
-        inn >> m;
-        mVertices.reserve(m);
-        for (int i=0; i<m; i++){
-            inn >> temp.x;
-            inn >> temp.y;
-            inn >> temp.z;
-
-            float fX = temp.x - 614580.f;
-            fX = fX/n;
-            fX = std::floor(fX);
-            float fY = (temp.y - 6757290.f);
-            fY = fY/n;
-            fY = std::floor(fY);
-            int tempX = static_cast<int>(fX);
-            int tempY = static_cast<int>(fY);
-            map[tempX][tempY].push_back(temp);
-
-            if(temp.x < xMin)
-                xMin = temp.x;
-            if(temp.x > xMax)
-                xMax = temp.x;
-            if(temp.y < yMin)
-                yMin = temp.y;
-            if(temp.y > yMax)
-                yMax = temp.y;
-        }
-        inn.close();
-    }
-    MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
-    MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
-}
-
-void TriangleSurface::makePlain()
-{   
-    float f = 0.5;
-    for(float x = 0; x<static_cast<float>(X)-1; x+=1)
-        for(float y =0; y<static_cast<float>(Y)-1; y+=1)
-        {
-            mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, f, 0});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   f+f, f, 0});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   f+f, f, 0});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(x+1, y+1),   f, f, 0});
-        }
-}
-
-float TriangleSurface::calcHeight(float x, float y)
-{
-    int xInt = static_cast<int>(x);
-    int yInt = static_cast<int>(y);
-    float z = 0;
-
-    if(!map[xInt][yInt].empty())
-    {
-        for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
-        {
-            z += (*it).z;
-        }
-        z = z/map[xInt][yInt].size();
-    }
-    else
-        z = 555;
-
-    z = z-550;
-    z = z*0.3;
-    return z;
 }
 
 void TriangleSurface::readFile(std::string filnavn)
