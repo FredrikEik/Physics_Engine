@@ -19,7 +19,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 {
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
-    mLightPosition.z = 2.0f;
+    mLightPosition.z = 40.0f;
     //This is sent to QWindow:
     setSurfaceType(QWindow::OpenGLSurface);
     setFormat(format);
@@ -38,7 +38,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
-    qDebug() << v[0] <<v[1] << v[3] << v[2];
+    //qDebug() << v[0] <<v[1] << v[3] << v[2];
 
 
     gsmMMatrix = new gsml::Matrix4x4;
@@ -134,7 +134,7 @@ void RenderWindow::init()
    // dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
     Flate->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
-
+    mBSpline->init(mMatrixUniform);
     makeRain();
 
 
@@ -144,11 +144,10 @@ void RenderWindow::init()
 void RenderWindow::makeRain()
 {
     RollingBall *ball{nullptr};
-    for(auto i{0}; i<10; i++)
+    for(auto i{0}; i<20; i++)
     {
         ball = new RollingBall(3);
         ball->setSurface(Flate);
-        ball->move(rand()%150, rand()%200, rand()%100);
         ball->init(mMatrixUniform);
         Rain.push_back(ball);
 
@@ -178,11 +177,11 @@ void RenderWindow::render()
     // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
     // must be here to update each frame - if static object, it could be set only once
 
-    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
     glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
+    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
-
+    Flate->draw();
 //    Oblig 2
 //    surf2->draw();
 //    ball->move(0.017f);
@@ -190,10 +189,11 @@ void RenderWindow::render()
 
 
 //    oblig 3
-    Flate->draw();
+
 //    ball->draw();
 //    ball->move(0.017f);
     xyz.draw();
+    //mBSpline->draw();
 
     if(!Rain.empty())
     {

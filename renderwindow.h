@@ -14,6 +14,7 @@
 #include "rollingball.h"
 #include "flatefil.h"
 #include "camera.h"
+#include "bspinecurve.h"
 
 class QOpenGLContext;
 class Shader;
@@ -51,6 +52,7 @@ private:
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
     void makeRain();
+    BSpineCurve *mBSpline;
 
 
 

@@ -12,17 +12,17 @@ FlateFil::FlateFil(std::string filnavn) : VisualObject()
 
 void FlateFil::makePlain()
 {
-    float f = 1;
-     for(float x = 0; x<static_cast<float>(X)-1; x+=1)
-         for(float y =0; y<static_cast<float>(Y)-1; y+=1)
-         {
-             mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, f, 0});
-             mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, f});
-             mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-             mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-             mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, f});
-             mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(x+1, y+1),   f, f, 0});
-         }
+    float f = 0.5;
+    for(float x = 0; x<static_cast<float>(X)-1; x+=1)
+        for(float y =0; y<static_cast<float>(Y)-1; y+=1)
+        {
+            mVertices.push_back(gsml::Vertex{f*x, f*y, calcHeight(  x,   y),   f, f, 0});
+            mVertices.push_back(gsml::Vertex{f*(x+1),f*y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{f*x, f*(y+1), calcHeight(  x, y+1),   f+f, f, 0});
+            mVertices.push_back(gsml::Vertex{f*x, f*(y+1), calcHeight(  x, y+1),   f+f, f, 0});
+            mVertices.push_back(gsml::Vertex{f*(x+1),f*y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{f*(x+1),f*(y+1), calcHeight(x+1, y+1),   f, f, 0});
+        }
 }
 
 
@@ -78,23 +78,23 @@ void FlateFil::readPoints(std::string filnavn)
 float FlateFil::calcHeight(float x, float y)
 {
     int xInt = static_cast<int>(x);
-     int yInt = static_cast<int>(y);
-     float z = 0;
+    int yInt = static_cast<int>(y);
+    float z = 0;
 
-     if(!map[xInt][yInt].empty())
-     {
-         for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
-         {
-             z += (*it).z;
-         }
-         z = z/map[xInt][yInt].size();
-     }
-     else
-         z = 555;
+    if(!map[xInt][yInt].empty())
+    {
+        for(auto it = map[xInt][yInt].begin(); it != map[xInt][yInt].end(); it++)
+        {
+            z += (*it).z;
+        }
+        z = z/map[xInt][yInt].size();
+    }
+    else
+        z = 555;
 
-     z = z-550;
-     z = z*0.3;
-     return z;
+    z = z-550;
+    z = z*0.3;
+    return z;
 
 }
 
