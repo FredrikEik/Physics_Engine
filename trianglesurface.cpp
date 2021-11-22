@@ -24,7 +24,7 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
     //readFile(filnavn);
     readLasFile(filnavn);
-    mMatrix.setToIdentity();
+    //mMatrix.setToIdentity();
 
     //mMatrix.translate(-10,-10,0);
 
@@ -33,7 +33,7 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 TriangleSurface::~TriangleSurface()
 {
     //qDebug() << "TriangleSurface::~TriangleSurface()";
-   //delete [] m_vertices;
+    //delete [] m_vertices;
     //qDebug() << "TriangleSurface::~TriangleSurface() - vertices deleted";
 }
 
@@ -50,8 +50,8 @@ void TriangleSurface::readFile(std::string filnavn)
         mVertices.reserve(n);
         for (int i=0; i<n; i++)
         {
-             inn >> vertex;
-             mVertices.push_back(vertex);
+            inn >> vertex;
+            mVertices.push_back(vertex);
         }
         inn.close();
     }
@@ -95,7 +95,6 @@ void TriangleSurface::readLasFile(std::string filnavn)
         lasVertex.set_xyz(x,y,z);
         lasVertices.push_back(lasVertex);
         // vertex.set_xyz(a[0],b[0],c[0]);
-        //  mVertices.push_back(vertex);
         for (int i=0; i<n; i++)
         {
             inn >> x >> y >> z;
@@ -135,17 +134,17 @@ void TriangleSurface::readLasFile(std::string filnavn)
         inn.close();
     }
 
-        minMaxScale();
+    minMaxScale();
 
 
-        int squarecounter=0;
-        float step = 2;
-        float xOffset = (xmax-xmin)/step;
-        float yOffset = (ymax-ymin)/step;
-        double squareMinY = ymin;
-        double squareMaxY;
-        double squareMinX = xmin;
-        double squareMaxX;
+    int squarecounter=0;
+    int step = 3;
+    float xOffset = (xmax-xmin)/step;
+    float yOffset = (ymax-ymin)/step;
+    double squareMinY = ymin;
+    double squareMaxY;
+    double squareMinX = xmin;
+    double squareMaxX;
 
     for (double j=squareMinY; j<=ymax-yOffset; j+=yOffset){
         squareMaxY = j+yOffset;
@@ -164,74 +163,75 @@ void TriangleSurface::readLasFile(std::string filnavn)
                      lasVertices[k].getXYZ().y > j){
                     numberofPointsInside++;
 
-//                    tempX += lasVertices[k].getXYZ().x;
-//                    tempY += lasVertices[k].getXYZ().y;
+                    //                    tempX += lasVertices[k].getXYZ().x;
+                    //                    tempY += lasVertices[k].getXYZ().y;
                     tempZ += lasVertices[k].getXYZ().z;
-
                 }
 
 
                 //qDebug() << mVertices[k].getXYZ().x << mVertices[k].getXYZ().y;
 
             }
-            if(numberofPointsInside == 0){
-                vertex.set_xyz(squareMaxX - xOffset/2, squareMaxY - yOffset/2, zmin+(zmax-zmin)/2);
+            tempX = squareMaxX - (xOffset/2);
+            //tempX/numberofPointsInside;
+            tempY =  squareMaxY - (yOffset/2);
+            //tempY/numberofPointsInside;
+            if(numberofPointsInside==0){
+                tempZ = (zmin+(zmax-zmin))/2;
             }
             else if(numberofPointsInside > 0)  {
-                tempX = squareMaxX - (xOffset/2);
-                        //tempX/numberofPointsInside;
-                tempY =  squareMaxY - (yOffset/2);
-                        //tempY/numberofPointsInside;
+
                 tempZ = tempZ/numberofPointsInside;
-
-                vertex.set_xyz(tempX, tempY, tempZ);
-                //vertex.set_rgb(0,255,100);
-                vertex.set_normal(0,0,tempZ);
-
             }
+            vertex.set_xyz(tempX, tempY, tempZ);
+            vertex.set_rgb(0,255,100);
+            vertex.set_normal(tempX,0,1);
 
-            //qDebug() << squarecounter;
+            qDebug() <<"Number of squares" << squarecounter;
             //qDebug () << numberofPointsInside;
             //qDebug() << vertex.getXYZ().x << vertex.getXYZ().y << vertex.getXYZ().z;
             //qDebug() << lasVertices[squarecounter].getXYZ().x << lasVertices[squarecounter].getXYZ().y << lasVertices[squarecounter].getXYZ().z
             tempVertices.push_back(vertex);
+
         }
+    }
+    qDebug() << tempVertices.size();
+
+    for(int i =0; i<squarecounter-(step+1) ; i++){
+
+        mVertices.push_back(tempVertices[i]);
+        mVertices.push_back(tempVertices[i+1]);
+        mVertices.push_back(tempVertices[i+step]);
+         qDebug() << mVertices.size();
+        mVertices.push_back(tempVertices[i+(step+1)]);
+        mVertices.push_back(tempVertices[i+step]);
+        mVertices.push_back(tempVertices[i+1]);
+
+
+         qDebug() << mVertices.size();
+        //qDebug () << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
+
     }
 
 
 
-        for(int i =0; i<squarecounter-(step+1) ; i++){
-            mVertices.push_back(tempVertices[i]);
-            mVertices.push_back(tempVertices[i+1]);
-            mVertices.push_back(tempVertices[i+step]);
-
-            mVertices.push_back(tempVertices[i+1]);
-            mVertices.push_back(tempVertices[i+step]);
-            mVertices.push_back(tempVertices[i+step+1]);
-
-            //qDebug () << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
-
-        }
 
 
+    //              sortering algoritme, ikke i bruk
+    //        for (l = 0; l < n-1; l++)
+    //        {
+    //            min_index = l;
+    //            for (j=l+1 ; j<n; j++)
+    //            {
+    //                if (a[j] < a[min_index]){
+    //                 min_index = j;
+    //                }
+    //            }
 
-
-
-//              sortering algoritme, ikke i bruk
-//        for (l = 0; l < n-1; l++)
-//        {
-//            min_index = l;
-//            for (j=l+1 ; j<n; j++)
-//            {
-//                if (a[j] < a[min_index]){
-//                 min_index = j;
-//                }
-//            }
-
-//            vertex.swap(&mVertices[min_index], &mVertices[l]);
-//            for(int i=0; i<n; i++)
-//                qDebug () << mVertices[i].getXYZ().x;
-//        }
+    //            vertex.swap(&mVertices[min_index], &mVertices[l]);
+    //            for(int i=0; i<n; i++)
+    //                qDebug () << mVertices[i].getXYZ().x;
+    //        }
 
     //qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
     // qDebug() << linesRead;
@@ -282,6 +282,11 @@ void TriangleSurface::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
 
+    // 3rd attribute buffer : uvs
+    glVertexAttribPointer(2, 2,  GL_FLOAT, GL_FALSE, sizeof(gsml::Vertex), (GLvoid*)( 6 * sizeof(GLfloat)) );
+    glEnableVertexAttribArray(2);
+
+
     //enable the matrixUniform
     // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
 
@@ -294,87 +299,88 @@ void TriangleSurface::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    glBindVertexArray(0);
 
 }
 
 void TriangleSurface::construct()
 {
-   for (auto x=xmin; x<xmax; x+=h)
-       for (auto y=ymin; y<ymax; y+=h)
-       {
-           float z = sin(M_PI*x)*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x,y,z,x,y,z});
-           z = sin(M_PI*(x+h))*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
-           z = sin(M_PI*x)*sin(M_PI*(y+h));
-           mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
-           mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
-           z = sin(M_PI*(x+h))*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
-           z = sin(M_PI*(x+h))*sin(M_PI*(y+h));
-           mVertices.push_back(gsml::Vertex{x+h,y+h,z,x,y,z});
-       }
+//    for (auto x=xmin; x<xmax; x+=h)
+//        for (auto y=ymin; y<ymax; y+=h)
+//        {
+//            float z = sin(M_PI*x)*sin(M_PI*y);
+//            mVertices.push_back(gsml::Vertex{x,y,z,x,y,z});
+//            z = sin(M_PI*(x+h))*sin(M_PI*y);
+//            mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
+//            z = sin(M_PI*x)*sin(M_PI*(y+h));
+//            mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
+//            mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
+//            z = sin(M_PI*(x+h))*sin(M_PI*y);
+//            mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
+//            z = sin(M_PI*(x+h))*sin(M_PI*(y+h));
+//            mVertices.push_back(gsml::Vertex{x+h,y+h,z,x,y,z});
+//        }
 }
 
 void TriangleSurface::construct_cylinder()
 {
-    float h=0.5;
-    const int SEKTORER=12;
-    float t=2*M_PI/SEKTORER;
-    mVertices.clear();
-    for (int k=0; k<2; k++)
-    {
-        for (int i=0; i<SEKTORER; i++)
-        {
-            float x0=cos(i*t);
-            float y0=sin(i*t);
-            float z0=h*k;
-            float x1=cos((i+1)*t);
-            float y1=sin((i+1)*t);
-            float z2=h*(k+1);
-            mVertices.push_back(gsml::Vertex{x0,y0,z0,0,0,1,0,0});
-            mVertices.push_back(gsml::Vertex{x0,y0,z2,0,0,1,1,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,z0,0,0,1,0,1});
-            mVertices.push_back(gsml::Vertex{x0,y0,z2,1,1,0,0,1});
-            mVertices.push_back(gsml::Vertex{x1,y1,z2,1,1,0,1,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,z0,1,1,0,1,1});
-/*            float x0=cos(i*t);
-            float y0=sin(i*t);
-            float z0=h*k;
-            float x1=cos((i+1)*t);
-            float y1=sin((i+1)*t);
-            float z2=h*(k+1);
-            mVertices.push_back(Vertex{x0,y0,z0,0,0,1});
-            mVertices.push_back(Vertex{x1,y1,z0,0,0,1});
-            mVertices.push_back(Vertex{x0,y0,z2,0,0,1});
-            mVertices.push_back(Vertex{x0,y0,z2,1,1,0});
-            mVertices.push_back(Vertex{x1,y1,z0,1,1,0});
-            mVertices.push_back(Vertex{x1,y1,z2,1,1,0});
-*/        }
-    }
+//    float h=0.5;
+//    const int SEKTORER=12;
+//    float t=2*M_PI/SEKTORER;
+//    mVertices.clear();
+//    for (int k=0; k<2; k++)
+//    {
+//        for (int i=0; i<SEKTORER; i++)
+//        {
+//            float x0=cos(i*t);
+//            float y0=sin(i*t);
+//            float z0=h*k;
+//            float x1=cos((i+1)*t);
+//            float y1=sin((i+1)*t);
+//            float z2=h*(k+1);
+//            mVertices.push_back(gsml::Vertex{x0,y0,z0,0,0,1,0,0});
+//            mVertices.push_back(gsml::Vertex{x0,y0,z2,0,0,1,1,0});
+//            mVertices.push_back(gsml::Vertex{x1,y1,z0,0,0,1,0,1});
+//            mVertices.push_back(gsml::Vertex{x0,y0,z2,1,1,0,0,1});
+//            mVertices.push_back(gsml::Vertex{x1,y1,z2,1,1,0,1,0});
+//            mVertices.push_back(gsml::Vertex{x1,y1,z0,1,1,0,1,1});
+//            /*            float x0=cos(i*t);
+//            float y0=sin(i*t);
+//            float z0=h*k;
+//            float x1=cos((i+1)*t);
+//            float y1=sin((i+1)*t);
+//            float z2=h*(k+1);
+//            mVertices.push_back(Vertex{x0,y0,z0,0,0,1});
+//            mVertices.push_back(Vertex{x1,y1,z0,0,0,1});
+//            mVertices.push_back(Vertex{x0,y0,z2,0,0,1});
+//            mVertices.push_back(Vertex{x0,y0,z2,1,1,0});
+//            mVertices.push_back(Vertex{x1,y1,z0,1,1,0});
+//            mVertices.push_back(Vertex{x1,y1,z2,1,1,0});
+//*/        }
+//    }
 }
 
 void TriangleSurface::construct_plane()
 {
-    float dx=2.0;
-    float dy=2.0;
-    mVertices.clear();
-    for (float y=-2.0; y<2.0; y+=dy)
-    {
-        for (float x=-3.0; x<3.0; x+=dx)
-        {
-            float x0=x;
-            float y0=y;
-            float x1=x0+dx;
-            float y1=y0+dy;
-            mVertices.push_back(gsml::Vertex{x0,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,0,0,0.5,0});
-        }
-    }
+//    float dx=2.0;
+//    float dy=2.0;
+//    mVertices.clear();
+//    for (float y=-2.0; y<2.0; y+=dy)
+//    {
+//        for (float x=-3.0; x<3.0; x+=dx)
+//        {
+//            float x0=x;
+//            float y0=y;
+//            float x1=x0+dx;
+//            float y1=y0+dy;
+//            mVertices.push_back(gsml::Vertex{x0,y0,0,0,0.5,0});
+//            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
+//            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
+//            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
+//            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
+//            mVertices.push_back(gsml::Vertex{x1,y1,0,0,0.5,0});
+//        }
+//    }
 }
 
 void TriangleSurface::minMaxScale()

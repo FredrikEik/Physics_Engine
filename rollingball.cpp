@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(0,0,2);
+    mPosition.translate(1.5,1.5,2);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gAkselerasjon*masseIKG;        //regner ut gkraften til ballen
 }
@@ -16,7 +16,6 @@ void RollingBall::move(float dt)
 
     mMatrix = mPosition * mScale;
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();             //skaffer vertices
-
     for (int i=0; i < vertices.size()-2; i+=3){
         v0 = gsml::Vector3d(vertices[i].getXYZ());
         v1 = gsml::Vector3d(vertices[i+1].getXYZ());

@@ -17,7 +17,7 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 4;
+    help.x = 10; help.y = -10; help.z = 4;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -43,9 +43,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    surf3 = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/jonas.txt");
     ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf3);
+    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -120,7 +120,7 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
-    surf3->init(mMatrixUniform);
+    surf2->init(mMatrixUniform);
 
     ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
@@ -156,16 +156,17 @@ void RenderWindow::render()
     //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
     //gsml::Vector3d eye{2.5,2.5,2};
     gsml::Vector3d eye{help.x,help.y,help.z};
-    gsml::Vector3d at{0,0,1};
+    gsml::Vector3d at{1.5,1.5,2};
     gsml::Vector3d up{0,0,1};
     gsmVMatrix->lookAt(eye, at, up);
 
     glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, gsmPMatrix->constData());
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
+
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
     // demo
-    surf3->draw();
+    surf2->draw();
     ball->move(0.017f);
     ball->draw();
 
