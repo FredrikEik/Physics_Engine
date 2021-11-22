@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1,1,1);
+    mPosition.translate(0,0,2);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gAkselerasjon*masseIKG;        //regner ut gkraften til ballen
 }

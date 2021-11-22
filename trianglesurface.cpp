@@ -2,8 +2,10 @@
 #include <QImage>
 #include <cstdio>
 #include <iostream>
+#include <vector>
 #include "trianglesurface.h"
 #include "vertex.h"
+
 
 TriangleSurface::TriangleSurface() : VisualObject()
 {
@@ -22,9 +24,10 @@ TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
     //readFile(filnavn);
     readLasFile(filnavn);
-    //mMatrix.setToIdentity();
-    //mMatrix.translate(0,0,5);
-    //mMatrix.setPosition(xMinimum,yMinimum,zMinimum);
+    mMatrix.setToIdentity();
+
+    //mMatrix.translate(-10,-10,0);
+
 }
 
 TriangleSurface::~TriangleSurface()
@@ -88,9 +91,9 @@ void TriangleSurface::readLasFile(std::string filnavn)
         //        yMinimum = b[0];
         //        zMaximum = c[0];
         //        zMinimum = c[0];
-        mVertices.reserve(n);
-        //vertex.set_xyz(x,y,z);
-        //mVertices.push_back(vertex);
+        lasVertices.reserve(n);
+        lasVertex.set_xyz(x,y,z);
+        lasVertices.push_back(lasVertex);
         // vertex.set_xyz(a[0],b[0],c[0]);
         //  mVertices.push_back(vertex);
         for (int i=0; i<n; i++)
@@ -99,9 +102,9 @@ void TriangleSurface::readLasFile(std::string filnavn)
             //inn >> a[i] >> b[i] >> c[i];
             linesRead++;
             //qDebug() << x << y << z;
-            vertex.set_xyz(x,y,z);
+            lasVertex.set_xyz(x,y,z);
             //vertex.set_xyz(a[i],b[i],c[i]);
-            mVertices.push_back(vertex);
+            lasVertices.push_back(lasVertex);
             if (x > xMaximum)
                 xMaximum = x;
             else if(x < xMinimum)
@@ -132,38 +135,38 @@ void TriangleSurface::readLasFile(std::string filnavn)
         inn.close();
     }
 
-        //minMaxScale();
+        minMaxScale();
 
 
-    int squarecounter=0;
-    float step = 10;
-    float xOffset = (xMaximum-xMinimum)/step;
-    float yOffset = (yMaximum-yMinimum)/step;
-    double squareMinY = yMinimum;
-    double squareMaxY = squareMinY+yOffset;
-    double squareMinX = xMinimum;
-    double squareMaxX = squareMinX +xOffset;
+        int squarecounter=0;
+        float step = 2;
+        float xOffset = (xmax-xmin)/step;
+        float yOffset = (ymax-ymin)/step;
+        double squareMinY = ymin;
+        double squareMaxY;
+        double squareMinX = xmin;
+        double squareMaxX;
 
-    for (double j=squareMinY; j<=yMaximum-yOffset; j+=yOffset){
+    for (double j=squareMinY; j<=ymax-yOffset; j+=yOffset){
         squareMaxY = j+yOffset;
 
-        for (double i =squareMinX; i<= xMaximum-xOffset; i+=xOffset){
+        for (double i =squareMinX; i<= xmax-xOffset; i+=xOffset){
             numberofPointsInside=0;
             float tempX=0;
             float tempY=0;
             float tempZ=0;
             squarecounter++;
             squareMaxX = i +xOffset;
-            for ( int k = 0 ; k<mVertices.size(); k++){
-                if ( mVertices[k].getXYZ().x < squareMaxX &&
-                     mVertices[k].getXYZ().x > i &&
-                     mVertices[k].getXYZ().y < squareMaxY &&
-                     mVertices[k].getXYZ().y > j){
+            for ( int k = 0 ; k<lasVertices.size(); k++){
+                if ( lasVertices[k].getXYZ().x < squareMaxX &&
+                     lasVertices[k].getXYZ().x > i &&
+                     lasVertices[k].getXYZ().y < squareMaxY &&
+                     lasVertices[k].getXYZ().y > j){
                     numberofPointsInside++;
 
-                    tempX += mVertices[k].getXYZ().x;
-                    tempY += mVertices[k].getXYZ().y;
-                    tempZ += mVertices[k].getXYZ().z;
+//                    tempX += lasVertices[k].getXYZ().x;
+//                    tempY += lasVertices[k].getXYZ().y;
+                    tempZ += lasVertices[k].getXYZ().z;
 
                 }
 
@@ -171,33 +174,46 @@ void TriangleSurface::readLasFile(std::string filnavn)
                 //qDebug() << mVertices[k].getXYZ().x << mVertices[k].getXYZ().y;
 
             }
-
-            //qDebug () << numberofPointsInside;
-            if(numberofPointsInside <= 0){
-                vertex2.set_xyz(squareMinX + xOffset/2, squareMinY + yOffset/2, zMinimum+(zMaximum-zMinimum)/2);
+            if(numberofPointsInside == 0){
+                vertex.set_xyz(squareMaxX - xOffset/2, squareMaxY - yOffset/2, zmin+(zmax-zmin)/2);
             }
             else if(numberofPointsInside > 0)  {
-                tempX = tempX/numberofPointsInside;
-                tempY = tempY/numberofPointsInside;
+                tempX = squareMaxX - (xOffset/2);
+                        //tempX/numberofPointsInside;
+                tempY =  squareMaxY - (yOffset/2);
+                        //tempY/numberofPointsInside;
                 tempZ = tempZ/numberofPointsInside;
 
-                vertex2.set_xyz(tempX, tempY, tempZ);
+                vertex.set_xyz(tempX, tempY, tempZ);
+                //vertex.set_rgb(0,255,100);
+                vertex.set_normal(0,0,tempZ);
+
             }
 
-            qDebug() << squarecounter;
+            //qDebug() << squarecounter;
             //qDebug () << numberofPointsInside;
-            qDebug() << vertex2.getXYZ().x << vertex2.getXYZ().y << vertex2.getXYZ().z;
-
-            Vertices.push_back(vertex2);
-
-
-           // squareMinX = squareMinX +xOffset;
-            //squareMaxX = squareMaxX +xOffset;
+            //qDebug() << vertex.getXYZ().x << vertex.getXYZ().y << vertex.getXYZ().z;
+            //qDebug() << lasVertices[squarecounter].getXYZ().x << lasVertices[squarecounter].getXYZ().y << lasVertices[squarecounter].getXYZ().z
+            tempVertices.push_back(vertex);
         }
-       // squareMinY = squareMinY +yOffset;
-       // squareMaxY = squareMaxY +yOffset;
-
     }
+
+
+
+        for(int i =0; i<squarecounter-(step+1) ; i++){
+            mVertices.push_back(tempVertices[i]);
+            mVertices.push_back(tempVertices[i+1]);
+            mVertices.push_back(tempVertices[i+step]);
+
+            mVertices.push_back(tempVertices[i+1]);
+            mVertices.push_back(tempVertices[i+step]);
+            mVertices.push_back(tempVertices[i+step+1]);
+
+            //qDebug () << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
+
+        }
+
+
 
 
 
@@ -219,6 +235,7 @@ void TriangleSurface::readLasFile(std::string filnavn)
 
     //qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
     // qDebug() << linesRead;
+
 
 }
 
@@ -276,7 +293,7 @@ void TriangleSurface::draw()
 {
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, Vertices.size());//mVertices.size());
+    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 
 }
 
@@ -362,10 +379,14 @@ void TriangleSurface::construct_plane()
 
 void TriangleSurface::minMaxScale()
 {
-    for(int index=0; index<=mVertices.size(); index++){
-        mVertices[index].set_xyz((mVertices[index].getXYZ().x-xMinimum)*(valueMax-valueMin)/(xMaximum-xMinimum),
-                                 (mVertices[index].getXYZ().y-yMinimum)*(valueMax-valueMin)/(yMaximum-yMinimum),
-                                 mVertices[index].getXYZ().z);
+    for(int index = 0; index < lasVertices.size(); index++){
+
+        float scaledX = xmin+(((lasVertices[index].getXYZ().x-xMinimum)*(xmax-xmin))/(xMaximum-xMinimum));
+        float scaledY = ymin+(((lasVertices[index].getXYZ().y-yMinimum)*(ymax-ymin))/(yMaximum-yMinimum));
+        float scaledZ = zmin+(((lasVertices[index].getXYZ().z-zMinimum)*(zmax-zmin))/(zMaximum-zMinimum));
+
+
+        lasVertices[index].set_xyz(scaledX, scaledY, scaledZ);
     }
 }
 
