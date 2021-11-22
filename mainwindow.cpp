@@ -70,6 +70,7 @@ void MainWindow::init()
 //Example of a slot called from the button on the top of the program.
 void MainWindow::on_pushButton_clicked()
 {
+    mRenderWindow->makeRain();
     qDebug() << "Button clicked";
 }
 

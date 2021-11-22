@@ -81,15 +81,15 @@ void TriangleSurface::readPoints(std::string filnavn)
 
 void TriangleSurface::makePlain()
 {   
-    float f = 1;
+    float f = 0.5;
     for(float x = 0; x<static_cast<float>(X)-1; x+=1)
         for(float y =0; y<static_cast<float>(Y)-1; y+=1)
         {
             mVertices.push_back(gsml::Vertex{  x,   y, calcHeight(  x,   y),   f, f, 0});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, f});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   0, 0, f});
-            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, f});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   f+f, f, 0});
+            mVertices.push_back(gsml::Vertex{  x, y+1, calcHeight(  x, y+1),   f+f, f, 0});
+            mVertices.push_back(gsml::Vertex{x+1,   y, calcHeight(x+1,   y),   0, f, 0});
             mVertices.push_back(gsml::Vertex{x+1, y+1, calcHeight(x+1, y+1),   f, f, 0});
         }
 }

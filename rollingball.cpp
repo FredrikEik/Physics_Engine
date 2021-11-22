@@ -2,6 +2,7 @@
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
+    p = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     //mPosition.translate(1.5,1.5,3);
     //ph = new Physics;
@@ -68,7 +69,7 @@ void RollingBall::setHeight(float z)
     gsml::Vector3d Translation{0,0,0};
     Translation = Get_position();
 
-    Translation.z = (HeightVector.z + mRadius);
+    Translation.z = (HeightVector.z + p->radius);
 
     if(z != mMatrix.getColumn(3).z())
     {
@@ -127,45 +128,39 @@ void RollingBall::move(float dt)
 
             float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
             mHeight = sqrt(mHeight * mHeight);
-            if(mHeight > mRadius+0.2)
+
+            if(mHeight > p->radius+0.2)
             {
-                frittfall = true;
-                mAcceleration = gsml::Vector3d(0, 0, -lilleG);
-                mForce = mAcceleration * mass;
-                qDebug() << "Fritt Fall";
+                p->freeFall();
+                //qDebug() << "Fritt Fall";
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
             }
             else
             {
-                if(frittfall == true)
-                    oldVelocity.z = 0;
-                frittfall = false;
-                mAcceleration = gsml::Vector3d(m_normal.x * m_normal.z, m_normal.y * m_normal.z, (m_normal.z*m_normal.z)-1) * lilleG;
-                mForce = mAcceleration * mass;
+                p->onGround(m_normal);
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
             }
-            mVelocity = oldVelocity + mAcceleration * dt;
-            mPos = (oldVelocity + mVelocity) * (dt/2);
+            p->Velocity = p->oldVelocity + p->Acceleration * dt;
+            mPos = (p->oldVelocity + p->Velocity) * (dt/2);
 
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
 
             if(m_index != old_index)
             {
-                mVelocity = mN * gsml::Vector3d::dot(oldVelocity, mN);
-                mVelocity = oldVelocity - mVelocity * 2;
-                mVelocity = mVelocity * friction;
-                qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+                p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
+                p->Velocity = p->oldVelocity - p->Velocity * 2;
+                //p->Velocity = p->Velocity * p->friction;
+                //qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
             }
-            oldVelocity = mVelocity;
+            p->oldVelocity = p->Velocity;
             old_normal = m_normal;
             old_index = m_index;
             break;
-
         }
     }
 }

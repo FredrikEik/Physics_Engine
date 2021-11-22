@@ -122,11 +122,7 @@ void RenderWindow::init()
     // Demo
     //surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
-
-    ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf);
     surf->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
 }
 
@@ -143,8 +139,6 @@ void RenderWindow::render()
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //    ball->move(0.017);
-    //    //ball->heightAt();
     // what shader to use
     glUseProgram(mShaderProgram->getProgram() );
     glEnable(GL_PROGRAM_POINT_SIZE);
@@ -154,21 +148,6 @@ void RenderWindow::render()
     // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
     // must be here to update each frame - if static object, it could be set only once
 
-
-    //    gsmPMatrix->setToIdentity();
-    //    gsmVMatrix->setToIdentity();
-    //    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
-    //    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    //    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
-    //    //gsmPMatrix->print();
-    //    //qDebug() << *mPMatrix;
-    //    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
-    //    //gsml::Vector3d eye{2.5,2.5,2};
-    //    gsml::Vector3d eye{help.x,help.y,help.z};
-    //    gsml::Vector3d at{0 ,0 , 0};
-    //    gsml::Vector3d up{0,0,1};
-    //    gsmVMatrix->lookAt(eye, at, up);
-
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
     glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
@@ -176,20 +155,17 @@ void RenderWindow::render()
     // demo
     surf->draw();
 
-    ball->move(0.017f);
-    ball->draw();
-
+    if(!Rain.empty()){
+        for(auto i{0}; i<Rain.size(); i++)
+        {
+            Rain[i]->move(0.017f);
+            Rain[i]->draw();
+            if(i == 2){
+                qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
+                qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
+        }}
 
     xyz.draw();
-    //mia.draw();
-    //fx.draw();
-    // tetraeder->draw();
-    //disc->move(0.017);
-    //disc->draw();
-    //vogn->move(0.017f);
-    //vogn->draw();
-    //cylinder->draw();
-    //toppen->draw();
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();
@@ -326,6 +302,20 @@ void RenderWindow::checkCamInp()
             mCamera->updateHeigth(mCameraSpeed);
         if (inpE)
             mCamera->updateHeigth(-mCameraSpeed);
+    }
+}
+
+void RenderWindow::makeRain()
+{
+    RollingBall* ball{nullptr};
+    for(auto i{0}; i<3; i++)
+    {
+            ball = new RollingBall(3);
+            ball->setSurface(surf);
+            ball->move(1+ rand()%199, 1 + rand()%293, 50+rand()%50);
+            ball->init(mMatrixUniform);
+            Rain.push_back(ball);
+            //Sleep(1000);
     }
 }
 

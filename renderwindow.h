@@ -34,7 +34,7 @@ public:
     void exposeEvent(QExposeEvent *) override;
 
     //    void error(const QString &msg);
-
+    void makeRain();
 private slots:
     void render();
 
@@ -46,8 +46,9 @@ private:
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
-    RollingBall* ball;
+    //RollingBall* ball;
     Camera* mCamera;
+    std::vector<RollingBall*> Rain;
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;
@@ -74,12 +75,15 @@ private:
 
     void startOpenGLDebugger();
 
+    void itsRainingBalls(float ElapsedSeconds);
+
     float mCameraSpeed{0.5f};
     float mCameraRotateSpeed{0.1f};
     float mPlayerSpeed{0.05f};
     int mMouseXlast{0};
     int mMouseYlast{0};
     void checkCamInp();
+
 
     bool inpW{false};
     bool inpA{false};
