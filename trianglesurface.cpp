@@ -20,9 +20,11 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
-    readFile(filnavn);
+    //readFile(filnavn);
+    readLasFile(filnavn);
     //mMatrix.setToIdentity();
     //mMatrix.translate(0,0,5);
+    //mMatrix.setPosition(xMinimum,yMinimum,zMinimum);
 }
 
 TriangleSurface::~TriangleSurface()
@@ -33,6 +35,26 @@ TriangleSurface::~TriangleSurface()
 }
 
 void TriangleSurface::readFile(std::string filnavn)
+{
+    std::ifstream inn;
+    inn.open(filnavn.c_str());
+
+    if (inn.is_open())
+    {
+        int n;
+        gsml::Vertex vertex;
+        inn >> n;
+        mVertices.reserve(n);
+        for (int i=0; i<n; i++)
+        {
+             inn >> vertex;
+             mVertices.push_back(vertex);
+        }
+        inn.close();
+    }
+}
+
+void TriangleSurface::readLasFile(std::string filnavn)
 {
     std::ifstream inn;
     inn.open(filnavn.c_str());
@@ -123,7 +145,7 @@ void TriangleSurface::readFile(std::string filnavn)
     double squareMaxX = squareMinX +xOffset;
 
     for (double j=squareMinY; j<=yMaximum-yOffset; j+=yOffset){
-        //qDebug() << "hei";
+        squareMaxY = j+yOffset;
 
         for (double i =squareMinX; i<= xMaximum-xOffset; i+=xOffset){
             numberofPointsInside=0;
@@ -131,12 +153,13 @@ void TriangleSurface::readFile(std::string filnavn)
             float tempY=0;
             float tempZ=0;
             squarecounter++;
+            squareMaxX = i +xOffset;
             for ( int k = 0 ; k<mVertices.size(); k++){
                 if ( mVertices[k].getXYZ().x < squareMaxX &&
                      mVertices[k].getXYZ().x > i &&
                      mVertices[k].getXYZ().y < squareMaxY &&
                      mVertices[k].getXYZ().y > j){
-                    ++numberofPointsInside;
+                    numberofPointsInside++;
 
                     tempX += mVertices[k].getXYZ().x;
                     tempY += mVertices[k].getXYZ().y;
@@ -144,7 +167,11 @@ void TriangleSurface::readFile(std::string filnavn)
 
                 }
 
+
+                //qDebug() << mVertices[k].getXYZ().x << mVertices[k].getXYZ().y;
+
             }
+
             //qDebug () << numberofPointsInside;
             if(numberofPointsInside <= 0){
                 vertex2.set_xyz(squareMinX + xOffset/2, squareMinY + yOffset/2, zMinimum+(zMaximum-zMinimum)/2);
@@ -157,9 +184,9 @@ void TriangleSurface::readFile(std::string filnavn)
                 vertex2.set_xyz(tempX, tempY, tempZ);
             }
 
-            //qDebug() << squarecounter << xOffset << yOffset;
-             qDebug () << numberofPointsInside;
-            //qDebug() << vertex2.getXYZ().x << vertex2.getXYZ().y << vertex2.getXYZ().z;
+            qDebug() << squarecounter;
+            //qDebug () << numberofPointsInside;
+            qDebug() << vertex2.getXYZ().x << vertex2.getXYZ().y << vertex2.getXYZ().z;
 
             Vertices.push_back(vertex2);
 
@@ -173,58 +200,26 @@ void TriangleSurface::readFile(std::string filnavn)
     }
 
 
-    //qDebug() << Vertices.size();
 
+//              sortering algoritme, ikke i bruk
+//        for (l = 0; l < n-1; l++)
+//        {
+//            min_index = l;
+//            for (j=l+1 ; j<n; j++)
+//            {
+//                if (a[j] < a[min_index]){
+//                 min_index = j;
+//                }
+//            }
 
-    //    for (l = 0; l < n-1; l++)
-    //    {
-    //        min_index = l;
-    //        for (j=l+1 ; j<n; j++)
-    //        {
-    //            if (a[j] < a[min_index]){
-    //             min_index = j;
-    //            }
-    //        }
-
-    //        vertex.swap(&mVertices[min_index], &mVertices[l]);
-    //        for(int i=0; i<n; i++)
-    //            qDebug () << mVertices[i].getXYZ().x;
-    //    }
+//            vertex.swap(&mVertices[min_index], &mVertices[l]);
+//            for(int i=0; i<n; i++)
+//                qDebug () << mVertices[i].getXYZ().x;
+//        }
 
     //qDebug() << xMinimum << xMaximum << yMinimum << yMaximum << zMinimum << zMaximum;
     // qDebug() << linesRead;
 
-    //    if (inn.is_open())
-    //    {
-    //        long int n;
-    //        gsml::Vertex vertex;
-    //        inn >> n;
-    //        inn >> vertex;
-    //        xmin = vertex.getXYZ().x;
-    //        xmax = vertex.getXYZ().x;
-    //        ymin = vertex.getXYZ().y;
-    //        ymax = vertex.getXYZ().y;
-    //        mVertices.reserve(n);
-    //        for (int i=0; i<n; i++)
-    //        {
-    //             inn >> vertex;
-    //             if (xmin > vertex.getXYZ().x)
-    //                 xmin = vertex.getXYZ().x;
-    //             if (xmax < vertex.getXYZ().x)
-    //                 xmax = vertex.getXYZ().x;
-    //             if(ymin > vertex.getXYZ().y)
-    //                 ymin = vertex.getXYZ().y;
-    //             if(ymax < vertex.getXYZ().y)
-    //                 ymax = vertex.getXYZ().y;
-
-    //             mVertices.push_back(vertex);
-
-
-
-    //        }
-    //        inn.close();
-    //    }
-    //    qDebug() << xmin << xmax << ymin << ymax;
 }
 
 void TriangleSurface::writeFile(std::string filnavn)
@@ -281,7 +276,7 @@ void TriangleSurface::draw()
 {
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    glDrawArrays(GL_TRIANGLES, 0, Vertices.size());//mVertices.size());
 
 }
 
@@ -371,7 +366,6 @@ void TriangleSurface::minMaxScale()
         mVertices[index].set_xyz((mVertices[index].getXYZ().x-xMinimum)*(valueMax-valueMin)/(xMaximum-xMinimum),
                                  (mVertices[index].getXYZ().y-yMinimum)*(valueMax-valueMin)/(yMaximum-yMinimum),
                                  mVertices[index].getXYZ().z);
-
     }
 }
 

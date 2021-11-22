@@ -11,6 +11,7 @@ public:
     TriangleSurface(std::string filnavn);
     ~TriangleSurface() override;
     void readFile(std::string filnavn);
+    void readLasFile(std::string filnavn);
     void writeFile(std::string filnavn);
     void init(GLint matrixUniform) override;
     void draw() override;
