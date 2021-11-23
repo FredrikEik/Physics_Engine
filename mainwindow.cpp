@@ -67,10 +67,14 @@ void MainWindow::init()
     mRenderWindowContainer->setFocus();
 }
 
-//Example of a slot called from the button on the top of the program.
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_RollingBall_clicked()
+{
+    mRenderWindow->spawnRollingBall();
+}
+
+
+void MainWindow::on_MakeItRain_clicked()
 {
     mRenderWindow->makeRain();
-    qDebug() << "Button clicked";
 }
 

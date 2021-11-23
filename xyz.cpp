@@ -3,6 +3,7 @@
 
 XYZ::XYZ() : VisualObject()
 {
+    mDrawType = GL_LINES;
     mVertices.push_back(gsml::Vertex{0,0,0,1,0,0});
     mVertices.push_back(gsml::Vertex{1,0,0,1,0,0});
     mVertices.push_back(gsml::Vertex{0,0,0,0,1,0});
@@ -54,8 +55,8 @@ void XYZ::init(GLint matrixUniform)
 void XYZ::draw()
 {
     glBindVertexArray( mVAO );
-    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_LINES, 0, mVertices.size());//mVertices.size());
+    //glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
+    //glDrawArrays(GL_LINES, 0, mVertices.size());//mVertices.size());
     //mMatrix.rotate(-1.5f, 1.f, 1.0, 0.f);
     glBindVertexArray(0);
 }

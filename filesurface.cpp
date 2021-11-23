@@ -7,11 +7,12 @@ FileSurface::FileSurface(std::string filnavn) : VisualObject()
     mMatrix.setToIdentity();
     //mMatrix.translate(0,0,5);
 
+    mShader = 1;
     readPoints(filnavn);
-    //qDebug() << xMin << xMax << yMin << yMax;
-
     makePlain();
     calculateNormals();
+
+    //qDebug() << xMin << xMax << yMin << yMax;
     //move(-X/2, -Y/2, 0);
     //mMatrix.setPosition(-X/2, -Y/2, 0);
     //move(-tempX, -tempY, 0);
@@ -51,8 +52,8 @@ void FileSurface::init(GLint matrixUniform)
 void FileSurface::draw()
 {
     glBindVertexArray( mVAO );
-    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    //glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
+    //glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
 
 void FileSurface::readPoints(std::string filnavn)

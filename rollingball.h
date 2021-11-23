@@ -9,8 +9,8 @@
 struct Physics
 {
     float radius = 0.25;
-    float mass = 5;
-    //float friction = 0.9;
+    float mass = 100;
+    float friction = 0.9;
     float lilleG = 9.81;
 
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
@@ -41,7 +41,7 @@ struct Physics
         gsml::Vector3d u{0-Velocity.x,0-Velocity.y,0-Velocity.z};//flow velocity
         float A = M_PI * (radius*radius); //Area
         float dc = 0.47; //drag coefficient
-        //airF = 1/2 * p * (u * u) * dc * A;
+        //airF = 1/2 p * (u^2) * dc * A;
         airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
         airF = airF * (0.5 * p);
         airF = airF * dc;

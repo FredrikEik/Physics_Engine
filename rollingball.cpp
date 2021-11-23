@@ -5,7 +5,6 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
     p = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     //mPosition.translate(1.5,1.5,3);
-    //ph = new Physics;
     mScale.scale(0.25,0.25,0.25);
     //mMatrix = mPosition * mScale;
 }
@@ -89,14 +88,17 @@ void RollingBall::setSurface(VisualObject* surface)
     triangle_surface = surface;
     vertices = triangle_surface->get_vertices();
     int mT = static_cast<int>(vertices.size());
-    mT = rand()%mT;
-    qDebug() << mT;
-    gsml::Vector3d v1 =vertices.at(mT).getXYZ();
-    gsml::Vector3d v2 =vertices.at(mT+1).getXYZ();
-    gsml::Vector3d v3 =vertices.at(mT+2).getXYZ();
-    gsml::Vector3d pos = (v1+v2+v3)*0.333;
-    pos.z += 50;
-    setPosition(pos);
+    if(vertices.size()>100){
+        mT = rand()%mT;
+        qDebug() << mT;
+        gsml::Vector3d v1 =vertices.at(mT).getXYZ();
+        gsml::Vector3d v2 =vertices.at(mT+1).getXYZ();
+        gsml::Vector3d v3 =vertices.at(mT+2).getXYZ();
+        gsml::Vector3d pos = (v1+v2+v3)*0.333;
+        pos.z += 50;
+        setPosition(pos);}
+    else
+        move(1,1,5);
 }
 
 void RollingBall::move(float dt)
@@ -134,10 +136,6 @@ void RollingBall::move(float dt)
             bool isFalling{false};
             if(mHeight > p->radius+0.2)
                 isFalling = true;
-            else if(Get_position().x <= 0.25)
-                isFalling = true;
-            else if(Get_position().y <=0.25)
-                isFalling = true;
             else
                 isFalling = false;
 
@@ -149,6 +147,7 @@ void RollingBall::move(float dt)
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
+                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             else
             {
@@ -156,6 +155,7 @@ void RollingBall::move(float dt)
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
+                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             p->Velocity = p->oldVelocity + p->Acceleration * dt;
             mPos = (p->oldVelocity + p->Velocity) * (dt/2);
@@ -167,8 +167,8 @@ void RollingBall::move(float dt)
             {
                 p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
                 p->Velocity = p->oldVelocity - p->Velocity * 2;
-                //p->Velocity = p->Velocity * p->friction;
-                //qDebug() << "mVelocity: " << mVelocity.x << mVelocity.y << mVelocity.z;
+                p->Velocity = p->Velocity * p->friction;
+                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             p->oldVelocity = p->Velocity;
             old_normal = m_normal;

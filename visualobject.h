@@ -26,12 +26,17 @@ public:
     gsml::Vector3d barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position);
     float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
     std::vector<gsml::Vertex> get_vertices();
-    GLuint getShaderProgram(){GLuint prog = static_cast<GLuint>(mMatrixUniform); return prog;};
-
-protected:
-    std::vector<gsml::Vertex> mVertices;
+    int getShaderID(){return mShader;};
+    gsml::Matrix4x4 getMatrix(){ return mMatrix;};
+    GLenum mDrawType{GL_TRIANGLES};
     GLuint mVAO{0};
+    int mScene{0};
+protected:
+    std::vector<GLuint> mIndices;
+    std::vector<gsml::Vertex> mVertices;
     GLuint mVBO{0};
+    GLuint mEAB{0}; //holds the indices (Element Array Buffer - EAB)
+    int mShader{0};
     GLint mMatrixUniform{0};
     gsml::Matrix4x4 mMatrix;
     gsml::Matrix4x4 mPosition;

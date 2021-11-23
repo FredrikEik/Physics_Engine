@@ -19,7 +19,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_RollingBall_clicked();
+
+    void on_MakeItRain_clicked();
 
 private:
     void init();

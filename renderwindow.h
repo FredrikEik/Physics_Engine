@@ -8,6 +8,7 @@
 #include <QMatrix4x4>
 #include <vector>
 #include "camera.h"
+#include "light.h"
 #include "vertex.h"
 #include "xyz.h"
 #include "trianglesurface.h"
@@ -36,27 +37,25 @@ public:
 
     //    void error(const QString &msg);
     void makeRain();
+    void spawnRollingBall();
 private slots:
     void render();
 
 private:
     void init();
-    XYZ xyz;
-    //TriangleSurface* surf;
+    XYZ* xyz;
+    TriangleSurface* surf2;
     VisualObject* surf;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
-    //RollingBall* ball;
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
     std::vector<VisualObject*> mVisualObjects;
+    Light* mLight{nullptr};
+    int currentScene{1};
 
     Shader *mShaderProgram[2];
-//    GLint  mMatrixUniform;
-//    GLint mPMatrixUniform;  // nytt 23/1
-//    GLint mVMatrixUniform;  // nytt 23/1
-//    GLint mLightPositionUniform;   // nytt 3/10/19
     GLuint mVAO;
     GLuint mVBO;
 
@@ -77,9 +76,9 @@ private:
     GLint pMatrixUniform{-1};
 
     void setupPhongShader(int shaderIndex);
-    GLint mMatrixUniform2{-1};
-    GLint vMatrixUniform2{-1};
-    GLint pMatrixUniform2{-1};
+    GLint mMatrixUniform1{-1};
+    GLint vMatrixUniform1{-1};
+    GLint pMatrixUniform1{-1};
     GLint mTextureUniformPhong{-1};
     // GLint mUsingTextureUniform{-1};
     //light shader variables
@@ -92,6 +91,7 @@ private:
     GLint mSpecularExponentUniform{-1};
     GLint mLightPowerUniform{-1};
 
+    void makeObjects();
     void drawObjects();
 
     void checkForGLerrors();
