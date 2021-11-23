@@ -138,7 +138,7 @@ void TriangleSurface::readLasFile(std::string filnavn)
 
 
     int VerticesCounter=0;
-    int step = 3;
+    int step = 50;
     int squaresDirection = (step-1);
     int Amountsquares = squaresDirection*squaresDirection;
     float xOffset = (xmax-xmin)/step;
@@ -195,26 +195,35 @@ void TriangleSurface::readLasFile(std::string filnavn)
 
     qDebug() <<"Number of Vertices" << VerticesCounter;
     qDebug() << "Amount of squares" << Amountsquares;
-    for(int j =1; j<squaresDirection;j++){
-        for(int i =1; i< squaresDirection ; i++){
+    int k=1;
+    int j=0;
+   // for(int j =0; j<squaresDirection; j++){
+        for(int i =0; i< Amountsquares; i++){
 
-        mVertices.push_back(tempVertices[j*(i-1)]);
-        mVertices.push_back(tempVertices[j*(i)]);
-        mVertices.push_back(tempVertices[j*(i+step-1)]);
+            if(i == squaresDirection*k){
+                j++;
+                k++;
+            }
 
-        mVertices.push_back(tempVertices[j*(i+(step))]);
-        mVertices.push_back(tempVertices[j*(i+step-1)]);
-        mVertices.push_back(tempVertices[j*(i)]);
-    }
+        mVertices.push_back(tempVertices[(i)+(j)]);
+        mVertices.push_back(tempVertices[(i+1)+j]);
+        mVertices.push_back(tempVertices[(i+step)+j]);
+
+        mVertices.push_back(tempVertices[(i+(step+1)+j)]);
+        mVertices.push_back(tempVertices[(i+step)+j]);
+        mVertices.push_back(tempVertices[(i+1)+j]);
+
+
+    //}
     }
 
-    for(int i =0;i<tempVertices.size(); i++){
-        qDebug() << tempVertices[i].getXYZ().x << tempVertices[i].getXYZ().y << tempVertices[i].getXYZ().z;
+//    for(int i =0;i<tempVertices.size(); i++){
+//        qDebug() << tempVertices[i].getXYZ().x << tempVertices[i].getXYZ().y << tempVertices[i].getXYZ().z;
 
-    }
-    for (int i = 0; i<mVertices.size(); i++){
-         qDebug() << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
-    }
+//    }
+//    for (int i = 0; i<mVertices.size(); i++){
+//         qDebug() << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
+//    }
 
 
 
