@@ -9,6 +9,8 @@
 #include <QStatusBar>
 #include <QDebug>
 
+#include "las.h"
+
 #include "shader.h"
 #include "mainwindow.h"
 
@@ -42,7 +44,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
+    surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
     surf2->mMatrix.rotate(90, 0, 0, 0);
         ball = new RollingBall(3);
       //  ball = new RollingBall(3, surf2);
@@ -125,9 +128,18 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
+
+
+
     surf2->init(mMatrixUniform);
+    //mGameObjects.push_back(surf2);
     ball->init(mMatrixUniform);
+   // mGameObjects.push_back(ball);
     xyz.init(mMatrixUniform);
+    map->init(mMatrixUniform);
+    mGameObjects.push_back(map);
+
+
 }
 
 ///Called each frame - doing the rendering
@@ -169,23 +181,26 @@ void RenderWindow::render()
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
     // demo
-    surf2->draw();
-    ball->move(0.017f);
-    ball->draw();
+    //surf2->draw();
+    //ball->move(0.017f);
+    //ball->draw();
+
+    //map->draw();
+
+
+    for(unsigned int i{0}; i < mGameObjects.size(); i++)
+    {
+
+        mGameObjects[i]->draw();
+        mVerticesDrawn += mGameObjects[i]->mVertices.size();
+    }
 
 
 
 
 
 
-
-
-
-
-
-
-
-    //xyz.draw();
+    xyz.draw();
     //mia.draw();
     //fx.draw();
    // tetraeder->draw();
@@ -248,7 +263,8 @@ void RenderWindow::calculateFramerate()
             //showing some statistics in status bar
             mMainWindow->statusBar()->showMessage(" Time pr FrameDraw: " +
                                                   QString::number(nsecElapsed/1000000.f, 'g', 4) + " ms  |  " +
-                                                  "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7));
+                                                  "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7) +
+                                                  "  |  Vertices drawn: :" + QString::number(mVerticesDrawn));
             frameCount = 0;     //reset to show a new message in 60 frames
         }
     }

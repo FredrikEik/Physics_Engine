@@ -86,8 +86,15 @@ public:
     {
         return mXYZ.z;
     }
+
+
+    gsml::Vector3d getNormal();
+    gsml::Vector2d getUV();
     
+//private:
     gsml::Vector3d mXYZ;
+    gsml::Vector3d mNormal;
+    gsml::Vector2d mST;
 };
 }
 

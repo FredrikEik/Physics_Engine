@@ -36,6 +36,7 @@ public:
     virtual void move(float dt) { }
     //virtual void move(float dx, float dy, float dz) { }
     std::vector<gsml::Vertex> mVertices;
+    std::vector<gsml::Vertex> positions;
     std::vector<Triangle> mTriangles;
         //std::vector<GLuint> mIndices;
         gsml::Matrix4x4 mMatrix;

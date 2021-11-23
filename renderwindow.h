@@ -12,6 +12,7 @@
 #include "trianglesurface.h"
 #include "matrix4x4.h"
 #include "rollingball.h"
+#include "las.h"
 
 class QOpenGLContext;
 class Shader;
@@ -32,6 +33,8 @@ public:
 
     void exposeEvent(QExposeEvent *) override;
 
+    std::vector<VisualObject*> mGameObjects;
+
 //    void error(const QString &msg);
 
 private slots:
@@ -40,12 +43,16 @@ private slots:
 private:
     void init();
     XYZ xyz;
+
+    LAS* map;
     TriangleSurface surf;
     TriangleSurface* surf2;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
     RollingBall* ball;
+
+    int mVerticesDrawn{0};
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;

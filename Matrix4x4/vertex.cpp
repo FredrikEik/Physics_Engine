@@ -94,6 +94,18 @@ void Vertex::set_uv(GLfloat u, GLfloat v)
     set_st(u,v);
 }
 
+gsml::Vector3d Vertex::getNormal()
+{
+    for (int i=0; i<3; i++)
+    return m_normal[i];
+}
+
+gsml::Vector2d Vertex::getUV()
+{
+    for (int i=0; i<2; i++)
+    return m_st[i];
+}
+
 std::ostream& operator<< (std::ostream& os, const Vertex& v)
 {
     os << std::fixed << std::setprecision(2) << std::setw(10);
