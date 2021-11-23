@@ -137,8 +137,10 @@ void TriangleSurface::readLasFile(std::string filnavn)
     minMaxScale();
 
 
-    int squarecounter=0;
+    int VerticesCounter=0;
     int step = 3;
+    int squaresDirection = (step-1);
+    int Amountsquares = squaresDirection*squaresDirection;
     float xOffset = (xmax-xmin)/step;
     float yOffset = (ymax-ymin)/step;
     double squareMinY = ymin;
@@ -154,9 +156,9 @@ void TriangleSurface::readLasFile(std::string filnavn)
             float tempX=0;
             float tempY=0;
             float tempZ=0;
-            squarecounter++;
+            VerticesCounter++;
             squareMaxX = i +xOffset;
-            for ( int k = 0 ; k<lasVertices.size(); k++){
+            for ( unsigned long long k = 0 ; k<lasVertices.size(); k++){
                 if ( lasVertices[k].getXYZ().x < squareMaxX &&
                      lasVertices[k].getXYZ().x > i &&
                      lasVertices[k].getXYZ().y < squareMaxY &&
@@ -165,12 +167,8 @@ void TriangleSurface::readLasFile(std::string filnavn)
 
                     //                    tempX += lasVertices[k].getXYZ().x;
                     //                    tempY += lasVertices[k].getXYZ().y;
-                    tempZ += lasVertices[k].getXYZ().z;
+                    tempZ = tempZ+ lasVertices[k].getXYZ().z;
                 }
-
-
-                //qDebug() << mVertices[k].getXYZ().x << mVertices[k].getXYZ().y;
-
             }
             tempX = squareMaxX - (xOffset/2);
             //tempX/numberofPointsInside;
@@ -187,7 +185,6 @@ void TriangleSurface::readLasFile(std::string filnavn)
             vertex.set_rgb(0,255,100);
             vertex.set_normal(tempX,0,1);
 
-            qDebug() <<"Number of squares" << squarecounter;
             //qDebug () << numberofPointsInside;
             //qDebug() << vertex.getXYZ().x << vertex.getXYZ().y << vertex.getXYZ().z;
             //qDebug() << lasVertices[squarecounter].getXYZ().x << lasVertices[squarecounter].getXYZ().y << lasVertices[squarecounter].getXYZ().z
@@ -195,24 +192,29 @@ void TriangleSurface::readLasFile(std::string filnavn)
 
         }
     }
-    qDebug() << tempVertices.size();
 
-    for(int i =0; i<squarecounter-(step+1) ; i++){
+    qDebug() <<"Number of Vertices" << VerticesCounter;
+    qDebug() << "Amount of squares" << Amountsquares;
+    for(int j =1; j<squaresDirection;j++){
+        for(int i =1; i< squaresDirection ; i++){
 
-        mVertices.push_back(tempVertices[i]);
-        mVertices.push_back(tempVertices[i+1]);
-        mVertices.push_back(tempVertices[i+step]);
-         qDebug() << mVertices.size();
-        mVertices.push_back(tempVertices[i+(step+1)]);
-        mVertices.push_back(tempVertices[i+step]);
-        mVertices.push_back(tempVertices[i+1]);
+        mVertices.push_back(tempVertices[j*(i-1)]);
+        mVertices.push_back(tempVertices[j*(i)]);
+        mVertices.push_back(tempVertices[j*(i+step-1)]);
 
-
-         qDebug() << mVertices.size();
-        //qDebug () << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
-
+        mVertices.push_back(tempVertices[j*(i+(step))]);
+        mVertices.push_back(tempVertices[j*(i+step-1)]);
+        mVertices.push_back(tempVertices[j*(i)]);
+    }
     }
 
+    for(int i =0;i<tempVertices.size(); i++){
+        qDebug() << tempVertices[i].getXYZ().x << tempVertices[i].getXYZ().y << tempVertices[i].getXYZ().z;
+
+    }
+    for (int i = 0; i<mVertices.size(); i++){
+         qDebug() << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
+    }
 
 
 
