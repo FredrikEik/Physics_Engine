@@ -33,6 +33,7 @@ public:
 
     void exposeEvent(QExposeEvent *) override;
 
+        void toggleWireframe(bool buttonState);
     std::vector<VisualObject*> mGameObjects;
 
 //    void error(const QString &msg);

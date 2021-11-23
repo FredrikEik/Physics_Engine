@@ -231,6 +231,7 @@ void LAS::GenerateHeightMap()
             float height4 = CalcHeight(    x,  z+1);
             float height5 = CalcHeight(  x+1,    z);
             float height6 = CalcHeight(  x+1,  z+1);
+
                                                                                         //use height date for colouring   //This order is like this because our
             mVertices.push_back(gsml::Vertex{ofsetx +  x, ofsety +height1,ofsetz +   z,       x/900, height1/100, z/1000,0,0}); //1
             mVertices.push_back(gsml::Vertex{ofsetx +x+1, ofsety +height2,ofsetz +   z,       x/900, height2/100, z/1000,0,0}); //2

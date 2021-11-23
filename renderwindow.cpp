@@ -46,14 +46,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Demo
     map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
     surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
-    surf2->mMatrix.rotate(90, 0, 0, 0);
+    //surf2->mMatrix.rotate(90, 0, 0, 0);
         ball = new RollingBall(3);
       //  ball = new RollingBall(3, surf2);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-
-
-
-
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -134,8 +130,13 @@ void RenderWindow::init()
     surf2->init(mMatrixUniform);
     //mGameObjects.push_back(surf2);
     ball->init(mMatrixUniform);
-   // mGameObjects.push_back(ball);
+
+    //mGameObjects.push_back(ball);
+    xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
+
+    //map->mMatrix.scale(1,1,1);
+    map->mMatrix.translate(1,1,1);
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
 
@@ -181,12 +182,8 @@ void RenderWindow::render()
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
     // actual draw call
     // demo
-    //surf2->draw();
-    //ball->move(0.017f);
-    //ball->draw();
 
-    //map->draw();
-
+   // ball->move(0.017f);
 
     for(unsigned int i{0}; i < mGameObjects.size(); i++)
     {
@@ -221,6 +218,20 @@ void RenderWindow::render()
     // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
     // and wait for vsync.
     mContext->swapBuffers(this);
+}
+
+void RenderWindow::toggleWireframe(bool buttonState)
+{
+    if (buttonState)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    //turn on wireframe mode
+        glDisable(GL_CULL_FACE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    //turn off wireframe mode
+        glEnable(GL_CULL_FACE);
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)
