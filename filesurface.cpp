@@ -51,7 +51,6 @@ void FileSurface::init(GLint matrixUniform)
 void FileSurface::draw()
 {
     glBindVertexArray( mVAO );
-    glNormal3fv(mNormals);
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 }
@@ -136,7 +135,7 @@ float FileSurface::calcHeight(float x, float y)
 
 void FileSurface::calculateNormals()
 {
-    for (int i = 0; i <mVertices.size(); i+=3)
+    for (int i = 0; i <static_cast<int>(mVertices.size()); i+=3)
     {
         gsml::Vertex* v1 = &mVertices[i];
         gsml::Vertex* v2 = &mVertices[i+1];
@@ -171,20 +170,21 @@ void FileSurface::calculateNormals()
         v2->wNormals.push_back(n * a2);
         v3->wNormals.push_back(n * a3);
     }
-    for (int i = 0; i < mVertices.size(); i++)
+    for (int i = 0; i < static_cast<int>(mVertices.size()); i++)
     {
         gsml::Vector3d N;
 
         // run through the normals in each vertex's array and interpolate them
         // vertex(v) here fetches the data of the vertex at index 'v'
-        for (int n = 0; n < mVertices[i].wNormals.size(); n++)
+        for (int n = 0; n < static_cast<int>(mVertices[i].wNormals.size()); n++)
         {
             N = N + mVertices[i].wNormals.at(n);
         }
 
         // normalize the final normal
         N.normalize();
-        mNormals.push_back(N);
+        //mVertices[0].at(i).set_normal(N.x, N.y, N.z);// = result;
+        mVertices[i].set_normal(N);
     }
 }
 

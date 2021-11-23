@@ -39,5 +39,7 @@ SOURCES += \
     xyz.cpp
 
 DISTFILES += \
+    PhongFragment.frag \
+    PhongVertex.vert \
     dagfragment.frag \
     dagvertex.vert

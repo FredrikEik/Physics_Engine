@@ -50,12 +50,13 @@ private:
     //RollingBall* ball;
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
+    std::vector<VisualObject*> mVisualObjects;
 
-    Shader *mShaderProgram;
-    GLint  mMatrixUniform;
-    GLint mPMatrixUniform;  // nytt 23/1
-    GLint mVMatrixUniform;  // nytt 23/1
-    GLint mLightPositionUniform;   // nytt 3/10/19
+    Shader *mShaderProgram[2];
+//    GLint  mMatrixUniform;
+//    GLint mPMatrixUniform;  // nytt 23/1
+//    GLint mVMatrixUniform;  // nytt 23/1
+//    GLint mLightPositionUniform;   // nytt 3/10/19
     GLuint mVAO;
     GLuint mVBO;
 
@@ -69,6 +70,29 @@ private:
     MainWindow *mMainWindow;    //points back to MainWindow to be able to put info in StatusBar
 
     class QOpenGLDebugLogger *mOpenGLDebugLogger{nullptr};
+
+    void setupPlainShader(int shaderIndex);
+    GLint mMatrixUniform{-1};
+    GLint vMatrixUniform{-1};
+    GLint pMatrixUniform{-1};
+
+    void setupPhongShader(int shaderIndex);
+    GLint mMatrixUniform2{-1};
+    GLint vMatrixUniform2{-1};
+    GLint pMatrixUniform2{-1};
+    GLint mTextureUniformPhong{-1};
+    // GLint mUsingTextureUniform{-1};
+    //light shader variables
+    GLint mLightColorUniform{-1};
+    GLint mObjectColorUniform{-1};
+    GLint mAmbientLightStrengthUniform{-1};
+    GLint mLightPositionUniform{-1};
+    GLint mCameraPositionUniform{-1};
+    GLint mSpecularStrengthUniform{-1};
+    GLint mSpecularExponentUniform{-1};
+    GLint mLightPowerUniform{-1};
+
+    void drawObjects();
 
     void checkForGLerrors();
 

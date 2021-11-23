@@ -27,6 +27,7 @@ private:
     static const int Y = 294; // (Max.y - Min.y) / n
     std::vector<gsml::Vector3d> map[X][Y];
     //gsml::Vector3d m[X][Y];
+    float mNormal[3];
 };
 
 #endif // FILESURFACE_H

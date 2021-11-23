@@ -97,7 +97,11 @@ void RenderWindow::init()
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
     mCamera = new Camera;
-    mShaderProgram = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
+    mShaderProgram[0] = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
+    mShaderProgram[1] = new Shader("../VSIM101_H21_Rulleball_0/PhongVertex.vert", "../VSIM101_H21_Rulleball_0/PhongFragment.frag");
+
+    setupPlainShader(0);
+    setupPhongShader(1);
 
     //********************** Making the object to be drawn **********************
 
@@ -109,10 +113,7 @@ void RenderWindow::init()
     //enable the matrixUniform
     // NB: enable in shader and in render() function also to use matrix
     // endret/nytt 23/1
-    mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
-    mPMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
-    mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
-    mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
+
     glBindVertexArray( 0 );
 
 
@@ -126,6 +127,32 @@ void RenderWindow::init()
     xyz.init(mMatrixUniform);
 }
 
+void RenderWindow::setupPlainShader(int shaderIndex)
+{
+    mMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "mMatrix" );
+    vMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "vMatrix" );
+    pMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "pMatrix" );
+    mLightPositionUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "light_position");
+}
+
+void RenderWindow::setupPhongShader(int shaderIndex)
+{
+    mMatrixUniform2 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "mMatrix" );
+    vMatrixUniform2 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "vMatrix" );
+    pMatrixUniform2 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "pMatrix" );
+
+    //  mUsingTextureUniform = glGetUniformLocation( mShaderPrograms[shaderIndex]->getProgram(), "usingTextures" );
+    mLightColorUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightColor" );
+    mObjectColorUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "objectColor" );
+    mAmbientLightStrengthUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "ambientStrengt" );
+    mLightPositionUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightPosition" );
+    mSpecularStrengthUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "specularStrength" );
+    mSpecularExponentUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "specularExponent" );
+    mLightPowerUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightStrengt" );
+    mCameraPositionUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "cameraPosition" );
+    mTextureUniformPhong = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "textureSampler");
+}
+
 ///Called each frame - doing the rendering
 void RenderWindow::render()
 {
@@ -135,37 +162,14 @@ void RenderWindow::render()
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
-    // initializeOpenGLFunctions();    //must call this every frame it seems...
+    initializeOpenGLFunctions();    //must call this every frame it seems...
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // what shader to use
-    glUseProgram(mShaderProgram->getProgram() );
-    glEnable(GL_PROGRAM_POINT_SIZE);
-    glPointSize(5);
-    // what object to draw
+    drawObjects();
 
-    // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
-    // must be here to update each frame - if static object, it could be set only once
 
-    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
-    glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
-    glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
-    // actual draw call
-    // demo
-    surf->draw();
 
-    if(!Rain.empty()){
-        for(auto i{0}; i<Rain.size(); i++)
-        {
-            Rain[i]->move(0.017f);
-            Rain[i]->draw();
-            //if(i == 2){
-            //    qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
-            //    qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
-        }}
-
-    xyz.draw();
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();
@@ -179,191 +183,252 @@ void RenderWindow::render()
     mContext->swapBuffers(this);
 }
 
-//This function is called from Qt when window is exposed (shown)
-//and when it is resized
-//exposeEvent is a overridden function from QWindow that we inherit from
-void RenderWindow::exposeEvent(QExposeEvent *)
+void RenderWindow::drawObjects()
 {
-    if (!mInitialized)
-        init();
-
-    //This is just to support modern screens with "double" pixels
-    const qreal retinaScale = devicePixelRatio();
-    glViewport(0, 0, static_cast<GLint>(width() * retinaScale), static_cast<GLint>(height() * retinaScale));
-
-    //If the window actually is exposed to the screen we start the main loop
-    //isExposed() is a function in QWindow
-    if (isExposed())
+    //This block sets up the uniforms for the shader used in the material
+    //Also sets up texture if needed.
+    int viewMatrix{-1};
+    int projectionMatrix{-1};
+    int modelMatrix{-1};
+    //Draws the objects
+    for(int i{0}; i <static_cast<int>(mVisualObjects.size()); i++)
     {
-        //This timer runs the actual MainLoop
-        //16 means 16ms = 60 Frames pr second (should be 16.6666666 to be exact..)
-        mRenderTimer->start(16);
-        mTimeStart.start();
-    }
-    mCamera->calculateProjectionMatrix();
-}
+        glUseProgram(mShaderProgram[mVisualObjects[i]->getShaderProgram()]->getProgram());
 
-//The way this is set up is that we start the clock before doing the draw call,
-//and check the time right after it is finished (done in the render function)
-//This will approximate what framerate we COULD have.
-//The actual frame rate on your monitor is limited by the vsync and is probably 60Hz
-void RenderWindow::calculateFramerate()
-{
-    long nsecElapsed = mTimeStart.nsecsElapsed();
-    static int frameCount{0};                       //counting actual frames for a quick "timer" for the statusbar
-
-    if (mMainWindow)    //if no mainWindow, something is really wrong...
-    {
-        ++frameCount;
-        if (frameCount > 30) //once pr 30 frames = update the message twice pr second (on a 60Hz monitor)
+        if (mVisualObjects[i]->getShaderProgram() == 0) //PlainShader
         {
-            //showing some statistics in status bar
-            mMainWindow->statusBar()->showMessage(" Time pr FrameDraw: " +
-                                                  QString::number(nsecElapsed/1000000.f, 'g', 4) + " ms  |  " +
-                                                  "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7));
-            frameCount = 0;     //reset to show a new message in 60 frames
+            viewMatrix = vMatrixUniform;
+            projectionMatrix = pMatrixUniform;
+            modelMatrix = mMatrixUniform;
+        }
+        else if (mVisualObjects[i]->getShaderProgram() == 1)//TextureShader
+        {
+            viewMatrix = vMatrixUniform2;
+            projectionMatrix = pMatrixUniform2;
+            modelMatrix = mMatrixUniform2;
+
+            glUniform3f(mLightPositionUniform, mLight->mTransform->mMatrix.getPosition().x, mLight->mTransform->mMatrix.getPosition().y, mLight->mTransform->mMatrix.getPosition().y);
+            glUniform3f(mCameraPositionUniform, mCamera->position().x, mCamera->position().y, mCamera->position().z);
+            glUniform3f(mLightColorUniform, mLight->mLightColor.x(), mLight->mLightColor.y(), mLight->mLightColor.z());
+        }
+
+//        glEnable(GL_PROGRAM_POINT_SIZE);
+//        glPointSize(5);
+
+        //send data to shader
+         glUniformMatrix4fv( viewMatrix, 1, GL_TRUE, mCamera->mViewMatrix.constData());
+         glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
+         glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->mTransform->mMatrix.constData());
+
+         glBindVertexArray(mVisualObjects[i]->mVAO );
+         glDrawArrays(mVisualObjects[i]->mDrawType, 0, Lod(i));
+         glBindVertexArray(0);
+
+        glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
+        glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
+        glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
+        // actual draw call
+        // demo
+        surf->draw();
+
+        if(!Rain.empty()){
+            for(auto i{0}; i<static_cast<int>(Rain.size()); i++)
+            {
+                Rain[i]->move(0.017f);
+                Rain[i]->draw();
+                //if(i == 2){
+                //    qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
+                //    qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
+            }}
+
+        xyz.draw();
+    }
+
+    //This function is called from Qt when window is exposed (shown)
+    //and when it is resized
+    //exposeEvent is a overridden function from QWindow that we inherit from
+    void RenderWindow::exposeEvent(QExposeEvent *)
+    {
+        if (!mInitialized)
+            init();
+
+        //This is just to support modern screens with "double" pixels
+        const qreal retinaScale = devicePixelRatio();
+        glViewport(0, 0, static_cast<GLint>(width() * retinaScale), static_cast<GLint>(height() * retinaScale));
+
+        //If the window actually is exposed to the screen we start the main loop
+        //isExposed() is a function in QWindow
+        if (isExposed())
+        {
+            //This timer runs the actual MainLoop
+            //16 means 16ms = 60 Frames pr second (should be 16.6666666 to be exact..)
+            mRenderTimer->start(16);
+            mTimeStart.start();
+        }
+        mCamera->calculateProjectionMatrix();
+    }
+
+    //The way this is set up is that we start the clock before doing the draw call,
+    //and check the time right after it is finished (done in the render function)
+    //This will approximate what framerate we COULD have.
+    //The actual frame rate on your monitor is limited by the vsync and is probably 60Hz
+    void RenderWindow::calculateFramerate()
+    {
+        long nsecElapsed = mTimeStart.nsecsElapsed();
+        static int frameCount{0};                       //counting actual frames for a quick "timer" for the statusbar
+
+        if (mMainWindow)    //if no mainWindow, something is really wrong...
+        {
+            ++frameCount;
+            if (frameCount > 30) //once pr 30 frames = update the message twice pr second (on a 60Hz monitor)
+            {
+                //showing some statistics in status bar
+                mMainWindow->statusBar()->showMessage(" Time pr FrameDraw: " +
+                                                      QString::number(nsecElapsed/1000000.f, 'g', 4) + " ms  |  " +
+                                                      "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7));
+                frameCount = 0;     //reset to show a new message in 60 frames
+            }
         }
     }
-}
 
 
-/// Uses QOpenGLDebugLogger if this is present
-/// Reverts to glGetError() if not
-void RenderWindow::checkForGLerrors()
-{
-    if(mOpenGLDebugLogger)
+    /// Uses QOpenGLDebugLogger if this is present
+    /// Reverts to glGetError() if not
+    void RenderWindow::checkForGLerrors()
     {
-        const QList<QOpenGLDebugMessage> messages = mOpenGLDebugLogger->loggedMessages();
-        for (const QOpenGLDebugMessage &message : messages)
-            qDebug() << message;
-    }
-    else
-    {
-        GLenum err = GL_NO_ERROR;
-        while((err = glGetError()) != GL_NO_ERROR)
+        if(mOpenGLDebugLogger)
         {
-            qDebug() << "glGetError returns " << err;
+            const QList<QOpenGLDebugMessage> messages = mOpenGLDebugLogger->loggedMessages();
+            for (const QOpenGLDebugMessage &message : messages)
+                qDebug() << message;
+        }
+        else
+        {
+            GLenum err = GL_NO_ERROR;
+            while((err = glGetError()) != GL_NO_ERROR)
+            {
+                qDebug() << "glGetError returns " << err;
+            }
         }
     }
-}
 
-/// Tries to start the extended OpenGL debugger that comes with Qt
-void RenderWindow::startOpenGLDebugger()
-{
-    QOpenGLContext * temp = this->context();
-    if (temp)
+    /// Tries to start the extended OpenGL debugger that comes with Qt
+    void RenderWindow::startOpenGLDebugger()
     {
-        QSurfaceFormat format = temp->format();
-        if (! format.testOption(QSurfaceFormat::DebugContext))
-            qDebug() << "This system can not use QOpenGLDebugLogger, so we revert to glGetError()";
-
-        if(temp->hasExtension(QByteArrayLiteral("GL_KHR_debug")))
+        QOpenGLContext * temp = this->context();
+        if (temp)
         {
-            qDebug() << "System can log OpenGL errors!";
-            mOpenGLDebugLogger = new QOpenGLDebugLogger(this);
-            if (mOpenGLDebugLogger->initialize()) // initializes in the current context
-                qDebug() << "Started OpenGL debug logger!";
+            QSurfaceFormat format = temp->format();
+            if (! format.testOption(QSurfaceFormat::DebugContext))
+                qDebug() << "This system can not use QOpenGLDebugLogger, so we revert to glGetError()";
+
+            if(temp->hasExtension(QByteArrayLiteral("GL_KHR_debug")))
+            {
+                qDebug() << "System can log OpenGL errors!";
+                mOpenGLDebugLogger = new QOpenGLDebugLogger(this);
+                if (mOpenGLDebugLogger->initialize()) // initializes in the current context
+                    qDebug() << "Started OpenGL debug logger!";
+            }
         }
     }
-}
 
-void RenderWindow::mouseMoveEvent(QMouseEvent *event)
-{
-    if (inpRMB)
+    void RenderWindow::mouseMoveEvent(QMouseEvent *event)
     {
-        //Using mMouseXYlast as deltaXY so we don't need extra variables
-        mMouseXlast = event->pos().x() - mMouseXlast;
-        mMouseYlast = event->pos().y() - mMouseYlast;
+        if (inpRMB)
+        {
+            //Using mMouseXYlast as deltaXY so we don't need extra variables
+            mMouseXlast = event->pos().x() - mMouseXlast;
+            mMouseYlast = event->pos().y() - mMouseYlast;
 
-        if (mMouseXlast != 0)
-            mCamera->yaw(-mCameraRotateSpeed * mMouseXlast);
-        if (mMouseYlast != 0)
-            mCamera->pitch(-mCameraRotateSpeed * mMouseYlast);
+            if (mMouseXlast != 0)
+                mCamera->yaw(-mCameraRotateSpeed * mMouseXlast);
+            if (mMouseYlast != 0)
+                mCamera->pitch(-mCameraRotateSpeed * mMouseYlast);
+        }
+        mMouseXlast = event->pos().x();
+        mMouseYlast = event->pos().y();
     }
-    mMouseXlast = event->pos().x();
-    mMouseYlast = event->pos().y();
-}
 
-void RenderWindow::checkCamInp()
-{
-    mCamera->setSpeed(0.f);
-
-    if(inpRMB == true)
+    void RenderWindow::checkCamInp()
     {
-        if (inpA)
-            mCamera->moveRight(mCameraSpeed);
-        if (inpD)
-            mCamera->moveRight(-mCameraSpeed);
-        if (inpW)
-            mCamera->setSpeed(mCameraSpeed);
-        if (inpS)
-            mCamera->setSpeed(-mCameraSpeed);
-        if (inpQ)
-            mCamera->updateHeigth(mCameraSpeed);
-        if (inpE)
-            mCamera->updateHeigth(-mCameraSpeed);
+        mCamera->setSpeed(0.f);
+
+        if(inpRMB == true)
+        {
+            if (inpA)
+                mCamera->moveRight(mCameraSpeed);
+            if (inpD)
+                mCamera->moveRight(-mCameraSpeed);
+            if (inpW)
+                mCamera->setSpeed(mCameraSpeed);
+            if (inpS)
+                mCamera->setSpeed(-mCameraSpeed);
+            if (inpQ)
+                mCamera->updateHeigth(mCameraSpeed);
+            if (inpE)
+                mCamera->updateHeigth(-mCameraSpeed);
+        }
     }
-}
 
-void RenderWindow::makeRain()
-{
-    RollingBall* ball{nullptr};
-    for(auto i{0}; i<10; i++)
+    void RenderWindow::makeRain()
     {
+        RollingBall* ball{nullptr};
+        for(auto i{0}; i<10; i++)
+        {
             ball = new RollingBall(3);
             ball->setSurface(surf);
             //ball->move(1+ rand()%99, 1 + rand()%146, 50+rand()%50);
             ball->init(mMatrixUniform);
             Rain.push_back(ball);
             //Sleep(1000);
+        }
     }
-}
 
-void RenderWindow::keyPressEvent(QKeyEvent *event)
-{
-    mCamera->setSpeed(0.f);
-    if (event->key() == Qt::Key_Escape) //Shuts down whole program
+    void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
-        mMainWindow->close();
+        mCamera->setSpeed(0.f);
+        if (event->key() == Qt::Key_Escape) //Shuts down whole program
+        {
+            mMainWindow->close();
+        }
+        if (event->key() == Qt::Key_A)
+            inpA = true;
+        if (event->key() == Qt::Key_D)
+            inpD = true;
+        if (event->key() == Qt::Key_W)
+            inpW = true;
+        if (event->key() == Qt::Key_S)
+            inpS = true;
+        if (event->key() == Qt::Key_Q)
+            inpQ = true;
+        if (event->key() == Qt::Key_E)
+            inpE = true;
     }
-    if (event->key() == Qt::Key_A)
-        inpA = true;
-    if (event->key() == Qt::Key_D)
-        inpD = true;
-    if (event->key() == Qt::Key_W)
-        inpW = true;
-    if (event->key() == Qt::Key_S)
-        inpS = true;
-    if (event->key() == Qt::Key_Q)
-        inpQ = true;
-    if (event->key() == Qt::Key_E)
-        inpE = true;
-}
 
-void RenderWindow::keyReleaseEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_A)
-        inpA = false;
-    if (event->key() == Qt::Key_D)
-        inpD = false;
-    if (event->key() == Qt::Key_W)
-        inpW = false;
-    if (event->key() == Qt::Key_S)
-        inpS = false;
-    if (event->key() == Qt::Key_Q)
-        inpQ = false;
-    if (event->key() == Qt::Key_E)
-        inpE = false;
-}
+    void RenderWindow::keyReleaseEvent(QKeyEvent *event)
+    {
+        if (event->key() == Qt::Key_A)
+            inpA = false;
+        if (event->key() == Qt::Key_D)
+            inpD = false;
+        if (event->key() == Qt::Key_W)
+            inpW = false;
+        if (event->key() == Qt::Key_S)
+            inpS = false;
+        if (event->key() == Qt::Key_Q)
+            inpQ = false;
+        if (event->key() == Qt::Key_E)
+            inpE = false;
+    }
 
-void RenderWindow::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton)
-        inpRMB = true;
-}
+    void RenderWindow::mousePressEvent(QMouseEvent *event)
+    {
+        if (event->button() == Qt::RightButton)
+            inpRMB = true;
+    }
 
-void RenderWindow::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::RightButton)
-        inpRMB = false;
-}
+    void RenderWindow::mouseReleaseEvent(QMouseEvent *event)
+    {
+        if (event->button() == Qt::RightButton)
+            inpRMB = false;
+    }

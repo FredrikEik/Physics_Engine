@@ -26,17 +26,16 @@ public:
     gsml::Vector3d barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position);
     float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
     std::vector<gsml::Vertex> get_vertices();
+    GLuint getShaderProgram(){GLuint prog = static_cast<GLuint>(mMatrixUniform); return prog;};
+
 protected:
     std::vector<gsml::Vertex> mVertices;
     GLuint mVAO{0};
     GLuint mVBO{0};
     GLint mMatrixUniform{0};
     gsml::Matrix4x4 mMatrix;
-    // Flyttet fra Disc 12/2/19
     gsml::Matrix4x4 mPosition;
     gsml::Matrix4x4 mRotation;
-    //gsml::Vector3d mVelocity;
-    //
     gsml::Matrix4x4 mScale;
 };
 
