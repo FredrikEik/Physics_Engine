@@ -20,7 +20,7 @@ public:
     void construct_plane();
     void minMaxScale();
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
-    float xmin=-10.f, xmax=10.f, ymin=-10.f, ymax=10.f, zmin = 0.f, zmax =10.f, h=0.f;
+    float xmin=-20.f, xmax=20.f, ymin=-20.f, ymax=20.f, zmin = 0.f, zmax =10.f, h=0.f;
     double xMinimum = 0, xMaximum = 1, yMinimum = 0, yMaximum=1, zMinimum = 0, zMaximum=1;
     int numberofPointsInside;
     gsml::Vertex vertex;

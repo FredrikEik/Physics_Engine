@@ -217,14 +217,6 @@ void TriangleSurface::readLasFile(std::string filnavn)
     //}
     }
 
-//    for(int i =0;i<tempVertices.size(); i++){
-//        qDebug() << tempVertices[i].getXYZ().x << tempVertices[i].getXYZ().y << tempVertices[i].getXYZ().z;
-
-//    }
-//    for (int i = 0; i<mVertices.size(); i++){
-//         qDebug() << mVertices[i].getXYZ().x << mVertices[i].getXYZ().y << mVertices[i].getXYZ().z;
-//    }
-
 
 
 

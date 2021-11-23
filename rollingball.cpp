@@ -3,7 +3,7 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    mPosition.translate(1.5,1.5,2);
+    mPosition.translate(1.5,1.5,4);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gAkselerasjon*masseIKG;        //regner ut gkraften til ballen
 }
@@ -34,7 +34,7 @@ void RollingBall::move(float dt)
             //gsml::Vector3d distanseFlyttet =0;
             //gsml::Vector3d distanseFlyttetNM =0;
             //gsml::Vector3d temp = (1,0,0.55);
-            //qDebug() << i;
+            qDebug() << i;
 
             normalvektor = (v1-v0)^(v2-v0);                                             //regner ut normalvektoren til planet
             normalvektor.normalize();                                                   //normaliserer normalvektoren
