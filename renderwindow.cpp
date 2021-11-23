@@ -135,8 +135,8 @@ void RenderWindow::init()
     xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
 
-    //map->mMatrix.scale(1,1,1);
-    map->mMatrix.translate(1,1,1);
+    map->mMatrix.scale(.2,.2,.2);
+   // map->mMatrix.translate(1,1,1);
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
 

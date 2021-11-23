@@ -47,7 +47,7 @@ public:
     Vertex();
     Vertex(float x, float y, float z, float r, float g, float b);
     Vertex(float x, float y, float z, float r, float g, float b, float s, float t);
-
+    Vertex(Vector3d a, Vector3d b, Vector2d c);
     ~Vertex();
     void set_xyz(GLfloat* xyz);
     void set_xyz(GLfloat x, GLfloat y, GLfloat z);
