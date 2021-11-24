@@ -31,16 +31,18 @@ public:
     ~VisualObject();
     gsml::Vector3d(baryCoord(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &pos));
 
+    std::vector<gsml::Vertex> get_vertices();
     virtual void init(GLint matrixUniform)=0;
     virtual void draw()=0;
     virtual void move(float dt) { }
 
     float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
-    std::vector<gsml::Vertex> get_vertices();
-    int getShaderID(){return mShader;};
+
+
     std::vector<gsml::Vertex> mVertices;
     std::vector<Triangle> mTriangles;
     gsml::Matrix4x4 mMatrix;
+    int getShaderID(){return mShader;};
 protected:
     GLuint mVAO{0};
     GLuint mVBO{0};

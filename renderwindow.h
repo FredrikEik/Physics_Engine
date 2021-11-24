@@ -80,8 +80,6 @@ private:
     GLint pMatrixUniform1{-1};
     GLint mTextureUniformPhong{-1};
 
-
-
     void checkForGLerrors();
 
     void calculateFramerate();
