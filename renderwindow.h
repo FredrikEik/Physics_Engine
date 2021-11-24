@@ -12,6 +12,7 @@
 #include "trianglesurface.h"
 #include "matrix4x4.h"
 #include "rollingball.h"
+#include "surface.h"
 
 class QOpenGLContext;
 class Shader;
@@ -46,10 +47,12 @@ private:
     XYZ xyz;
     TriangleSurface surf;
     TriangleSurface* surf2;
+    TriangleSurface* surf3;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
     RollingBall* ball;
+    Surface* surface1;
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;

@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 
 #include "rollingball.h"
+#include "surface.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -54,6 +55,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     gsmPMatrix->setToIdentity();
 
     ballMove = false;
+
+    //File surface:
+    surface1 = new Surface("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf3 = new TriangleSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
 }
 
 RenderWindow::~RenderWindow()
@@ -124,6 +129,8 @@ void RenderWindow::init()
     surf2->init(mMatrixUniform);
     ball->init(mMatrixUniform);
     xyz.init(mMatrixUniform);
+    surface1->init(mMatrixUniform);
+    surf3->init(mMatrixUniform);
 }
 
 ///Called each frame - doing the rendering
@@ -175,7 +182,10 @@ void RenderWindow::render()
         ball->move(0.f);
     ball->draw();
 
+    //drawing folder surface:
+    //surface1->draw();
 
+    surf3->draw();
 
 
 
