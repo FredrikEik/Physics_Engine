@@ -34,15 +34,19 @@ public:
     virtual void init(GLint matrixUniform)=0;
     virtual void draw()=0;
     virtual void move(float dt) { }
+
+    float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
+    std::vector<gsml::Vertex> get_vertices();
+    int getShaderID(){return mShader;};
     std::vector<gsml::Vertex> mVertices;
     std::vector<Triangle> mTriangles;
-        gsml::Matrix4x4 mMatrix;
+    gsml::Matrix4x4 mMatrix;
 protected:
     GLuint mVAO{0};
     GLuint mVBO{0};
    //     GLuint mEAB{0}; //holds the indices (Element Array Buffer - EAB)
     GLint mMatrixUniform{0};
-
+    int mShader{0};
     // Flyttet fra Disc 12/2/19
     gsml::Matrix4x4 mPosition;
     gsml::Matrix4x4 mRotation;

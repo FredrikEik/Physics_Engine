@@ -121,6 +121,12 @@ struct Vector3d {
 
         return normalized;
     }
+    double Angle(const Vector3d& v){
+    double Dot = x*v.x + y*v.y + z*v.z;    //between [x1, y1, z1] and [x2, y2, z2]
+    double lenSq1 = x*x + y*y + z*z;
+    double lenSq2 = v.x*v.x + v.y*v.y + v.z*v.z;
+    double angle = acos(Dot/sqrt(lenSq1 * lenSq2));
+    return angle;}
 
     static GLfloat dot(const Vector3d &v1, const Vector3d &v2)
     {
@@ -149,6 +155,54 @@ struct Vector3d {
             y=y/d;
             z=z/d;
         }
+    }
+    double PI_D = 3.141592653589793238462643383279502884;
+
+    inline double deg2rad(double deg)
+    {return deg * (PI_D / 180.0);}
+
+    void rotateX(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = deg2rad(angle);
+
+        dir.x = x;
+        dir.y = (y * std::cos(angle)) + (z * (-std::sin(angle)));
+        dir.z = (y * std::sin(angle)) + (z * std::cos(angle));
+
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
+    }
+
+
+    void rotateY(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = deg2rad(angle);
+
+        dir.x =((x * std::cos(angle)) + (z * std::sin(angle)));
+        dir.y = (y);
+        dir.z = ((x * (-std::sin(angle))) + (z * std::cos(angle)));
+
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
+    }
+
+
+    void rotateZ(GLfloat angle)
+    {
+        Vector3d dir;
+        angle = deg2rad(angle);
+
+        dir.x =((x * std::cos(angle)) + (y * (-std::sin(angle))));
+        dir.y = ((x * std::sin(angle)) + (y * std::cos(angle)));
+        dir.z = z;
+
+        x = dir.x;
+        y = dir.y;
+        z = dir.z;
     }
 
     //! Dot product

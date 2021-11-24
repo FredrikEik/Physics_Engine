@@ -12,6 +12,8 @@
 #include "trianglesurface.h"
 #include "matrix4x4.h"
 #include "rollingball.h"
+#include "surf.h"
+#include "camera.h"
 
 class QOpenGLContext;
 class Shader;
@@ -46,8 +48,9 @@ private:
     bool mInitialized;
     gsml::Vector3d help;
     RollingBall* ball;
+    Camera* mCamera;
 
-    Shader *mShaderProgram;
+    Shader *mShaderProgram[2];
     GLint  mMatrixUniform;
     GLint mPMatrixUniform;  // nytt 23/1
     GLint mVMatrixUniform;  // nytt 23/1
@@ -65,6 +68,19 @@ private:
     MainWindow *mMainWindow;    //points back to MainWindow to be able to put info in StatusBar
 
     class QOpenGLDebugLogger *mOpenGLDebugLogger{nullptr};
+
+    void setupPlainShader(int shaderIndex);
+    GLint MatrixUniform{-1};
+    GLint vMatrixUniform{-1};
+    GLint pMatrixUniform{-1};
+
+    void setupPhongShader(int shaderIndex);
+    GLint MatrixUniform1{-1};
+    GLint vMatrixUniform1{-1};
+    GLint pMatrixUniform1{-1};
+    GLint mTextureUniformPhong{-1};
+
+
 
     void checkForGLerrors();
 

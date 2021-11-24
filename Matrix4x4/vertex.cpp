@@ -78,7 +78,12 @@ void Vertex::set_normal(GLfloat x, GLfloat y, GLfloat z)
 {
     m_normal[0] = x; m_normal[1] = y; m_normal[2] = z;
 }
-
+void Vertex::set_normal(Vector3d normal_in)
+{
+    m_normal[0] = normal_in.x;
+    m_normal[1] = normal_in.y;
+    m_normal[2] = normal_in.z;
+}
 void Vertex::set_st(GLfloat* st)
 {
     for (int i=0; i<2; i++) m_st[i] = st[i];
@@ -126,6 +131,11 @@ gsml::Vector3d Vertex::getXYZ() const
 {
     return gsml::Vector3d{m_xyz[0], m_xyz[1], m_xyz[2]};
 }
+gsml::Vector3d Vertex::getNormal()
+{
+    return Vector3d{m_normal[0], m_normal[1], m_normal[2]};
+}
+
 
 void Vertex::operator =(const Vertex &v)
 {

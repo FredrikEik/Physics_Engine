@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <ostream>
+#include <vector>
 #include "vector3d.h"
 typedef float GLfloat;
 
@@ -55,11 +56,14 @@ public:
     void set_rgb(GLfloat r, GLfloat g, GLfloat b);
     void set_normal(GLfloat* normal);
     void set_normal(GLfloat x, GLfloat y, GLfloat z);
+    void set_normal(Vector3d normal_in);
     void set_st(GLfloat* st);
     void set_st(GLfloat s, GLfloat t);
     void set_uv(GLfloat u, GLfloat v);
     void data(float v[]) const;
     gsml::Vector3d getXYZ() const;
+    gsml::Vector3d getNormal();
+    std::vector<gsml::Vector3d> wNormals;
     void operator = (const Vertex& v);
     void setX(float x)
     {
