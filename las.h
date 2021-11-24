@@ -22,6 +22,7 @@ public:
     void draw() override;
     void init(GLint matrixUniform) override;
     //void move(float x, float y, float z) override;
+//    std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
 
 private:
 

@@ -40,6 +40,8 @@ public:
     std::vector<Triangle> mTriangles;
         //std::vector<GLuint> mIndices;
         gsml::Matrix4x4 mMatrix;
+
+        std::vector<gsml::Vertex>& get_vertices() { return mVertices; }
     
 protected:
     GLuint mVAO{0};

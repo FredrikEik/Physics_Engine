@@ -1,4 +1,5 @@
 #include "rollingball.h"
+#include "las.h"
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
@@ -40,14 +41,70 @@ void RollingBall::move(float dt)
 
 
 
+}
 
-//mPosition.translate(0,0,0);
+void RollingBall::moveAlongLAs(VisualObject * temp, float dt)
+{
+
+    std::vector<gsml::Vertex>& vertices = temp->get_vertices();
+
+    gsml::Vector3d barycCoords;
+    gsml::Vector3d ballPosition = temp->mMatrix.getPosition();
+
+    for(int i = 0; i < vertices.size() - 2; i+= 3)
+    {
+        gsml::Vector3d p1, p2, p3;
+        p1 = gsml::Vector3d(vertices[i].getXYZ());
+        p2 = gsml::Vector3d(vertices[i+1].getXYZ());
+        p3 = gsml::Vector3d(vertices[i+2].getXYZ());
+        //qDebug() << "p1:" << p1.x<<p1.y<<p1.z << " p2:" << p2.x<<p2.y<<p3.z << " p3:" << p3.x<<p3.y<<p3.z;
+
+        barycCoords = ballPosition.barycentricCoordinates(p1, p2, p3);
+        //qDebug() << i << barycCoords.x << barycCoords.y << barycCoords.z;
+
+        if(barycCoords.x >= 0 && barycCoords.y >= 0 && barycCoords.z >= 0)
+        {
+
+            //qDebug() << "pos before:   " << ballPosition.x << ballPosition.y << ballPosition.z;
+            //qDebug() << "barycentric index: " i << barycCoords.x << barycCoords.y << barycCoords.z;
+
+            gsml::Vector3d p12 = p2-p1;
+            gsml::Vector3d p13 = p3-p1;
+            //qDebug() << "p12, p13" << p12.x << p12.y << p12.z << p13.x << p13.y << p13.z;
+            gsml::Vector3d pNormal = p12^p13;
+
+            //qDebug() << "pNormal not normalized: " << pNormal.x << pNormal.y << pNormal.z;
+            pNormal.normalize();
+            //qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
+
+            gForce = gsml::Vector3d(abs(gForce.x), abs(gForce.y), abs(gForce.z));
+            //gsml::Vector3d pz{pNormal.z, pNormal.z, pNormal.z};
+
+            acceleration = gForce ^ pNormal ^ gsml::Vector3d(0, pNormal.y, 0);
+            //acceleration = gAcceleration * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
+            //acceleration = acceleration + friction;
+            velocity = velocity + acceleration * dt;
+
+            float yOffset = 0.25f;
+            gsml::Vector3d newPosition = temp->mMatrix.getPosition() + velocity * dt;
+            newPosition.y = p1.y*barycCoords.x + p2.y*barycCoords.y + p3.y*barycCoords.z;
+            temp->mMatrix.setPosition(newPosition.x, newPosition.y+ yOffset, newPosition.z);
+
+            ballPosition = temp->mMatrix.getPosition();
+
+            //mPosition.translate(velocity.x, velocity.y, velocity.z);
+            //qDebug() << "pos after:    " << ballPosition.x << ballPosition.y << ballPosition.z;
+            //qDebug() << "acceleration: " << acceleration.x << acceleration.y << acceleration.z;
+            //qDebug() << "velocity:     " << velocity.x << velocity.y << velocity.z;
+        }
+        //qDebug() << "ballpos: " << ballPosition.x << ballPosition.y << ballPosition.z;
+    }
 
 }
 
 void RollingBall::barycentricCords2(float dt)
 {
-    //std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     if (mTime == 0)
     {mVelocity = {0.f, 0.f, 0.f};

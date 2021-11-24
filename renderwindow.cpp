@@ -129,13 +129,15 @@ void RenderWindow::init()
 
     surf2->init(mMatrixUniform);
     //mGameObjects.push_back(surf2);
+    ball->mMatrix.scale(.5,.5,.5);
     ball->init(mMatrixUniform);
 
-    //mGameObjects.push_back(ball);
+    mGameObjects.push_back(ball);
     xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
 
     map->mMatrix.scale(.2,.2,.2);
+    map->mMatrix.rotate(90,1,0,0);
    // map->mMatrix.translate(1,1,1);
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
@@ -183,7 +185,9 @@ void RenderWindow::render()
     // actual draw call
     // demo
 
-   // ball->move(0.017f);
+    //ball->move(0.017f);
+
+    ball->moveAlongLAs(map, 0.017);
 
     for(unsigned int i{0}; i < mGameObjects.size(); i++)
     {
@@ -191,11 +195,6 @@ void RenderWindow::render()
         mGameObjects[i]->draw();
         mVerticesDrawn += mGameObjects[i]->mVertices.size();
     }
-
-
-
-
-
 
     xyz.draw();
     //mia.draw();

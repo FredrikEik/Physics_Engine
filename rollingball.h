@@ -3,6 +3,7 @@
 
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "las.h"
 
 class RollingBall : public OctahedronBall
 {
@@ -13,6 +14,7 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override ;
+    void moveAlongLAs(VisualObject* temp, float dt);
         float radius = 0.25f;
         float r = 1.f;
     
@@ -24,9 +26,11 @@ public:
 
         int mPrevIndex{0};
             VisualObject *mTriangleSurface{nullptr};
+          //  VisualObject *mLas{nullptr};
 
 protected:
     VisualObject* triangle_surface;
+    VisualObject* _las;
 private:
 
     float speed = 0.001f;
