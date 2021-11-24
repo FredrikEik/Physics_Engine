@@ -17,6 +17,7 @@ public:
     std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
     
 private:
+     void calculateNormals();
     float xMin = 9000000;
     float xMax = 0;
     float yMin = 9000000;
@@ -27,7 +28,7 @@ private:
     static const int X = 200; // (Max.x - Min.x) / n
     static const int Y = 294; // (Max.y - Min.y) / n
     std::vector<gsml::Vector3d> map[X][Y];
-  //  gsml::Vector3d m[X][Y];
+    float mNormal[3];
     
 };
 

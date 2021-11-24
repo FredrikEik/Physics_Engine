@@ -15,12 +15,38 @@ VisualObject::~VisualObject()
     glDeleteBuffers( 1, &mVBO );
 }
 
-void VisualObject::move(float dx, float dy, float dz)
+void VisualObject::init(GLint matrixUniform)
 {
-    mPosition.translate(dx, dy, dz);
-    mMatrix = mPosition;
-}
+    mMatrixUniform = matrixUniform;
+    //must call this to use OpenGL functions?
+    initializeOpenGLFunctions();
 
+    //Vertex Array Object - VAO
+    glGenVertexArrays( 1, &mVAO );
+    glBindVertexArray( mVAO );
+
+    //Vertex Buffer Object to hold vertices - VBO
+    glGenBuffers( 1, &mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+
+    //Vertex Buffer Object to hold vertices - VBO
+    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof( gsml::Vertex ),
+                  mVertices.data(), GL_STATIC_DRAW );
+
+    // 1rst attribute buffer : vertices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(gsml::Vertex), (GLvoid*)0  );          // array buffer offset
+    glEnableVertexAttribArray(0);
+
+    // 2nd attribute buffer : colors
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
+    glEnableVertexAttribArray(1);
+
+    // 3rd attribute buffer : uvs
+    glVertexAttribPointer(2, 2,  GL_FLOAT, GL_FALSE, sizeof(gsml::Vertex), (GLvoid*)( 6 * sizeof(GLfloat)) );
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
+}
 
 gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position)
 {
@@ -30,7 +56,6 @@ gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const g
     //qDebug() << "P12" << p12.x << p12.y << "P13" << p13.x << p13.y;
 
     gsml::Vector3d n = p12.operator^(p13);
-
 
     //qDebug() << "n" << n.x << n.y << n.z;
     float areal_123 = n.length();

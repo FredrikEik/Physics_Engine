@@ -15,6 +15,7 @@
 #include "flatefil.h"
 #include "camera.h"
 #include "bspinecurve.h"
+#include "light.h"
 
 class QOpenGLContext;
 class Shader;
@@ -36,34 +37,59 @@ public:
     void exposeEvent(QExposeEvent *) override;
 
 //    void error(const QString &msg);
+    void makeRain();
+    void spawnRollingBall();
 
 private slots:
     void render();
 
 private:
     void init();
-    XYZ xyz;
-    TriangleSurface surf;
+    void makeObjects();
+    void drawObjects();
+    XYZ *xyz;
+    VisualObject* surf;
     TriangleSurface* surf2;
     QOpenGLContext *mContext;
     bool mInitialized;
-    RollingBall* ball;
-    VisualObject *Flate;
+    Light * mLight{nullptr};
+    FlateFil *Flate;
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
-    void makeRain();
+    std::vector<VisualObject*> mVisualObjects;
     BSpineCurve *mBSpline;
+    int currentScene{1};
 
 
 
 
-    Shader *mShaderProgram;
-    GLint  mMatrixUniform;
-    GLint mPMatrixUniform;  // nytt 23/1
-    GLint mVMatrixUniform;  // nytt 23/1
-    GLint mLightPositionUniform;   // nytt 3/10/19
+    Shader *mShaderProgram[2]{nullptr};
     GLuint mVAO;
     GLuint mVBO;
+
+    void setupPlainShader(int shaderIndex);
+    GLint mMatrixUniform{-1};
+    GLint vMatrixUniform{-1};
+    GLint pMatrixUniform{-1};
+
+    void setupPhongShader(int shaderIndex);
+    GLint mMatrixUniform1{-1};
+    GLint vMatrixUniform1{-1};
+    GLint pMatrixUniform1{-1};
+    GLint mTextureUniformPhong{-1};
+
+    //light shader variables
+    GLint mLightColorUniform{-1};
+    GLint mObjectColorUniform{-1};
+    GLint mAmbientLightStrengthUniform{-1};
+    GLint mLightPositionUniform{-1};
+    GLint mCameraPositionUniform{-1};
+    GLint mSpecularStrengthUniform{-1};
+    GLint mSpecularExponentUniform{-1};
+    GLint mLightPowerUniform{-1};
+
+
+
 
     gsml::Matrix4x4 * gsmMMatrix;  // nytt 23/1
     gsml::Matrix4x4 * gsmVMatrix;  // nytt 23/1

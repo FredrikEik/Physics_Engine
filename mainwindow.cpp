@@ -73,3 +73,15 @@ void MainWindow::on_pushButton_clicked()
     qDebug() << "Button clicked";
 }
 
+
+void MainWindow::on_RollingBall_clicked()
+{
+    mRenderWindow->spawnRollingBall();
+}
+
+
+void MainWindow::on_MakeItRain_clicked()
+{
+    mRenderWindow->makeRain();
+}
+

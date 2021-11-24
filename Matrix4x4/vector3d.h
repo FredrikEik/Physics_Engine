@@ -75,6 +75,14 @@ struct Vector3d {
         }
     }
 
+    //returns angle between two vectors as a double
+    double Angle(const Vector3d& v){
+    double Dot = x*v.x + y*v.y + z*v.z;    //between [x1, y1, z1] and [x2, y2, z2]
+    double lenSq1 = x*x + y*y + z*z;
+    double lenSq2 = v.x*v.x + v.y*v.y + v.z*v.z;
+    double angle = acos(Dot/sqrt(lenSq1 * lenSq2));
+    return angle;}
+
     //! Dot product
     float operator * (const Vector3d& v) const{
         return x*v.x + y*v.y + z*v.z;

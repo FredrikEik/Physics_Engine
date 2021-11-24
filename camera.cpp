@@ -41,9 +41,13 @@ void Camera::updateForwardVector()
     mRight = gsml::Vector3d(1.f, 0.f, 0.f);
     mRight.rotateY(mYaw);
     mRight.normalize();
+
+
+
     mUp = gsml::Vector3d(0.f, 1.f, 0.f);
     mUp.rotateX(mPitch);
     mUp.normalize();
+
     mForward = mUp^mRight;
 
     updateRightVector();
@@ -59,10 +63,10 @@ void Camera::update()
     //mPitchMatrix.rotateX(mPitch);
     //mYawMatrix.rotateY(mYaw);
 
-    mPosition = mPosition - (mForward * mSpeed);
+    mPosition = mPosition + (mForward * mSpeed);
 
     mViewMatrix = mPitchMatrix* mYawMatrix;
-    mViewMatrix.translate(-mPosition.x, -mPosition.y, -mPosition.z);
+    mViewMatrix.translate(mPosition.x, mPosition.y, mPosition.z);
 }
 
 void Camera::calculateProjectionMatrix()
@@ -82,7 +86,7 @@ void Camera::setSpeed(float speed)
 
 void Camera::updateHeigth(float deltaHeigth)
 {
-    mPosition.y += deltaHeigth;
+    mPosition.z += deltaHeigth;
 }
 
 void Camera::moveRight(float delta)
@@ -91,7 +95,7 @@ void Camera::moveRight(float delta)
     //so camera always holds its height when straifing
     //should be fixed thru correct right calculations!
     gsml::Vector3d right = mRight;
-    right.y = 0.f;
+    right.z = 0.f;
     mPosition = mPosition + (right * delta);
 }
 

@@ -10,6 +10,7 @@ XYZ::XYZ() : VisualObject()
     mVertices.push_back(gsml::Vertex{0,0,0,0,0,1});
     mVertices.push_back(gsml::Vertex{0,0,1,0,0,1});
 
+    mDrawType = GL_LINES;
     //mMatrix.setToIdentity();
     //mMatrix.frustum(-1,1,-1,1,-1,1);
 }

@@ -79,6 +79,13 @@ void Vertex::set_normal(GLfloat x, GLfloat y, GLfloat z)
     m_normal[0] = x; m_normal[1] = y; m_normal[2] = z;
 }
 
+void Vertex::set_normal(Vector3d normal_in)
+{
+    m_normal[0] = normal_in.x;
+    m_normal[1] = normal_in.y;
+    m_normal[2] = normal_in.z;
+}
+
 void Vertex::set_st(GLfloat* st)
 {
     for (int i=0; i<2; i++) m_st[i] = st[i];

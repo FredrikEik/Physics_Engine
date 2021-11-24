@@ -3,9 +3,9 @@
 layout(location = 0) in vec4 posAttr;
 layout(location = 1) in vec4 colAttr;
 out vec4 col;
-uniform mat4 pmatrix;
-uniform mat4 vmatrix;
-uniform mat4 matrix;
+uniform mat4 mMatrix;
+uniform mat4 vMatrix;
+uniform mat4 pMatrix;
 uniform vec3 light_position;
 //
 // Beregner vha Phong shading
@@ -20,11 +20,11 @@ const float shininess = 1.0;
 void main() {
    //col = colAttr;
    //gl_Position = pmatrix * vmatrix * matrix * posAttr;
-    vec4 vertexPositionEye4 = matrix * posAttr;
+    vec4 vertexPositionEye4 = mMatrix * posAttr;
     vec3 vertexPositionEye3 = vertexPositionEye4.xyz;
     vec3 vectorToLightSource = normalize(light_position-vertexPositionEye3);
    // vec3 normalEye = normailze(uNMatrix*aVertexNormal);
-    vec4 temp = vmatrix*matrix *colAttr;
+    vec4 temp = vMatrix*mMatrix *colAttr;
     vec3 normalEye = normalize(temp.xyz);
     float diffuseLightWeight = max (dot(normalEye, vectorToLightSource), 0.0);
     vec3 reflectionVector = normalize(reflect(-vectorToLightSource, normalEye));
@@ -35,7 +35,7 @@ void main() {
             diffuseColor*diffuseLightWeight +// +
            specularColor*specularLightWeight;
 
-    gl_Position = pmatrix*vmatrix*matrix * posAttr;
+    gl_Position = pMatrix*vMatrix*mMatrix * posAttr;
     col = colAttr;//*vec4(1.0, 0.5, 0.2, 1.0);//
     //vTextureCoordinates = aTextureCoordinates;
 }

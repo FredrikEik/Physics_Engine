@@ -5,8 +5,10 @@
 FlateFil::FlateFil(std::string filnavn) : VisualObject()
 {
     mMatrix.setToIdentity();
+    mShader = 1;
     readPoints(filnavn);
     makePlain();
+    calculateNormals();
 
 }
 
@@ -97,6 +99,62 @@ float FlateFil::calcHeight(float x, float y)
     return z;
 
 }
+
+void FlateFil::calculateNormals()
+{
+    for (int i = 0; i <static_cast<int>(mVertices.size()); i+=3)
+    {
+        gsml::Vertex* v1 = &mVertices[i];
+        gsml::Vertex* v2 = &mVertices[i+1];
+        gsml::Vertex* v3 = &mVertices[i+2];
+
+        gsml::Vector3d p1 = v1->getXYZ();
+        gsml::Vector3d p2 = v2->getXYZ();
+        gsml::Vector3d p3 = v3->getXYZ();
+        // p1, p2 and p3 are the points in the face (f)
+
+        // calculate facet normal of the triangle using cross product;
+        // both components are "normalized" against a common point chosen as the base
+        gsml::Vector3d p12 = p2 - p1;
+        gsml::Vector3d p13 = p3 - p1;
+        gsml::Vector3d n = p12^p13;
+        //float nF = n.length();    // p1 is the 'base' here
+
+        // get the angle between the two other points for each point;
+        // the starting point will be the 'base' and the two adjacent points will be normalized against it
+        double a1 = (p2 - p1).Angle(p3 - p1);    // p1 is the 'base' here
+        double a2 = (p3 - p2).Angle(p1 - p2);    // p2 is the 'base' here
+        double a3 = (p1 - p3).Angle(p2 - p3);    // p3 is the 'base' here
+
+//        // normalize the initial facet normals if you want to ignore surface area
+//        if (!area_weighting)
+//        {
+//            n.normalize();
+//        }
+
+        // store the weighted normal in an structured array
+        v1->wNormals.push_back(n * a1);
+        v2->wNormals.push_back(n * a2);
+        v3->wNormals.push_back(n * a3);
+    }
+    for (int i = 0; i < static_cast<int>(mVertices.size()); i++)
+    {
+        gsml::Vector3d N;
+
+        // run through the normals in each vertex's array and interpolate them
+        // vertex(v) here fetches the data of the vertex at index 'v'
+        for (int n = 0; n < static_cast<int>(mVertices[i].wNormals.size()); n++)
+        {
+            N = N + mVertices[i].wNormals.at(n);
+        }
+
+        // normalize the final normal
+        N.normalize();
+        //mVertices[0].at(i).set_normal(N.x, N.y, N.z);// = result;
+        mVertices[i].set_normal(N);
+    }
+}
+
 
 void FlateFil::init(GLint matrixUniform)
 {

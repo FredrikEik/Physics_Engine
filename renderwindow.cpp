@@ -39,14 +39,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
     //qDebug() << v[0] <<v[1] << v[3] << v[2];
+     mLight = new Light();
 
-
-    gsmMMatrix = new gsml::Matrix4x4;
-    gsmMMatrix->setToIdentity();
-    gsmVMatrix = new gsml::Matrix4x4;
-    gsmVMatrix->setToIdentity();
-    gsmPMatrix = new gsml::Matrix4x4;
-    gsmPMatrix->setToIdentity();
 }
 
 RenderWindow::~RenderWindow()
@@ -97,8 +91,13 @@ void RenderWindow::init()
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
 
-    mShaderProgram = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
-
+    mCamera = new Camera;
+    mShaderProgram[0] = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
+    qDebug() << "Plain shader program id: " << mShaderProgram[0]->getProgram();
+    mShaderProgram[1] = new Shader("../VSIM101_H21_Rulleball_0/phongvertex.vert", "../VSIM101_H21_Rulleball_0/phongfragment.frag");
+    qDebug() << "Phong shader program id: " << mShaderProgram[1]->getProgram();
+    setupPlainShader(0);
+    setupPhongShader(1);
 
     //********************** Making the object to be drawn **********************
 
@@ -107,53 +106,109 @@ void RenderWindow::init()
     glBindVertexArray( mVAO );
 
 
-    //enable the matrixUniform
-    // NB: enable in shader and in render() function also to use matrix
-    // endret/nytt 23/1
-    mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
-    mPMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
-    mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
-    mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
 
-    mCamera = new Camera;
-    mCamera->setPosition(gsml::Vector3d(10.f, .5f, 30.f));
-    mCamera->pitch(90);
 
-    //oblig 2
-//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-//    ball = new RollingBall(3);
-//    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-//    surf2->init(mMatrixUniform);
-//    ball->init(mMatrixUniform);
+    mCamera->pitch(70);
+    mCamera->setPosition(gsml::Vector3d(0.f, -100.f, -30.f));
+    mCamera->yaw(180);
 
-    //Oblig 3
-    Flate = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
-
-    //ball = new RollingBall(3);
-   // dynamic_cast<RollingBall*>(ball)->setSurface(Flate);
-    Flate->init(mMatrixUniform);
-    xyz.init(mMatrixUniform);
-    mBSpline->init(mMatrixUniform);
-    makeRain();
+    makeObjects();
 
 
 
 }
 
-void RenderWindow::makeRain()
+void RenderWindow::makeObjects()
 {
-    RollingBall *ball{nullptr};
-    for(auto i{0}; i<20; i++)
-    {
-        ball = new RollingBall(3);
-        ball->setSurface(Flate);
-        ball->init(mMatrixUniform);
-        Rain.push_back(ball);
+    xyz = new XYZ;
+       xyz->init(mMatrixUniform);
+       mVisualObjects.push_back(xyz);
 
+       surf = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
+       surf->init(mMatrixUniform1);
+       mVisualObjects.push_back(surf);
+
+       RollingBall* ball{nullptr};
+       for(auto i{0}; i<10; i++)
+       {
+           ball = new RollingBall(3);
+           ball->setSurface(surf);
+           ball->init(mMatrixUniform);
+           Rain.push_back(ball);
+           mVisualObjects.push_back(ball);
+       }
+
+       surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+       surf2->mScene = 1;
+       surf2->init(mMatrixUniform);
+       mVisualObjects.push_back(surf2);
+
+       ball = new RollingBall(3);
+       ball->setSurface(surf2);
+       ball->mScene = 1;
+       ball->init(mMatrixUniform);
+       mVisualObjects.push_back(ball);
+}
+
+void RenderWindow::drawObjects()
+{
+    //This block sets up the uniforms for the shader used in the material
+    //Also sets up texture if needed.
+    int viewMatrix{-1};
+    int projectionMatrix{-1};
+    int modelMatrix{-1};
+    //Draws the objects
+    for(int i{0}; i <static_cast<int>(mVisualObjects.size()); i++)
+    {
+        glUseProgram(mShaderProgram[mVisualObjects[i]->getShaderID()]->getProgram());
+
+        if (mVisualObjects[i]->getShaderID() == 0) //PlainShader
+        {
+            viewMatrix = vMatrixUniform;
+            projectionMatrix = pMatrixUniform;
+            modelMatrix = mMatrixUniform;
+        }
+        else if (mVisualObjects[i]->getShaderID() == 1)//TextureShader
+        {
+            viewMatrix = vMatrixUniform1;
+            projectionMatrix = pMatrixUniform1;
+            modelMatrix = mMatrixUniform1;
+
+            glUniform3f(mLightPositionUniform, mLight->getMatrix().getColumn(3).x(), mLight->getMatrix().getColumn(3).y(), mLight->getMatrix().getColumn(3).z());
+            glUniform3f(mCameraPositionUniform, mCamera->position().x, mCamera->position().y, mCamera->position().z);
+            glUniform3f(mLightColorUniform, mLight->mLightColor.x(), mLight->mLightColor.y(), mLight->mLightColor.z());
+        }
+
+
+        if(mVisualObjects[i]->mScene == currentScene)
+        {
+            //send data to shader
+            glUniformMatrix4fv( viewMatrix, 1, GL_TRUE, mCamera->mViewMatrix.constData());
+            glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
+            glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
+
+            glBindVertexArray(mVisualObjects[i]->mVAO );
+            glDrawArrays(mVisualObjects[i]->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
+            glBindVertexArray(0);
+        }
     }
 
+    glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mLight->getMatrix().constData());
+    glBindVertexArray(mLight->mVAO );
+    glDrawArrays(mLight->mDrawType, 0, mLight->get_vertices().size());
+    glBindVertexArray(0);
+
+    if(currentScene == 0){
+        if(!Rain.empty()){
+            for(auto i{0}; i<static_cast<int>(Rain.size()); i++)
+            {
+                Rain[i]->move(0.017f);
+            }}}
+    else
+        mVisualObjects.back()->move(0.017f);
 }
+
 
 ///Called each frame - doing the rendering
 void RenderWindow::render()
@@ -168,42 +223,7 @@ void RenderWindow::render()
     // to clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // what shader to use
-    glUseProgram(mShaderProgram->getProgram() );
-    glEnable(GL_PROGRAM_POINT_SIZE);
-    glPointSize(5);
-    // what object to draw
-
-    // Since our shader uses a matrix and we rotate the triangle, we send the current matrix here
-    // must be here to update each frame - if static object, it could be set only once
-
-    glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
-    glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, mCamera->mViewMatrix.constData());
-    glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
-    // actual draw call
-    Flate->draw();
-//    Oblig 2
-//    surf2->draw();
-//    ball->move(0.017f);
-//    ball->draw();
-
-
-//    oblig 3
-
-//    ball->draw();
-//    ball->move(0.017f);
-    xyz.draw();
-    //mBSpline->draw();
-
-    if(!Rain.empty())
-    {
-        for(auto i{0}; i<Rain.size(); i++)
-           {
-               Rain[i]->move(0.017f);
-               Rain[i]->draw();
-           }
-    }
-
+    drawObjects();
 
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
@@ -217,6 +237,22 @@ void RenderWindow::render()
     // and wait for vsync.
     mContext->swapBuffers(this);
 }
+
+void RenderWindow::makeRain()
+{
+    currentScene = 0;
+    mCamera->setPosition(gsml::Vector3d(0.f, -100.f, -50.f));
+
+}
+
+void RenderWindow::spawnRollingBall()
+{
+    currentScene = 1;
+    static_cast<RollingBall*>(mVisualObjects.back())->p = new Physics;
+    mVisualObjects.back()->move(1,1,5);
+    mCamera->setPosition(gsml::Vector3d(0.f, -15.f, -10.f));
+}
+
 
 //This function is called from Qt when window is exposed (shown)
 //and when it is resized
@@ -241,8 +277,36 @@ void RenderWindow::exposeEvent(QExposeEvent *)
     }
 
 
-     mCamera->calculateProjectionMatrix();
+    mCamera->calculateProjectionMatrix();
 }
+
+
+void RenderWindow::setupPhongShader(int shaderIndex)
+{
+    mMatrixUniform1 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "mMatrix" );
+    vMatrixUniform1 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "vMatrix" );
+    pMatrixUniform1 = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "pMatrix" );
+
+    mLightColorUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightColor" );
+    mObjectColorUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "objectColor" );
+    mAmbientLightStrengthUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "ambientStrengt" );
+    mLightPositionUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightPosition" );
+    mSpecularStrengthUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "specularStrength" );
+    mSpecularExponentUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "specularExponent" );
+    mLightPowerUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "lightStrengt" );
+    mCameraPositionUniform = glGetUniformLocation( mShaderProgram[shaderIndex]->getProgram(), "cameraPosition" );
+    mTextureUniformPhong = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "textureSampler");
+}
+
+
+void RenderWindow::setupPlainShader(int shaderIndex)
+{
+    mMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "mMatrix" );
+    vMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "vMatrix" );
+    pMatrixUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "pMatrix" );
+    mLightPositionUniform = glGetUniformLocation(mShaderProgram[shaderIndex]->getProgram(), "light_position");
+}
+
 
 //The way this is set up is that we start the clock before doing the draw call,
 //and check the time right after it is finished (done in the render function)
@@ -360,7 +424,7 @@ void RenderWindow::checkCamInp()
 
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
-     mCamera->setSpeed(0.f);
+    mCamera->setSpeed(0.f);
     if (event->key() == Qt::Key_Escape) //Shuts down whole program
     {
         mMainWindow->close();

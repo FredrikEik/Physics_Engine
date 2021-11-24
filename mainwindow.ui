@@ -16,9 +16,16 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="RollingBall">
       <property name="text">
-       <string>PushButton</string>
+       <string>RollingBall</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="MakeItRain">
+      <property name="text">
+       <string>MakeItRain</string>
       </property>
      </widget>
     </item>
@@ -33,7 +40,7 @@
      <x>0</x>
      <y>0</y>
      <width>1047</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

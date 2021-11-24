@@ -15,6 +15,7 @@ HEADERS += \
     bspinecurve.h \
     camera.h \
     flatefil.h \
+    light.h \
     mainwindow.h \
     marchingsquare.h \
     octahedronball.h \
@@ -31,6 +32,7 @@ SOURCES += \
     bspinecurve.cpp \
     camera.cpp \
     flatefil.cpp \
+    light.cpp \
     main.cpp \
     mainwindow.cpp \
     marchingsquare.cpp \
@@ -44,4 +46,6 @@ SOURCES += \
 
 DISTFILES += \
     dagfragment.frag \
-    dagvertex.vert
+    dagvertex.vert \
+    phongfragment.frag \
+    phongvertex.vert

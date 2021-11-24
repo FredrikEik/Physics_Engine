@@ -88,12 +88,18 @@ void RollingBall::setSurface(VisualObject* surface)
 {
     triangle_surface = surface;
     vertices = triangle_surface->get_vertices();
-    gsml::Vector3d v1 =vertices.at(17205).getXYZ();
-    gsml::Vector3d v2 =vertices.at(17206).getXYZ();
-    gsml::Vector3d v3 =vertices.at(17207).getXYZ();
-    gsml::Vector3d pos = (v1+v2+v3)*0.333;
-    pos.z += 50;
-    setPosition(pos);
+    int mT = static_cast<int>(vertices.size());
+    if(vertices.size()>100){
+        mT = rand()%mT;
+        qDebug() << mT;
+        gsml::Vector3d v1 =vertices.at(mT).getXYZ();
+        gsml::Vector3d v2 =vertices.at(mT+1).getXYZ();
+        gsml::Vector3d v3 =vertices.at(mT+2).getXYZ();
+        gsml::Vector3d pos = (v1+v2+v3)*0.333;
+        pos.z += 50;
+        setPosition(pos);}
+    else
+        move(1,1,5);
 }
 
 void RollingBall::move(float dt)
