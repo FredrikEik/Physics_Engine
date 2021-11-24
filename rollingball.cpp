@@ -7,7 +7,7 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
     mPosition.translate(1.5,0,2);
     mScale.scale(0.25,0.25,0.25);
     gKraft = gForce*mass;
-
+    gForce = gAcceleration * massInKg;
 }
 
 RollingBall::RollingBall(int n, VisualObject *surface) : OctahedronBall(n)
@@ -46,17 +46,23 @@ void RollingBall::move(float dt)
 void RollingBall::moveAlongLAs(VisualObject * temp, float dt)
 {
 
-    std::vector<gsml::Vertex>& vertices = temp->get_vertices();
+  //  std::vector<gsml::Vertex>& vertices = temp->get_vertices();
+
+   // std::vector<gsml::Vertex>& vertices = dynamic_cast<class LAS*>(_las)->mVertices;
+
+
+     // MÅ FIKSES!
 
     gsml::Vector3d barycCoords;
-    gsml::Vector3d ballPosition = temp->mMatrix.getPosition();
+    gsml::Vector3d ballPosition = mMatrix.getPosition();
 
-    for(int i = 0; i < vertices.size() - 2; i+= 3)
+    for(unsigned int i = 0; i < mTriangleSurface->mTriangles.size() ; i++)
     {
+        Triangle t = mTriangleSurface->mTriangles[i];
         gsml::Vector3d p1, p2, p3;
-        p1 = gsml::Vector3d(vertices[i].getXYZ());
-        p2 = gsml::Vector3d(vertices[i+1].getXYZ());
-        p3 = gsml::Vector3d(vertices[i+2].getXYZ());
+        p1 = gsml::Vector3d(t.V1.getXYZ());
+        p2 = gsml::Vector3d(t.V2.getXYZ());
+        p3 = gsml::Vector3d(t.V3.getXYZ());
         //qDebug() << "p1:" << p1.x<<p1.y<<p1.z << " p2:" << p2.x<<p2.y<<p3.z << " p3:" << p3.x<<p3.y<<p3.z;
 
         barycCoords = ballPosition.barycentricCoordinates(p1, p2, p3);
@@ -86,11 +92,11 @@ void RollingBall::moveAlongLAs(VisualObject * temp, float dt)
             velocity = velocity + acceleration * dt;
 
             float yOffset = 0.25f;
-            gsml::Vector3d newPosition = temp->mMatrix.getPosition() + velocity * dt;
+            gsml::Vector3d newPosition = mMatrix.getPosition() + velocity * dt;
             newPosition.y = p1.y*barycCoords.x + p2.y*barycCoords.y + p3.y*barycCoords.z;
-            temp->mMatrix.setPosition(newPosition.x, newPosition.y+ yOffset, newPosition.z);
+            mMatrix.setPosition(newPosition.x, newPosition.y+ yOffset, newPosition.z);
 
-            ballPosition = temp->mMatrix.getPosition();
+            ballPosition = mMatrix.getPosition();
 
             //mPosition.translate(velocity.x, velocity.y, velocity.z);
             //qDebug() << "pos after:    " << ballPosition.x << ballPosition.y << ballPosition.z;

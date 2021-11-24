@@ -28,8 +28,6 @@ LAS::LAS(std::string fileName)
     float averageHeights[800];
     //float averageHeights[numOfQuads];
 
-
-
     //For every vertices
     //qDebug() << "Vertices size" << lasData.size();
     for(int i = 0; i < lasData.size(); i++)

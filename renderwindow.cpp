@@ -46,10 +46,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Demo
     map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
     surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
-    //surf2->mMatrix.rotate(90, 0, 0, 0);
-        ball = new RollingBall(3);
-      //  ball = new RollingBall(3, surf2);
+    surf2->mMatrix.rotate(90, 0, 0, 0);
+    ball = new RollingBall(3);
+    //  ball = new RollingBall(3, surf2);
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+ //   dynamic_cast<RollingBall*>(ball)->setSurface(map);
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -128,8 +129,8 @@ void RenderWindow::init()
 
 
     surf2->init(mMatrixUniform);
-    //mGameObjects.push_back(surf2);
-    ball->mMatrix.scale(.5,.5,.5);
+    mGameObjects.push_back(surf2);
+    //ball->mMatrix.scale(.5,.5,.5);
     ball->init(mMatrixUniform);
 
     mGameObjects.push_back(ball);
@@ -185,9 +186,10 @@ void RenderWindow::render()
     // actual draw call
     // demo
 
-    //ball->move(0.017f);
+   ball->move(0.017f);
 
-    ball->moveAlongLAs(map, 0.017);
+
+  // ball->moveAlongLAs(map, 0.017);
 
     for(unsigned int i{0}; i < mGameObjects.size(); i++)
     {

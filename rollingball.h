@@ -42,6 +42,8 @@ private:
     gsml::Vector3d acceleration{};
     gsml::Vector3d gravity{0,-9.81f,0};
     float gravitation = 9.81;
+    float massInKg {0.05f};
+    gsml::Vector3d gAcceleration{0.0f, 0.0f, -9.80565f};
     
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     int old_index{0};
