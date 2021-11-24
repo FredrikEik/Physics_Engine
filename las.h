@@ -18,14 +18,15 @@ public:
 
     void readLAS(std::string fileName);
     void minMaxNormalize();
+    void triangulate();
 
     void draw() override;
     void init(GLint matrixUniform) override;
-    //void move(float x, float y, float z) override;
-//    std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
 
 private:
-
+    float R = 10;
+    float G = 30;
+    float B = 50;
     std::vector<gsml::Vertex> lasData;
 
     //mins and maxes must be uniform with step
