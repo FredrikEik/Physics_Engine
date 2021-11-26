@@ -49,8 +49,12 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     surf2->mMatrix.rotate(90, 0, 0, 0);
     ball = new RollingBall(3);
     //  ball = new RollingBall(3, surf2);
+
+    ball->switchVersion = false;
+    if(!ball->switchVersion)
+    dynamic_cast<RollingBall*>(ball)->setSurface(map);
+    else
     dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
- //   dynamic_cast<RollingBall*>(ball)->setSurface(map);
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -189,7 +193,7 @@ void RenderWindow::render()
    ball->move(0.017f);
 
 
-  // ball->moveAlongLAs(map, 0.017);
+  // ball->moveAlongLAs( 0.017);
 
     for(unsigned int i{0}; i < mGameObjects.size(); i++)
     {

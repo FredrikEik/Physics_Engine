@@ -21,7 +21,7 @@ RollingBall::RollingBall(int n, VisualObject *surface) : OctahedronBall(n)
     mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
     oktaederUnitBall();
     mMatrix.setToIdentity();
-    switchVersion = true;
+    //switchVersion = true;
 }
 
 RollingBall::~RollingBall()
@@ -35,34 +35,47 @@ void RollingBall::move(float dt)
 
 
     if(!switchVersion)
-        barycentricCords(dt);
+       // barycentricCords(dt);
+        moveAlongLAs(dt);
     else
-        barycentricCords2(dt);
+        barycentricCords(dt);
 
 
 
 }
 
-void RollingBall::moveAlongLAs(VisualObject * temp, float dt)
+void RollingBall::moveAlongLAs( float dt)
 {
 
+    /*
   //  std::vector<gsml::Vertex>& vertices = temp->get_vertices();
 
-   // std::vector<gsml::Vertex>& vertices = dynamic_cast<class LAS*>(_las)->mVertices;
-
+    std::vector<gsml::Vertex>& vertices = dynamic_cast<class LAS*>(_las)->mVertices;
+    //mMatrix = mPosition * mScale;
 
      // MÅ FIKSES!
 
     gsml::Vector3d barycCoords;
     gsml::Vector3d ballPosition = mMatrix.getPosition();
 
-    for(unsigned int i = 0; i < mTriangleSurface->mTriangles.size() ; i++)
+    for(unsigned int i = 0; i < mLas->mTriangles.size() ; i++)
     {
-        Triangle t = mTriangleSurface->mTriangles[i];
-        gsml::Vector3d p1, p2, p3;
-        p1 = gsml::Vector3d(t.V1.getXYZ());
-        p2 = gsml::Vector3d(t.V2.getXYZ());
-        p3 = gsml::Vector3d(t.V3.getXYZ());
+
+        Triangle t = mLas->mTriangles[i];
+        gsml::Vector3d bar = baryCoord(gsml::Vector2d{t.V1.getX(), t.V1.getZ()},
+                                  gsml::Vector2d{t.V2.getX(), t.V2.getZ()},
+                                  gsml::Vector2d{t.V3.getX(), t.V3.getZ()},
+                                  gsml::Vector2d{mMatrix.getPosition().x, mMatrix.getPosition().z});
+
+
+        gsml::Vector3d p1 = bar.getX();
+        gsml::Vector3d p2 = bar.getY();
+        gsml::Vector3d p3 = bar.getZ();
+//        Triangle t = mLas->mTriangles[i];
+//        gsml::Vector3d p1, p2, p3;
+//        p1 = gsml::Vector3d(t.V1.getXYZ());
+//        p2 = gsml::Vector3d(t.V2.getXYZ());
+//        p3 = gsml::Vector3d(t.V3.getXYZ());
         //qDebug() << "p1:" << p1.x<<p1.y<<p1.z << " p2:" << p2.x<<p2.y<<p3.z << " p3:" << p3.x<<p3.y<<p3.z;
 
         barycCoords = ballPosition.barycentricCoordinates(p1, p2, p3);
@@ -105,6 +118,62 @@ void RollingBall::moveAlongLAs(VisualObject * temp, float dt)
         }
         //qDebug() << "ballpos: " << ballPosition.x << ballPosition.y << ballPosition.z;
     }
+    */
+
+
+    std::vector<gsml::Vertex>& vertices = dynamic_cast<LAS*>(_las)->get_vertices();
+
+    for (unsigned int i=0; i < vertices.size() ; i+=3){
+
+        gsml::Vector3d pos1;
+        gsml::Vector3d pos2;
+        gsml::Vector3d pos3;
+        pos1 = gsml::Vector3d(vertices[i].getXYZ());
+        pos2 = gsml::Vector3d(vertices[i+1].getXYZ());
+        pos3 = gsml::Vector3d(vertices[i+2].getXYZ());
+
+        gsml::Vector3d BallPos = mPosition.getPosition();
+        gsml::Vector3d barCords = BallPos.barycentricCoordinates(vertices[i].getXYZ(),
+                                                  vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
+
+        if(barCords.x >= 0 && barCords.y >= 0 && barCords.z >= 0)
+        {
+
+            gsml::Vector3d p12 = pos2-pos1;
+            gsml::Vector3d p13 = pos3-pos1;
+            //qDebug() << "p12, p13" << p12.x << p12.y << p12.z << p13.x << p13.y << p13.z;
+            gsml::Vector3d pNormal = p12^p13;
+
+            //qDebug() << "pNormal not normalized: " << pNormal.x << pNormal.y << pNormal.z;
+            pNormal.normalize();
+
+            old_normal = pNormal;
+            //qDebug() << "pNormal normalized: " << pNormal.x << pNormal.y << pNormal.z;
+
+            gKraft = gsml::Vector3d(abs(gKraft.x), abs(gKraft.y), abs(gKraft.z));
+            //gsml::Vector3d pz{pNormal.z, pNormal.z, pNormal.z};
+
+            akselerasjon = gKraft ^ pNormal ^ gsml::Vector3d(0, pNormal.y, 0);
+            //acceleration = gAcceleration * gsml::Vector3d(pNormal.x*pNormal.z, pNormal.y*pNormal.z, pNormal.z*pNormal.z-1);
+            //acceleration = acceleration + friction;
+            hastighet = hastighet + acceleration * dt;
+
+            float yOffset = 0.25f;
+            gsml::Vector3d newPosition = mPosition.getPosition() + hastighet * dt;
+            newPosition.y = pos1.y*barCords.x + pos2.y*barCords.y + pos3.y*barCords.z;
+            mPosition.setPosition(newPosition.x, newPosition.y+ yOffset, newPosition.z);
+
+            BallPos = mPosition.getPosition();
+
+
+
+
+
+        }
+
+
+
+    }
 
 }
 
@@ -120,10 +189,10 @@ void RollingBall::barycentricCords2(float dt)
     int index{0};
 
     qDebug() << "utenfor forloop";
-    for (unsigned int i{0}; i < mTriangleSurface->mTriangles.size(); i++)
+    for (unsigned int i{0}; i < /*mTriangleSurface*/mLas->mTriangles.size(); i++)
     {
         //searches for current triangle with barycentric coordinates
-        Triangle t = mTriangleSurface->mTriangles[i];
+        Triangle t = /*mTriangleSurface*/mLas->mTriangles[i];
         gsml::Vector3d bar = baryCoord(gsml::Vector2d{t.V1.getX(), t.V1.getZ()},
                                   gsml::Vector2d{t.V2.getX(), t.V2.getZ()},
                                   gsml::Vector2d{t.V3.getX(), t.V3.getZ()},
@@ -175,6 +244,15 @@ void RollingBall::barycentricCords2(float dt)
         qDebug() << "inni forloop";
     }
 
+
+}
+
+void RollingBall::setSurface(VisualObject *surface)
+{
+    if(!switchVersion)
+        _las = surface;
+    else
+        triangle_surface = surface;
 
 }
 

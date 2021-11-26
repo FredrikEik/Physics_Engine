@@ -14,19 +14,19 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override ;
-    void moveAlongLAs(VisualObject* temp, float dt);
+    void moveAlongLAs( float dt);
         float radius = 0.25f;
         float r = 1.f;
     
         bool switchVersion = false;
-        void calculateBarycentricCoordinates(VisualObject *surface);
+    void calculateBarycentricCoordinates(VisualObject *surface);
     void barycentricCords(float dt);
     void barycentricCords2(float dt);
-    void setSurface(VisualObject* surface) { triangle_surface = surface; }
+    void setSurface(VisualObject* surface);
 
         int mPrevIndex{0};
-            VisualObject *mTriangleSurface{nullptr};
-          //  VisualObject *mLas{nullptr};
+         VisualObject *mTriangleSurface{nullptr};
+         VisualObject *mLas{nullptr};
 
 protected:
     VisualObject* triangle_surface;
