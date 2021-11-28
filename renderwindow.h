@@ -14,6 +14,7 @@
 #include "trianglesurface.h"
 #include "filesurface.h"
 #include "matrix4x4.h"
+#include "octahedronball.h"
 #include "rollingball.h"
 
 class QOpenGLContext;
@@ -44,6 +45,7 @@ private slots:
 private:
     void init();
     XYZ* xyz;
+    OctahedronBall* oball{nullptr};
     TriangleSurface* surf2;
     VisualObject* surf;
     QOpenGLContext *mContext;

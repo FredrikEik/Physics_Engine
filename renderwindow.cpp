@@ -155,10 +155,12 @@ void RenderWindow::makeObjects()
     surf->init(mMatrixUniform1);
     mVisualObjects.push_back(surf);
 
+    oball = new OctahedronBall(0);
     RollingBall* ball{nullptr};
-    for(auto i{0}; i<10; i++)
+    for(auto i{0}; i<100; i++)
     {
-        ball = new RollingBall(3);
+        ball = new RollingBall();
+        ball->setMesh(oball->getMesh());
         ball->setSurface(surf);
         //ball->move(1+ rand()%99, 1 + rand()%146, 50+rand()%50);
         ball->init(mMatrixUniform);
@@ -172,7 +174,8 @@ void RenderWindow::makeObjects()
     surf2->init(mMatrixUniform);
     mVisualObjects.push_back(surf2);
 
-    ball = new RollingBall(3);
+    ball = new RollingBall();
+    ball->setMesh(oball->getMesh());
     ball->setSurface(surf2);
     ball->mScene = 1;
     //ball->move(1.5,1.5,10);
@@ -247,14 +250,14 @@ void RenderWindow::drawObjects()
             glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
             glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
 
-            glBindVertexArray(mVisualObjects[i]->mVAO );
+            glBindVertexArray(mVisualObjects[i]->getMesh()->mVAO );
             glDrawArrays(mVisualObjects[i]->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
             glBindVertexArray(0);
         }
     }
 
     glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mLight->getMatrix().constData());
-    glBindVertexArray(mLight->mVAO );
+    glBindVertexArray(mLight->getMesh()->mVAO );
     glDrawArrays(mLight->mDrawType, 0, mLight->get_vertices().size());
     glBindVertexArray(0);
 

@@ -11,8 +11,8 @@ VisualObject::VisualObject()
 
 VisualObject::~VisualObject()
 {
-    glDeleteVertexArrays( 1, &mVAO );
-    glDeleteBuffers( 1, &mVBO );
+    glDeleteVertexArrays( 1, &mMesh->mVAO );
+    glDeleteBuffers( 1, &mMesh->mVBO );
 }
 
 void VisualObject::init(GLint matrixUniform)
@@ -22,16 +22,16 @@ void VisualObject::init(GLint matrixUniform)
     initializeOpenGLFunctions();
 
     //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
 
     //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
 
     //Vertex Buffer Object to hold vertices - VBO
-    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof( gsml::Vertex ),
-                  mVertices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof( gsml::Vertex ),
+                  mMesh->mVertices.data(), GL_STATIC_DRAW );
 
     // 1rst attribute buffer : vertices
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(gsml::Vertex), (GLvoid*)0  );          // array buffer offset
@@ -120,5 +120,5 @@ float VisualObject::barycentricHeight(const gsml::Vector3d &point, const gsml::V
 
 std::vector<gsml::Vertex> VisualObject::get_vertices()
 {
-    return mVertices;
+    return mMesh->mVertices;
 }

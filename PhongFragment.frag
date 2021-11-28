@@ -14,7 +14,7 @@ uniform vec3 lightColor = vec3(0.8, 0.8, 0.3);  //yellowish
 uniform float specularStrength = 0.9;
 uniform int specularExponent = 32;
 
-uniform vec3 objectColor = vec3(0.7, 0.7, 0.7); //grey
+uniform vec3 objectColor = vec3(1.0, 0.7, 0.7); //grey
 
 uniform sampler2D mtextureSampler;
 

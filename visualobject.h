@@ -13,6 +13,16 @@ struct Transform {
     gsml::Vector3d scaling;
     gsml::Vector4d rotation;
 };
+
+struct Mesh{
+    GLuint mVAO{0};
+    GLuint mVBO{0};
+    GLuint mEAB{0};
+    std::vector<gsml::Vertex> mVertices;
+    std::vector<GLuint> mIndices;
+    GLenum mDrawType{GL_TRIANGLES};
+};
+
 //
 class VisualObject : public QOpenGLFunctions_4_1_Core
 {
@@ -29,13 +39,10 @@ public:
     int getShaderID(){return mShader;};
     gsml::Matrix4x4 getMatrix(){ return mMatrix;};
     GLenum mDrawType{GL_TRIANGLES};
-    GLuint mVAO{0};
     int mScene{0};
+    Mesh* getMesh(){return mMesh;}
 protected:
-    std::vector<GLuint> mIndices;
-    std::vector<gsml::Vertex> mVertices;
-    GLuint mVBO{0};
-    GLuint mEAB{0}; //holds the indices (Element Array Buffer - EAB)
+    Mesh* mMesh{nullptr};
     int mShader{0};
     GLint mMatrixUniform{0};
     gsml::Matrix4x4 mMatrix;

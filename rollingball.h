@@ -53,10 +53,10 @@ struct Physics
     }
 };
 
-class RollingBall : public OctahedronBall
+class RollingBall : public VisualObject
 {
 public:
-    RollingBall(int n);
+    RollingBall();
     ~RollingBall() override;
     void init(GLint matrixUniform) override;
     void draw() override;
@@ -69,6 +69,7 @@ public:
     void setHeight(float z);
     void heightAt();
     Physics* p;
+    void setMesh(Mesh* uMesh);
 protected:
     VisualObject* triangle_surface;
 private:
@@ -77,7 +78,7 @@ private:
     gsml::Vector3d mN{0.0, 0.0, 1.0};
     int m_index{0};
     int old_index{0};
-    std::vector<gsml::Vertex> vertices;
+    std::vector<gsml::Vertex> surfVertices;
 
 };
 

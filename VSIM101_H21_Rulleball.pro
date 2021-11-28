@@ -16,6 +16,7 @@ HEADERS += \
     filesurface.h \
     light.h \
     mainwindow.h \
+    marchingsquare.h \
     octahedronball.h \
     renderwindow.h \
     rollingball.h \
@@ -32,6 +33,7 @@ SOURCES += \
     light.cpp \
     main.cpp \
     mainwindow.cpp \
+    marchingsquare.cpp \
     octahedronball.cpp \
     renderwindow.cpp \
     rollingball.cpp \
