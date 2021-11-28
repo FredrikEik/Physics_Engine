@@ -23,11 +23,12 @@ public:
     void draw() override;
     void init(GLint matrixUniform) override;
 
+
 private:
     float R = 10;
     float G = 30;
     float B = 50;
-    std::vector<gsml::Vertex> lasData;
+
 
     //mins and maxes must be uniform with step
     float xMin{-20.f}, yMin{0.f}, zMin{-20.f}, xMax{20.f}, yMax{6.f}, zMax{20.0f};
@@ -35,7 +36,6 @@ private:
 
     float highestX, highestY, highestZ, lowestX, lowestY, lowestZ;
     //int maxVertices{1000};
-
 
 
 

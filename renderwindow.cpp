@@ -141,7 +141,7 @@ void RenderWindow::init()
     xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
 
-    map->mMatrix.scale(.2,.2,.2);
+    map->mMatrix.scale(.4,.4,.4);
     map->mMatrix.rotate(90,1,0,0);
    // map->mMatrix.translate(1,1,1);
     map->init(mMatrixUniform);

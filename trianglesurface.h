@@ -17,7 +17,7 @@ public:
     void construct();
     void construct_cylinder();
     void construct_plane();
-    std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
+   // std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
 
 private:
         std::vector<int> mNeighbor;

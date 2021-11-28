@@ -36,14 +36,14 @@ public:
     virtual void move(float dt) { }
     //virtual void move(float dx, float dy, float dz) { }
     std::vector<gsml::Vertex> mVertices;
-        std::vector<gsml::Vertex> lasData;
+    std::vector<gsml::Vertex> lasData;
     std::vector<gsml::Vertex> positions;
     std::vector<Triangle> mTriangles;
         //std::vector<GLuint> mIndices;
-        gsml::Matrix4x4 mMatrix;
+    gsml::Matrix4x4 mMatrix;
 
-        std::vector<gsml::Vertex>& get_vertices() { return mVertices; }
-            std::vector<gsml::Vertex>& getLAS() { return lasData; }
+    std::vector<gsml::Vertex>& get_vertices() { return mVertices; }
+    std::vector<gsml::Vertex>& getLAS() { return lasData; }
     
 protected:
     GLuint mVAO{0};

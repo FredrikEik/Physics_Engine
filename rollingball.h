@@ -25,8 +25,7 @@ public:
     void setSurface(VisualObject* surface);
 
         int mPrevIndex{0};
-         VisualObject *mTriangleSurface{nullptr};
-         VisualObject *mLas{nullptr};
+
 
 protected:
     VisualObject* triangle_surface;
