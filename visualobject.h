@@ -39,9 +39,13 @@ public:
     std::vector<gsml::Vertex> positions;
     std::vector<Triangle> mTriangles;
         //std::vector<GLuint> mIndices;
-        gsml::Matrix4x4 mMatrix;
+   gsml::Matrix4x4 mMatrix;
+   float barycentricHeight(const gsml::Vector3d &point, const gsml::Vector3d &corner1, const gsml::Vector3d &corner2, const gsml::Vector3d &corner3);
 
-        std::vector<gsml::Vertex>& get_vertices() { return mVertices; }
+
+   std::vector<gsml::Vertex>& get_vertices() { return mVertices; }
+
+
     
 protected:
     GLuint mVAO{0};

@@ -365,6 +365,10 @@ public:
     Vector4d() {v[0] = v[1] = v[2] = v[3] = 0.0f; }
     Vector4d(float a, float b, float c, float d) {v[0]=a; v[1]=b; v[2]=c; v[3]=d;}
     float& operator[] (int i) { return v[i]; }
+    float x(){return v[0];};
+    float y(){return v[1];};
+    float z(){return v[2];};
+    float w(){return v[3];};
 
 private:
     float v[4];

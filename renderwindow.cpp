@@ -44,17 +44,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
     // Demo
-    map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
-    surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
-    surf2->mMatrix.rotate(90, 0, 0, 0);
-    ball = new RollingBall(3);
-    //  ball = new RollingBall(3, surf2);
 
-    ball->switchVersion = false;
-    if(!ball->switchVersion)
-    dynamic_cast<RollingBall*>(ball)->setSurface(map);
-    else
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -130,22 +121,65 @@ void RenderWindow::init()
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
 
+    map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
+    surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
+    surf2->mMatrix.rotate(90, 0, 0, 0);
 
-
+    //map->mMatrix.rotate(90,1,0,0);
+    map->init(mMatrixUniform);
+    mGameObjects.push_back(map);
     surf2->init(mMatrixUniform);
-    mGameObjects.push_back(surf2);
-    //ball->mMatrix.scale(.5,.5,.5);
-    ball->init(mMatrixUniform);
 
-    mGameObjects.push_back(ball);
+
+
+
+    RollingBall* ball{nullptr};
+
+    for(auto i{0}; i<30; i++)
+    {
+        ball = new RollingBall(3);
+        ball->switchVersion = true;
+       // ball->mMatrix.rotate(90,1,0,0);
+        if(ball->switchVersion)
+        {
+            ball->setSurface2(map);
+            testahha = true;
+        }
+
+
+
+        //ball->move(1+ rand()%99, 1 + rand()%146, 50+rand()%50);
+        ball->init(mMatrixUniform);
+        Rain.push_back(ball);
+        mGameObjects.push_back(ball);
+        //Sleep(1000);
+    }
+    //  ball = new RollingBall(3, surf2);
+
+
+
+    if(!ball->switchVersion)
+    {
+        dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+        testahha = false;
+        ball->init(mMatrixUniform);
+        mBalls.push_back(ball);
+        mGameObjects.push_back(surf2);
+        mGameObjects.push_back(ball);
+
+    }
+
+
+
+    //ball->mMatrix.scale(.5,.5,.5);
+    //ball->mMatrix.setPosition(1.5,0,2);
     xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
 
-    map->mMatrix.scale(.2,.2,.2);
-    map->mMatrix.rotate(90,1,0,0);
+    //map->mMatrix.scale(.2,.2,.2);
+    //map->mMatrix.rotate(90,1,0,0);
    // map->mMatrix.translate(1,1,1);
-    map->init(mMatrixUniform);
-    mGameObjects.push_back(map);
+
 
 
 }
@@ -190,7 +224,19 @@ void RenderWindow::render()
     // actual draw call
     // demo
 
-   ball->move(0.017f);
+    if(!testahha)
+    mBalls.back()->barycentricCords(0.017f);
+    else
+    {
+        if(!Rain.empty()){
+            for(auto i{0}; i<static_cast<int>(Rain.size()); i++)
+            {
+                Rain[i]->moveAlongLAs(0.017f);
+                //if(i == 2){
+                //    qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
+                //    qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
+            }}
+    }
 
 
   // ball->moveAlongLAs( 0.017);
@@ -199,7 +245,7 @@ void RenderWindow::render()
     {
 
         mGameObjects[i]->draw();
-        mVerticesDrawn += mGameObjects[i]->mVertices.size();
+        //mVerticesDrawn += mGameObjects[i]->mVertices.size();
     }
 
     xyz.draw();

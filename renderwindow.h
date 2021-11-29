@@ -51,7 +51,9 @@ private:
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
-    RollingBall* ball;
+    std::vector<RollingBall*> Rain;
+    std::vector<RollingBall*> mBalls;
+    bool testahha = false;
 
     int mVerticesDrawn{0};
 

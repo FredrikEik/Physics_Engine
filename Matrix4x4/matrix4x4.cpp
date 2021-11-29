@@ -419,6 +419,17 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     /*
     */
 }
+
+Vector4d Matrix4x4::getColumn(int index)
+{
+    float a = A[0][index];
+    float b = A[1][index];
+    float c = A[2][index];
+    float d = A[3][index];
+    gsml::Vector4d temp(a, b, c, d);
+    return temp;
+}
+
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {

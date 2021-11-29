@@ -58,6 +58,7 @@ public:
     void scale(float sx, float sy, float sz);
     void frustum(float left, float right, float bottom, float top, float near, float far);
 
+    Vector4d getColumn(int index);
     void perspective(float fovy, float aspectRatio, float nearPlane, float farPlane);
 
     void lookAt(const Vector3d& eye, const Vector3d& at, const Vector3d& up);
