@@ -18,7 +18,7 @@ public:
     void addC(std::string filnavn);
 private:
     std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
-    int n = 9; //Antall kontrollpunkter
+    int n = 4; //Antall kontrollpunkter
     int d = 2; //grad
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
     std::vector<double> t {0,0,0,1,2,2,2}; //Skjøtevektor

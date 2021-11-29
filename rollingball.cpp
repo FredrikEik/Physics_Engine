@@ -125,7 +125,7 @@ void RollingBall::setSurface(VisualObject* surface)
     triangle_surface = surface;
     surfVertices = triangle_surface->get_vertices();
     int mT = static_cast<int>(surfVertices.size());
-    if(surfVertices.size()>100){
+    if(surfVertices.size()>100){ // only do this for big surface
         mT = rand()%mT;
         qDebug() << mT;
         gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
