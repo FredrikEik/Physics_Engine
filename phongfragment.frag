@@ -8,13 +8,13 @@ in vec2 UV;       //for textures
 uniform vec3 lightPosition;
 uniform vec3 cameraPosition;
 
-uniform float ambientStrengt = 0.3;
+uniform float ambientStrengt = 0.2;
 uniform float lightStrengt = 0.5;
-uniform vec3 lightColor = vec3(0.8, 0.8, 0.3);  //yellowish
-uniform float specularStrength = 0.9;
+uniform vec3 lightColor = vec3(0.5, 0.7, 0.5);  //yellowish
+uniform float specularStrength = 0.6;
 uniform int specularExponent = 32;
 
-uniform vec3 objectColor = vec3(0.7, 0.7, 0.7); //grey
+uniform vec3 objectColor = vec3(0.1, 0.3, 0.5); //grey
 
 uniform sampler2D mtextureSampler;
 

@@ -3,6 +3,19 @@
 
 #include "visualobject.h"
 
+struct CountoureLines
+{
+    int n{5};
+
+    std::vector<gsml::Vertex> mPoints;
+    float ofsetX = -10;
+    float ofsetZ = -10;
+    float ofsetY = -10;
+    float mMin{5};
+    float mMax{5000};
+
+};
+
 class FlateFil : public VisualObject
 {
 public:
@@ -13,10 +26,13 @@ public:
     void draw() override;
     void makePlain();
     float calcHeight(float x, float y);
-    
-    std::vector<gsml::Vertex>& get_vertices() { return mVertices; } // 191120
-    
+    int width;
+
+    std::vector<gsml::Vertex> getCountourPoints();
+    std::vector<gsml::Vertex> CountourPoints;
+
 private:
+    CountoureLines *mCL;
      void calculateNormals();
     float xMin = 9000000;
     float xMax = 0;
@@ -24,11 +40,12 @@ private:
     float yMax = 0;
     gsml::Vector2d MapMin;
     gsml::Vector2d MapMax;
-    int n = 5;
-    static const int X = 200; // (Max.x - Min.x) / n
-    static const int Y = 294; // (Max.y - Min.y) / n
+    int n = 10;
+    static const int X = 100; // (Max.x - Min.x) / n
+    static const int Y = 147; // (Max.y - Min.y) / n
     std::vector<gsml::Vector3d> map[X][Y];
     float mNormal[3];
+
     
 };
 

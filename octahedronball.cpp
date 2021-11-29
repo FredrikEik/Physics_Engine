@@ -6,7 +6,9 @@
 
 OctahedronBall::OctahedronBall(int n) : m_rekursjoner(n), m_indeks(0), VisualObject()
 {
-   mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
+    mMesh = new Mesh;
+   mMesh->mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
+    mMesh->mDrawType = GL_TRIANGLES;
    oktaederUnitBall();
 }
 
@@ -35,15 +37,15 @@ void OctahedronBall::lagTriangel(const Vec3& v1, const Vec3& v2, const Vec3& v3)
    v.set_xyz(v1.x, v1.y, v1.z);		// koordinater v.x = v1.x, v.y=v1.y, v.z=v1.z
    v.set_normal(0, 0, 0);	// rgb
    v.set_st(0.0f, 0.0f);			// kan utelates
-   mVertices.push_back(v);
+   mMesh->mVertices.push_back(v);
    v.set_xyz(v2.x, v2.y, v2.z);
    v.set_normal(0, 0, 0);
    v.set_st(1.0f, 0.0f);
-   mVertices.push_back(v);
+   mMesh->mVertices.push_back(v);
    v.set_xyz(v3.x, v3.y, v3.z);
    v.set_normal(0, 0, 0);
    v.set_st(0.5f, 1.0f);
-   mVertices.push_back(v);
+   mMesh->mVertices.push_back(v);
 }
 
 // Rekursiv subdivisjon av triangel
@@ -112,16 +114,16 @@ void OctahedronBall::init(GLint matrixUniform)
    initializeOpenGLFunctions();
 
    //Vertex Array Object - VAO
-   glGenVertexArrays( 1, &mVAO );
-   glBindVertexArray( mVAO );
+   glGenVertexArrays( 1, &mMesh->mVAO );
+   glBindVertexArray( mMesh->mVAO );
 
    //Vertex Buffer Object to hold vertices - VBO
-   glGenBuffers( 1, &mVBO );
-   glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+   glGenBuffers( 1, &mMesh->mVBO );
+   glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
 
-   glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(gsml::Vertex), mVertices.data(), GL_STATIC_DRAW );
+   glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
 
-   glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+   glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
    glEnableVertexAttribArray(0);
 
@@ -146,8 +148,8 @@ void OctahedronBall::init(GLint matrixUniform)
 //!
 void OctahedronBall::draw()
 {
-   glBindVertexArray( mVAO );
+   glBindVertexArray( mMesh->mVAO );
    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+   glDrawArrays(GL_TRIANGLES, 0, mMesh->mVertices.size());//mVertices.size());
 }
 

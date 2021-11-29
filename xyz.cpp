@@ -3,14 +3,15 @@
 
 XYZ::XYZ() : VisualObject()
 {
-    mVertices.push_back(gsml::Vertex{0,0,0,1,0,0});
-    mVertices.push_back(gsml::Vertex{1,0,0,1,0,0});
-    mVertices.push_back(gsml::Vertex{0,0,0,0,1,0});
-    mVertices.push_back(gsml::Vertex{0,1,0,0,1,0});
-    mVertices.push_back(gsml::Vertex{0,0,0,0,0,1});
-    mVertices.push_back(gsml::Vertex{0,0,1,0,0,1});
+    mMesh = new Mesh;
+    mMesh->mVertices.push_back(gsml::Vertex{0,0,0,1,0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{1,0,0,1,0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{0,0,0,0,1,0});
+    mMesh->mVertices.push_back(gsml::Vertex{0,1,0,0,1,0});
+    mMesh->mVertices.push_back(gsml::Vertex{0,0,0,0,0,1});
+    mMesh->mVertices.push_back(gsml::Vertex{0,0,1,0,0,1});
 
-    mDrawType = GL_LINES;
+    mMesh->mDrawType = GL_LINES;
     //mMatrix.setToIdentity();
     //mMatrix.frustum(-1,1,-1,1,-1,1);
 }
@@ -28,17 +29,17 @@ void XYZ::init(GLint matrixUniform)
     initializeOpenGLFunctions();
 
     //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
 
     //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
 
-    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof( gsml::Vertex ), mVertices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof( gsml::Vertex ), mMesh->mVertices.data(), GL_STATIC_DRAW );
 
     // 1rst attribute buffer : vertices
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
     glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, sizeof(gsml::Vertex), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
@@ -54,9 +55,9 @@ void XYZ::init(GLint matrixUniform)
 
 void XYZ::draw()
 {
-    glBindVertexArray( mVAO );
+    glBindVertexArray( mMesh->mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_LINES, 0, mVertices.size());//mVertices.size());
+    glDrawArrays(GL_LINES, 0, mMesh->mVertices.size());//mVertices.size());
     //mMatrix.rotate(-1.5f, 1.f, 1.0, 0.f);
     glBindVertexArray(0);
 }

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "bsplinecurve.h"
 
 struct Physics
 {
@@ -50,18 +51,20 @@ struct Physics
         Force = Acceleration * mass;
         Force = Force - airF;
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
-    }
-};
+        }
+    };
 
-class RollingBall : public OctahedronBall
+class RollingBall : public VisualObject
 {
 public:
-    RollingBall(int n);
+    RollingBall(int dID);
     ~RollingBall() override;
+
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override;
     void move(float dx, float dy, float dz) override;
+
     void baryMove(float x, float y, float z);
     void setSurface(VisualObject* surface); //{ triangle_surface = surface; }
     gsml::Vector3d Get_position();
@@ -69,12 +72,24 @@ public:
     void setHeight(float z);
     void heightAt();
     Physics* p;
+
+    void setMesh(Mesh* uMesh);
+    void contructBspline(gsml::Vector3d dP);
+    void saveRoute(std::string filnavn);
+//    BSplineCurve *mBSpline;
 protected:
     VisualObject* triangle_surface;
 private:
-    gsml::Vector3d m_normal{0.0, 0.0, 1.0};
-    gsml::Vector3d old_normal{0.0, 0.0, 1.0};
-    gsml::Vector3d mN{0.0, 0.0, 1.0};
+    int mID{0};
+
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    std::vector<gsml::Vector3d> mbsPoint;
+    gsml::Vector3d bsPoint{0, 0, 0};
+
+    gsml::Vector3d m_normal{0, 0, 1};
+    gsml::Vector3d old_normal{0, 0, 1};
+    gsml::Vector3d mN{0, 0, 1};
+
     int m_index{0};
     int old_index{0};
     std::vector<gsml::Vertex> vertices;

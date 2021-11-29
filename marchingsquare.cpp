@@ -2,5 +2,5 @@
 
 MarchingSquare::MarchingSquare()
 {
-
+    //for()
 }

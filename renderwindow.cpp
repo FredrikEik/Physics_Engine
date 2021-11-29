@@ -17,9 +17,9 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    mLightPosition.x = 5.2f;
-    mLightPosition.y = 5.2f;
-    mLightPosition.z = 40.0f;
+//    mLightPosition.x = 5.2f;
+//    mLightPosition.y = 5.2f;
+//    mLightPosition.z = 40.0f;
     //This is sent to QWindow:
     setSurfaceType(QWindow::OpenGLSurface);
     setFormat(format);
@@ -39,7 +39,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
     //qDebug() << v[0] <<v[1] << v[3] << v[2];
-     mLight = new Light();
 
 }
 
@@ -91,6 +90,7 @@ void RenderWindow::init()
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
 
+    mLight = new Light();
     mCamera = new Camera;
     mShaderProgram[0] = new Shader("../VSIM101_H21_Rulleball_0/dagvertex.vert", "../VSIM101_H21_Rulleball_0/dagfragment.frag");
     qDebug() << "Plain shader program id: " << mShaderProgram[0]->getProgram();
@@ -121,34 +121,53 @@ void RenderWindow::init()
 
 void RenderWindow::makeObjects()
 {
+
+
+    mLight->init(mMatrixUniform);
+    mLight->move(10,10,10);
+    mVisualObjects.push_back(mLight);
+
     xyz = new XYZ;
-       xyz->init(mMatrixUniform);
-       mVisualObjects.push_back(xyz);
+    xyz->init(mMatrixUniform);
+    mVisualObjects.push_back(xyz);
 
-       surf = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
-       surf->init(mMatrixUniform1);
-       mVisualObjects.push_back(surf);
+    surf = new FlateFil("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf->init(mMatrixUniform1);
+    mVisualObjects.push_back(surf);
 
-       RollingBall* ball{nullptr};
-       for(auto i{0}; i<10; i++)
-       {
-           ball = new RollingBall(3);
-           ball->setSurface(surf);
-           ball->init(mMatrixUniform);
-           Rain.push_back(ball);
-           mVisualObjects.push_back(ball);
-       }
+    oball = new OctahedronBall(1);
+    //oball->init();
+    RollingBall* ball{nullptr};
 
-       surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-       surf2->mScene = 1;
-       surf2->init(mMatrixUniform);
-       mVisualObjects.push_back(surf2);
+    for(auto i{0}; i<2; i++)
+    {
+        mBSpline = new BSplineCurve(i);
+        mBSpline->init(mMatrixUniform);
+        mVisualObjects.push_back(mBSpline);
 
-       ball = new RollingBall(3);
-       ball->setSurface(surf2);
-       ball->mScene = 1;
-       ball->init(mMatrixUniform);
-       mVisualObjects.push_back(ball);
+        ball = new RollingBall(i);
+        ball->setMesh(oball->getMesh());
+        ball->setSurface(surf);
+        ball->init(mMatrixUniform);
+        Rain.push_back(ball);
+        mVisualObjects.push_back(ball);
+
+    }
+
+
+
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2->mScene = 1;
+    surf2->init(mMatrixUniform);
+    mVisualObjects.push_back(surf2);
+
+
+    ball = new RollingBall(3);
+    ball->setMesh(oball->getMesh());
+    ball->setSurface(surf2);
+    ball->mScene = 1;
+    ball->init(mMatrixUniform);
+    mVisualObjects.push_back(ball);
 }
 
 void RenderWindow::drawObjects()
@@ -188,15 +207,15 @@ void RenderWindow::drawObjects()
             glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
             glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
 
-            glBindVertexArray(mVisualObjects[i]->mVAO );
-            glDrawArrays(mVisualObjects[i]->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
+            glBindVertexArray(mVisualObjects[i]->mMesh->mVAO );
+            glDrawArrays(mVisualObjects[i]->mMesh->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
             glBindVertexArray(0);
         }
     }
 
     glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mLight->getMatrix().constData());
-    glBindVertexArray(mLight->mVAO );
-    glDrawArrays(mLight->mDrawType, 0, mLight->get_vertices().size());
+    glBindVertexArray(mLight->mMesh->mVAO );
+    glDrawArrays(mLight->mMesh->mDrawType, 0, mLight->get_vertices().size());
     glBindVertexArray(0);
 
     if(currentScene == 0){
@@ -314,7 +333,7 @@ void RenderWindow::setupPlainShader(int shaderIndex)
 //The actual frame rate on your monitor is limited by the vsync and is probably 60Hz
 void RenderWindow::calculateFramerate()
 {
-    long nsecElapsed = mTimeStart.nsecsElapsed();
+    nsecElapsed = mTimeStart.nsecsElapsed();
     static int frameCount{0};                       //counting actual frames for a quick "timer" for the statusbar
 
     if (mMainWindow)    //if no mainWindow, something is really wrong...
@@ -396,17 +415,17 @@ void RenderWindow::checkCamInp()
     if(inpRMB == true)
     {
         if (inpA)
-            mCamera->moveRight(-mCameraSpeed);
-        if (inpD)
             mCamera->moveRight(mCameraSpeed);
+        if (inpD)
+            mCamera->moveRight(-mCameraSpeed);
         if (inpW)
-            mCamera->updateHeigth(mCameraSpeed);
-        if (inpS)
-            mCamera->updateHeigth(-mCameraSpeed);
-        if (inpQ)
-            mCamera->setSpeed(-mCameraSpeed);
-        if (inpE)
             mCamera->setSpeed(mCameraSpeed);
+        if (inpS)
+            mCamera->setSpeed(-mCameraSpeed);
+        if (inpQ)
+            mCamera->updateHeigth(mCameraSpeed);
+        if (inpE)
+            mCamera->updateHeigth(-mCameraSpeed);
         if (inpC==true)
             mCamera->pitch(2);
         if (inpX==true)

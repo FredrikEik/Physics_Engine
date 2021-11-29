@@ -14,8 +14,11 @@
 #include "rollingball.h"
 #include "flatefil.h"
 #include "camera.h"
-#include "bspinecurve.h"
+#include "bsplinecurve.h"
 #include "light.h"
+#include "octahedronball.h"
+#include "visualobject.h"
+
 
 class QOpenGLContext;
 class Shader;
@@ -57,8 +60,10 @@ private:
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
     std::vector<VisualObject*> mVisualObjects;
-    BSpineCurve *mBSpline;
+    BSplineCurve *mBSpline;
     int currentScene{1};
+    OctahedronBall *oball;
+
 
 
 
@@ -116,7 +121,7 @@ private:
     bool inpX{false};
     bool inpRMB{false};
     bool inpLMB{false};
-
+long nsecElapsed;
 
 
 

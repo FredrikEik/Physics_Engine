@@ -7,17 +7,20 @@
 
 TriangleSurface::TriangleSurface() : VisualObject()
 {
+    mMesh = new Mesh;
     gsml::Vertex v{};
-    v.set_xyz(0,0,0); v.set_rgb(1,0,0); mVertices.push_back(v);
-    v.set_xyz(0.5,0,0); v.set_rgb(0,1,0); mVertices.push_back(v);
-    v.set_xyz(0.5,0.5,0); v.set_rgb(0,0,1); mVertices.push_back(v);
-    v.set_xyz(0,0,0); v.set_rgb(0,1,0); mVertices.push_back(v);
-    v.set_xyz(0.5,0.5,0); v.set_rgb(1,0,0); mVertices.push_back(v);
-    v.set_xyz(0,0.5,0); v.set_rgb(0,0,1); mVertices.push_back(v);
+    v.set_xyz(0,0,0); v.set_rgb(1,0,0); mMesh->mVertices.push_back(v);
+    v.set_xyz(0.5,0,0); v.set_rgb(0,1,0); mMesh->mVertices.push_back(v);
+    v.set_xyz(0.5,0.5,0); v.set_rgb(0,0,1); mMesh->mVertices.push_back(v);
+    v.set_xyz(0,0,0); v.set_rgb(0,1,0); mMesh->mVertices.push_back(v);
+    v.set_xyz(0.5,0.5,0); v.set_rgb(1,0,0); mMesh->mVertices.push_back(v);
+    v.set_xyz(0,0.5,0); v.set_rgb(0,0,1); mMesh->mVertices.push_back(v);
+    mMesh->mDrawType = GL_TRIANGLES;
 }
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
+    mMesh = new Mesh;
     readFile(filnavn);
     //mMatrix.setToIdentity();
     //mMatrix.translate(0,0,5);
@@ -40,11 +43,11 @@ void TriangleSurface::readFile(std::string filnavn)
         int n;
         gsml::Vertex vertex;
         inn >> n;
-        mVertices.reserve(n);
+        mMesh->mVertices.reserve(n);
         for (int i=0; i<n; i++)
         {
              inn >> vertex;
-             mVertices.push_back(vertex);
+             mMesh->mVertices.push_back(vertex);
         }
         inn.close();
     }
@@ -60,10 +63,10 @@ void TriangleSurface::writeFile(std::string filnavn)
     if (ut.is_open())
     {
 
-        auto n = mVertices.size();
+        auto n = mMesh->mVertices.size();
         gsml::Vertex vertex;
         ut << n << std::endl;
-        for (auto it=mVertices.begin(); it != mVertices.end(); it++)
+        for (auto it=mMesh->mVertices.begin(); it != mMesh->mVertices.end(); it++)
         {
             //vertex = *it;
             ut << *it << std::endl;
@@ -77,17 +80,17 @@ void TriangleSurface::init(GLint matrixUniform)
     initializeOpenGLFunctions();
 
     //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
 
     //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
 
-    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(gsml::Vertex), mVertices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
 
     // 1rst attribute buffer : vertices
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
     glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
@@ -103,9 +106,9 @@ void TriangleSurface::init(GLint matrixUniform)
 
 void TriangleSurface::draw()
 {
-    glBindVertexArray( mVAO );
+    glBindVertexArray( mMesh->mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    glDrawArrays(GL_TRIANGLES, 0, mMesh->mVertices.size());//mVertices.size());
 
 }
 
@@ -116,16 +119,16 @@ void TriangleSurface::construct()
        for (auto y=ymin; y<ymax; y+=h)
        {
            float z = sin(M_PI*x)*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x,y,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x,y,z,x,y,z});
            z = sin(M_PI*(x+h))*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
            z = sin(M_PI*x)*sin(M_PI*(y+h));
-           mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
-           mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x,y+h,z,x,y,z});
            z = sin(M_PI*(x+h))*sin(M_PI*y);
-           mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x+h,y,z,x,y,z});
            z = sin(M_PI*(x+h))*sin(M_PI*(y+h));
-           mVertices.push_back(gsml::Vertex{x+h,y+h,z,x,y,z});
+           mMesh->mVertices.push_back(gsml::Vertex{x+h,y+h,z,x,y,z});
        }
 }
 
@@ -134,7 +137,7 @@ void TriangleSurface::construct_cylinder()
     float h=0.5;
     const int SEKTORER=12;
     float t=2*M_PI/SEKTORER;
-    mVertices.clear();
+    mMesh->mVertices.clear();
     for (int k=0; k<2; k++)
     {
         for (int i=0; i<SEKTORER; i++)
@@ -145,12 +148,12 @@ void TriangleSurface::construct_cylinder()
             float x1=cos((i+1)*t);
             float y1=sin((i+1)*t);
             float z2=h*(k+1);
-            mVertices.push_back(gsml::Vertex{x0,y0,z0,0,0,1,0,0});
-            mVertices.push_back(gsml::Vertex{x0,y0,z2,0,0,1,1,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,z0,0,0,1,0,1});
-            mVertices.push_back(gsml::Vertex{x0,y0,z2,1,1,0,0,1});
-            mVertices.push_back(gsml::Vertex{x1,y1,z2,1,1,0,1,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,z0,1,1,0,1,1});
+            mMesh->mVertices.push_back(gsml::Vertex{x0,y0,z0,0,0,1,0,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x0,y0,z2,0,0,1,1,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y1,z0,0,0,1,0,1});
+            mMesh->mVertices.push_back(gsml::Vertex{x0,y0,z2,1,1,0,0,1});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y1,z2,1,1,0,1,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y1,z0,1,1,0,1,1});
 /*            float x0=cos(i*t);
             float y0=sin(i*t);
             float z0=h*k;
@@ -171,7 +174,7 @@ void TriangleSurface::construct_plane()
 {
     float dx=2.0;
     float dy=2.0;
-    mVertices.clear();
+    mMesh->mVertices.clear();
     for (float y=-2.0; y<2.0; y+=dy)
     {
         for (float x=-3.0; x<3.0; x+=dx)
@@ -180,12 +183,12 @@ void TriangleSurface::construct_plane()
             float y0=y;
             float x1=x0+dx;
             float y1=y0+dy;
-            mVertices.push_back(gsml::Vertex{x0,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
-            mVertices.push_back(gsml::Vertex{x1,y1,0,0,0.5,0});
+            mMesh-> mVertices.push_back(gsml::Vertex{x0,y0,0,0,0.5,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x0,y1,0,0,0.5,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y0,0,0,0.5,0});
+            mMesh->mVertices.push_back(gsml::Vertex{x1,y1,0,0,0.5,0});
         }
     }
 }

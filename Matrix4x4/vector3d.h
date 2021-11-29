@@ -20,12 +20,22 @@ struct Vector3d {
 
     float& operator [] (int i) { if(i==0) return x; else if (i==1) return y; else if(i==2) return z; }
 
-    /* const Vector3d& operator = (const Vector3d& v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        return *this;
-    }*/
+//     const Vector3d& operator = (const Vector3d& v) {
+//        x = v.x;
+//        y = v.y;
+//        z = v.z;
+//        return *this;
+
+
+    Vector3d operator+=(const Vector3d& v)
+   {
+       Vector3d u={x,y,z};
+       u.x += v.x;
+       u.y += v.y;
+       u.z += v.z;
+
+       return u;
+   }
 
     Vector3d operator + (const Vector3d& v) const {
         Vector3d u;

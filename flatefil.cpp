@@ -4,26 +4,47 @@
 
 FlateFil::FlateFil(std::string filnavn) : VisualObject()
 {
+    mCL = new CountoureLines;
     mMatrix.setToIdentity();
     mShader = 1;
+    mMesh = new Mesh;
     readPoints(filnavn);
+    mMesh->mDrawType = GL_TRIANGLES;
     makePlain();
     calculateNormals();
 
 }
 
+
 void FlateFil::makePlain()
 {
+
     float f = 0.5;
     for(float x = 0; x<static_cast<float>(X)-1; x+=1)
         for(float y =0; y<static_cast<float>(Y)-1; y+=1)
         {
-            mVertices.push_back(gsml::Vertex{f*x, f*y, calcHeight(  x,   y),   f, f, 0});
-            mVertices.push_back(gsml::Vertex{f*(x+1),f*y, calcHeight(x+1,   y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{f*x, f*(y+1), calcHeight(  x, y+1),   f+f, f, 0});
-            mVertices.push_back(gsml::Vertex{f*x, f*(y+1), calcHeight(  x, y+1),   f+f, f, 0});
-            mVertices.push_back(gsml::Vertex{f*(x+1),f*y, calcHeight(x+1,   y),   0, f, 0});
-            mVertices.push_back(gsml::Vertex{f*(x+1),f*(y+1), calcHeight(x+1, y+1),   f, f, 0});
+            //get all height data :D
+            float height1 = calcHeight(    x,    y);
+            float height2 = calcHeight(  x+1,    y);
+            float height3 = calcHeight(    x,  y+1);
+            float height4 = calcHeight(    x,  y+1);
+            float height5 = calcHeight(  x+1,    y);
+            float height6 = calcHeight(  x+1,  y+1);
+
+            mMesh->mVertices.push_back(gsml::Vertex{x, y, height1,   f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y, height2,   f, 0, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1), height3,   f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1), height4,   f, 0, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y, height5,   f,0, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1),height6,   f, 0, 0});
+
+            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height5 + height6)/6)+mCL->ofsetZ); // GjennomsnittsHøyden
+            if(test > mCL->mMax || test < mCL->mMin){
+            }else{
+                if(std::fmod(test,5)<0.1){
+                    CountourPoints.push_back(gsml::Vertex{mCL->ofsetX +  x, mCL->ofsetY +   y ,test+0.5f,       1, 0, 1,0,1});
+                }
+            }
         }
 }
 
@@ -32,7 +53,6 @@ FlateFil::~FlateFil()
 {
 
 }
-
 
 void FlateFil::readPoints(std::string filnavn)
 {
@@ -44,7 +64,7 @@ void FlateFil::readPoints(std::string filnavn)
         int m;
         gsml::Vector3d temp;
         inn >> m;
-        mVertices.reserve(m);
+        mMesh->mVertices.reserve(m);
         for (int i=0; i<m; i++){
             inn >> temp.x;
             inn >> temp.y;
@@ -100,13 +120,18 @@ float FlateFil::calcHeight(float x, float y)
 
 }
 
+std::vector<gsml::Vertex> FlateFil::getCountourPoints()
+{
+    return CountourPoints;
+}
+
 void FlateFil::calculateNormals()
 {
-    for (int i = 0; i <static_cast<int>(mVertices.size()); i+=3)
+    for (int i = 0; i <static_cast<int>(mMesh->mVertices.size()); i+=3)
     {
-        gsml::Vertex* v1 = &mVertices[i];
-        gsml::Vertex* v2 = &mVertices[i+1];
-        gsml::Vertex* v3 = &mVertices[i+2];
+        gsml::Vertex* v1 = &mMesh->mVertices[i];
+        gsml::Vertex* v2 = &mMesh->mVertices[i+1];
+        gsml::Vertex* v3 = &mMesh->mVertices[i+2];
 
         gsml::Vector3d p1 = v1->getXYZ();
         gsml::Vector3d p2 = v2->getXYZ();
@@ -137,21 +162,21 @@ void FlateFil::calculateNormals()
         v2->wNormals.push_back(n * a2);
         v3->wNormals.push_back(n * a3);
     }
-    for (int i = 0; i < static_cast<int>(mVertices.size()); i++)
+    for (int i = 0; i < static_cast<int>(mMesh->mVertices.size()); i++)
     {
         gsml::Vector3d N;
 
         // run through the normals in each vertex's array and interpolate them
         // vertex(v) here fetches the data of the vertex at index 'v'
-        for (int n = 0; n < static_cast<int>(mVertices[i].wNormals.size()); n++)
+        for (int n = 0; n < static_cast<int>(mMesh->mVertices[i].wNormals.size()); n++)
         {
-            N = N + mVertices[i].wNormals.at(n);
+            N = N + mMesh->mVertices[i].wNormals.at(n);
         }
 
         // normalize the final normal
         N.normalize();
         //mVertices[0].at(i).set_normal(N.x, N.y, N.z);// = result;
-        mVertices[i].set_normal(N);
+        mMesh->mVertices[i].set_normal(N);
     }
 }
 
@@ -162,17 +187,17 @@ void FlateFil::init(GLint matrixUniform)
     initializeOpenGLFunctions();
 
     //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
 
     //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
 
-    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(gsml::Vertex), mVertices.data(), GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
 
     // 1rst attribute buffer : vertices
-    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
     glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
@@ -188,9 +213,9 @@ void FlateFil::init(GLint matrixUniform)
 
 void FlateFil::draw()
 {
-    glBindVertexArray( mVAO );
+    glBindVertexArray( mMesh->mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+    glDrawArrays(GL_TRIANGLES, 0, mMesh->mVertices.size());//mVertices.size());
 
 }
 

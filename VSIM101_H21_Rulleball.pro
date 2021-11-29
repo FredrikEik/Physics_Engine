@@ -12,7 +12,7 @@ HEADERS += \
     Matrix4x4/matrix4x4.h \
     Matrix4x4/vector3d.h \
     Matrix4x4/vertex.h \
-    bspinecurve.h \
+    bsplinecurve.h \
     camera.h \
     flatefil.h \
     light.h \
@@ -29,7 +29,7 @@ HEADERS += \
 SOURCES += \
     Matrix4x4/matrix4x4.cpp \
     Matrix4x4/vertex.cpp \
-    bspinecurve.cpp \
+    bsplinecurve.cpp \
     camera.cpp \
     flatefil.cpp \
     light.cpp \
