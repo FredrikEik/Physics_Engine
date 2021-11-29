@@ -121,8 +121,8 @@ void RenderWindow::init()
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
 
-    map = new LAS("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/test_las.txt");
-    surf2 = new TriangleSurface("C:\\Users\\fes22\\Documents\\GitHub\\VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
+    map = new LAS("../VSIM101_H21_Rulleball_0/datasett/test_las.txt");
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
     surf2->mMatrix.rotate(90, 0, 0, 0);
 
     //map->mMatrix.rotate(90,1,0,0);
