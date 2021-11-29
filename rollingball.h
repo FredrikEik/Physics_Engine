@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include "octahedronball.h"
 #include "trianglesurface.h"
+#include "bsplinecurve.h"
 
 struct Physics
 {
     float radius = 0.25;
-    float mass = 100;
-    float friction = 0.9;
+    float mass = 1;
+    float friction = 1;
     float lilleG = 9.81;
 
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
@@ -56,7 +57,7 @@ struct Physics
 class RollingBall : public VisualObject
 {
 public:
-    RollingBall();
+    RollingBall(int dID);
     ~RollingBall() override;
     void init(GLint matrixUniform) override;
     void draw() override;
@@ -70,9 +71,14 @@ public:
     void heightAt();
     Physics* p;
     void setMesh(Mesh* uMesh);
+    void constructBSpline(gsml::Vector3d dP);
+    void saveRoute(std::string filnavn);
 protected:
     VisualObject* triangle_surface;
 private:
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    gsml::Vector3d bsPoint{0,0,0};
+    std::vector<gsml::Vector3d> mbsPoints;
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     gsml::Vector3d mN{0.0, 0.0, 1.0};

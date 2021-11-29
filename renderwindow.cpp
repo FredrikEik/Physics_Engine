@@ -39,8 +39,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
     qDebug() << v[0] <<v[1] << v[3] << v[2];
-
-    mLight = new Light;
 }
 
 RenderWindow::~RenderWindow()
@@ -85,6 +83,8 @@ void RenderWindow::init()
     //    glEnable(GL_CULL_FACE);     //draws only front side of models - usually what you want -
     glClearColor(0.4f, 0.4f, 0.4f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
     //glClearColor(1.0f, 1.0f, 1.0f,1.0f);    //color used in glClear GL_COLOR_BUFFER_BIT
+
+    mLight = new Light;
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
@@ -147,6 +147,9 @@ void RenderWindow::setupPhongShader(int shaderIndex)
 
 void RenderWindow::makeObjects()
 {
+    mLight->init(mMatrixUniform1);
+    mVisualObjects.push_back(mLight);
+
     xyz = new XYZ;
     xyz->init(mMatrixUniform);
     mVisualObjects.push_back(xyz);
@@ -156,31 +159,35 @@ void RenderWindow::makeObjects()
     mVisualObjects.push_back(surf);
 
     oball = new OctahedronBall(0);
+
     RollingBall* ball{nullptr};
-    for(auto i{0}; i<100; i++)
+    for(int i{0}; i<2; i++)
     {
-        ball = new RollingBall();
+//        mBSpline = new BSplineCurve(i);
+//        mBSpline->init(mMatrixUniform);
+//        mVisualObjects.push_back(mBSpline);
+
+        ball = new RollingBall(i);
         ball->setMesh(oball->getMesh());
         ball->setSurface(surf);
-        //ball->move(1+ rand()%99, 1 + rand()%146, 50+rand()%50);
         ball->init(mMatrixUniform);
         Rain.push_back(ball);
         mVisualObjects.push_back(ball);
-        //Sleep(1000);
     }
+
 
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
     surf2->mScene = 1;
     surf2->init(mMatrixUniform);
     mVisualObjects.push_back(surf2);
 
-    ball = new RollingBall();
-    ball->setMesh(oball->getMesh());
-    ball->setSurface(surf2);
-    ball->mScene = 1;
-    //ball->move(1.5,1.5,10);
-    ball->init(mMatrixUniform);
-    mVisualObjects.push_back(ball);
+    //ball = new RollingBall();
+    //ball->setMesh(oball->getMesh());
+    //ball->setSurface(surf2);
+    //ball->mScene = 1;
+    ////ball->move(1.5,1.5,10);
+    //ball->init(mMatrixUniform);
+    //mVisualObjects.push_back(ball);
 }
 
 ///Called each frame - doing the rendering

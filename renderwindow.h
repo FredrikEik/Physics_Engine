@@ -16,6 +16,7 @@
 #include "matrix4x4.h"
 #include "octahedronball.h"
 #include "rollingball.h"
+#include "bsplinecurve.h"
 
 class QOpenGLContext;
 class Shader;
@@ -54,6 +55,7 @@ private:
     Camera* mCamera;
     std::vector<RollingBall*> Rain;
     std::vector<VisualObject*> mVisualObjects;
+    BSplineCurve* mBSpline;
     Light* mLight{nullptr};
     int currentScene{1};
 

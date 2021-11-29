@@ -1,7 +1,10 @@
 #include "rollingball.h"
 
-RollingBall::RollingBall() : VisualObject()
+RollingBall::RollingBall(int dID) : VisualObject()
 {
+    std::string sID = std::to_string(dID);
+    mTxt = mTxt + sID;
+    mTxt = mTxt + ".txt";
     p = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     //mPosition.translate(1.5,1.5,3);
@@ -82,6 +85,35 @@ void RollingBall::setMesh(Mesh* uMesh)
     mMesh = uMesh;
 }
 
+void RollingBall::saveRoute(std::string filnavn)
+{
+    std::ofstream ut;
+    ut.open(filnavn.c_str());
+
+    if (ut.is_open())
+    {
+        auto n = mbsPoints.size();
+        gsml::Vector3d temp;
+        ut << n << std::endl;
+        for (auto it=mbsPoints.begin(); it != mbsPoints.end(); it++)
+        {
+            temp = *it;
+            ut << temp.x << std::endl;
+            ut << temp.y << std::endl;
+            ut << temp.z << std::endl;
+        }
+        ut.close();
+    }
+}
+
+void RollingBall::constructBSpline(gsml::Vector3d dP)
+{
+    mbsPoints.push_back(dP);
+    if(mbsPoints.size() == 4){
+        saveRoute(mTxt);
+        qDebug() << "Route saved";}
+}
+
 void RollingBall::move(float dx, float dy, float dz)
 {
     mPosition.setPosition(dx, dy, dz);
@@ -100,7 +132,7 @@ void RollingBall::setSurface(VisualObject* surface)
         gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
         gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        pos.z += 50;
+        //pos.z += 5;
         setPosition(pos);}
     else
         move(1,1,5);
@@ -170,6 +202,7 @@ void RollingBall::move(float dt)
 
             if(m_index != old_index)
             {
+                constructBSpline(Get_position());
                 p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
                 p->Velocity = p->oldVelocity - p->Velocity * 2;
                 p->Velocity = p->Velocity * p->friction;
