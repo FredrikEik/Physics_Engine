@@ -22,7 +22,7 @@ public:
 private:
     std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline.txt";
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
-    int n; //Antall kontrollpunkter
+    int n = 4; //Antall kontrollpunkter
     int d =2; //grad
     std::vector<double> t{0,0,0,1,2,2,2}; //Skjøtevektor
     //Posisjon etc i visualObject
