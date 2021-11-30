@@ -5,26 +5,20 @@
 
 class BSplineCurve : public VisualObject
 {
-
 public:
     BSplineCurve(int dID);
-    ~BSplineCurve();
-
+    virtual void init(GLint matrixUniform) override;
+    virtual void draw() override;
     void initialize();
     gsml::Vector3d deBoor(double x);
-
-    virtual void init(GLint matrixUniform)override;
-    virtual void draw() override;
-
     int findKnotInterval(float x);
     void addC(std::string filnavn);
-
 private:
-    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline.txt";
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    int n = 9; //Antall kontrollpunkter
+    int d = 2; //grad
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
-    int n = 4; //Antall kontrollpunkter
-    int d =2; //grad
-    std::vector<double> t{0,0,0,1,2,2,2}; //Skjøtevektor
+    std::vector<double> t {0,0,0,1,2,3,4,5,6,7,7,7}; //Skjøtevektor
     //Posisjon etc i visualObject
 };
 

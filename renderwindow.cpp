@@ -135,8 +135,7 @@ void RenderWindow::makeObjects()
     surf->init(mMatrixUniform1);
     mVisualObjects.push_back(surf);
 
-    oball = new OctahedronBall(1);
-    //oball->init();
+    oball = new OctahedronBall(0);
     RollingBall* ball{nullptr};
 
     for(auto i{0}; i<2; i++)
@@ -154,20 +153,18 @@ void RenderWindow::makeObjects()
 
     }
 
+//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+//    surf2->mScene = 1;
+//    surf2->init(mMatrixUniform);
+//    mVisualObjects.push_back(surf2);
 
 
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    surf2->mScene = 1;
-    surf2->init(mMatrixUniform);
-    mVisualObjects.push_back(surf2);
-
-
-    ball = new RollingBall(3);
-    ball->setMesh(oball->getMesh());
-    ball->setSurface(surf2);
-    ball->mScene = 1;
-    ball->init(mMatrixUniform);
-    mVisualObjects.push_back(ball);
+//    ball = new RollingBall(3);
+//    ball->setMesh(oball->getMesh());
+//    ball->setSurface(surf2);
+//    ball->mScene = 1;
+//    ball->init(mMatrixUniform);
+//    mVisualObjects.push_back(ball);
 }
 
 void RenderWindow::drawObjects()

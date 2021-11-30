@@ -10,8 +10,8 @@
 struct Physics
 {
     float radius = 0.25;
-    float mass = 5;
-    //float friction = 0.9;
+    float mass = 1;
+    float friction = 1;
     float lilleG = 9.81;
 
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
@@ -42,29 +42,27 @@ struct Physics
         gsml::Vector3d u{0-Velocity.x,0-Velocity.y,0-Velocity.z};//flow velocity
         float A = M_PI * (radius*radius); //Area
         float dc = 0.47; //drag coefficient
-        //airF = 1/2 * p * (u * u) * dc * A;
+        //airF = 1/2 p * (u^2) * dc * A;
         airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        airF = airF * (1/2 * p);
+        airF = airF * (0.5 * p);
         airF = airF * dc;
         airF = airF * A;
 
         Force = Acceleration * mass;
         Force = Force - airF;
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
-        }
-    };
+    }
+};
 
 class RollingBall : public VisualObject
 {
 public:
     RollingBall(int dID);
     ~RollingBall() override;
-
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float dt) override;
     void move(float dx, float dy, float dz) override;
-
     void baryMove(float x, float y, float z);
     void setSurface(VisualObject* surface); //{ triangle_surface = surface; }
     gsml::Vector3d Get_position();
@@ -72,27 +70,21 @@ public:
     void setHeight(float z);
     void heightAt();
     Physics* p;
-
     void setMesh(Mesh* uMesh);
-    void contructBspline(gsml::Vector3d dP);
+    void constructBSpline(gsml::Vector3d dP);
     void saveRoute(std::string filnavn);
-//    BSplineCurve *mBSpline;
 protected:
     VisualObject* triangle_surface;
 private:
-    int mID{0};
-
     std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
-    std::vector<gsml::Vector3d> mbsPoint;
-    gsml::Vector3d bsPoint{0, 0, 0};
-
-    gsml::Vector3d m_normal{0, 0, 1};
-    gsml::Vector3d old_normal{0, 0, 1};
-    gsml::Vector3d mN{0, 0, 1};
-
+    gsml::Vector3d bsPoint{0,0,0};
+    std::vector<gsml::Vector3d> mbsPoints;
+    gsml::Vector3d m_normal{0.0, 0.0, 1.0};
+    gsml::Vector3d old_normal{0.0, 0.0, 1.0};
+    gsml::Vector3d mN{0.0, 0.0, 1.0};
     int m_index{0};
     int old_index{0};
-    std::vector<gsml::Vertex> vertices;
+    std::vector<gsml::Vertex> surfVertices;
 
 };
 

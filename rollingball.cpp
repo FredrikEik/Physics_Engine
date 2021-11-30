@@ -1,12 +1,14 @@
 #include "rollingball.h"
 
-RollingBall::RollingBall(int dID)
+RollingBall::RollingBall(int dID) : VisualObject()
 {
-    p = new Physics;
-    std::string sID = std::to_string(mID);
+    std::string sID = std::to_string(dID);
     mTxt = mTxt + sID;
     mTxt = mTxt + ".txt";
-    mScale.scale(0.25,0.25,0.25);
+    p = new Physics;
+    //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
+    //mPosition.translate(1.5,1.5,3);
+    mScale.scale(0.1,0.1,0.1);
     //mMatrix = mPosition * mScale;
 }
 RollingBall::~RollingBall()
@@ -78,20 +80,9 @@ void RollingBall::setHeight(float z)
     }
 }
 
-void RollingBall::setMesh(Mesh *uMesh)
+void RollingBall::setMesh(Mesh* uMesh)
 {
     mMesh = uMesh;
-}
-
-void RollingBall::contructBspline(gsml::Vector3d dP)
-{
-//    bsPoint = bsPoint + dP;
-//    float length = bsPoint.length();
-//    if(length >= 1){
-        mbsPoint.push_back(dP);//}
-    if(mbsPoint.size() == 4)
-        saveRoute(mTxt);
-    qDebug()<<"Route saved";
 }
 
 void RollingBall::saveRoute(std::string filnavn)
@@ -101,10 +92,11 @@ void RollingBall::saveRoute(std::string filnavn)
 
     if (ut.is_open())
     {
-        auto n = mbsPoint.size();
+        auto n = mbsPoints.size();
         gsml::Vector3d temp;
         ut << n << std::endl;
-        for (auto it=mbsPoint.begin(); it != mbsPoint.end(); it++)
+
+        for (auto it=mbsPoints.begin(); it != mbsPoints.end(); it++)
         {
             temp = *it;
             ut << temp.x << std::endl;
@@ -113,6 +105,14 @@ void RollingBall::saveRoute(std::string filnavn)
         }
         ut.close();
     }
+}
+
+void RollingBall::constructBSpline(gsml::Vector3d dP)
+{
+    mbsPoints.push_back(dP);
+    if(mbsPoints.size() == 9){
+        saveRoute(mTxt);
+        qDebug() << "Route saved";}
 }
 
 void RollingBall::move(float dx, float dy, float dz)
@@ -124,16 +124,16 @@ void RollingBall::move(float dx, float dy, float dz)
 void RollingBall::setSurface(VisualObject* surface)
 {
     triangle_surface = surface;
-    vertices = triangle_surface->get_vertices();
-    int mT = static_cast<int>(vertices.size());
-    if(vertices.size()>100){
+    surfVertices = triangle_surface->get_vertices();
+    int mT = static_cast<int>(surfVertices.size());
+    if(surfVertices.size()>100){ // only do this for big surface
         mT = rand()%mT;
-        //qDebug() << mT;
-        gsml::Vector3d v1 =vertices.at(mT).getXYZ();
-        gsml::Vector3d v2 =vertices.at(mT+1).getXYZ();
-        gsml::Vector3d v3 =vertices.at(mT+2).getXYZ();
+        qDebug() << mT;
+        gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
+        gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
+        gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-       //0 pos.z += 50;
+        //pos.z += 5;
         setPosition(pos);}
     else
         move(1,1,5);
@@ -144,12 +144,12 @@ void RollingBall::move(float dt)
     gsml::Vector3d bary;
     //std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
     gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
-    for (size_t i=0; i<vertices.size(); i++)
+    for (size_t i=0; i<surfVertices.size(); i++)
     {
         //qDebug() << "ground size: " << vertices.size();
-        gsml::Vector3d p1 = vertices[i].getXYZ();
-        gsml::Vector3d p2 = vertices[++i].getXYZ();
-        gsml::Vector3d p3 = vertices[++i].getXYZ();
+        gsml::Vector3d p1 = surfVertices[i].getXYZ();
+        gsml::Vector3d p2 = surfVertices[++i].getXYZ();
+        gsml::Vector3d p3 = surfVertices[++i].getXYZ();
         //qDebug() << "p1: " << p1.x << p1.y << p1.z << "p2: " << p2.x << p2.y << p2.z << "p3: " << p3.x << p3.y << p3.z;
 
         m_index = static_cast<int>(i+1) /3;
@@ -171,14 +171,21 @@ void RollingBall::move(float dt)
 
             float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
             mHeight = sqrt(mHeight * mHeight);
-
+            bool isFalling{false};
             if(mHeight > p->radius+0.2)
+                isFalling = true;
+            else
+                isFalling = false;
+
+
+            if(isFalling)
             {
                 p->freeFall();
                 //qDebug() << "Fritt Fall";
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
+                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             else
             {
@@ -186,18 +193,21 @@ void RollingBall::move(float dt)
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
+                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
-            contructBspline(Get_position());
             p->Velocity = p->oldVelocity + p->Acceleration * dt;
             mPos = (p->oldVelocity + p->Velocity) * (dt/2);
+
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
 
-
             if(m_index != old_index)
             {
+                constructBSpline(Get_position());
                 p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
                 p->Velocity = p->oldVelocity - p->Velocity * 2;
+                p->Velocity = p->Velocity * p->friction;
+                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             p->oldVelocity = p->Velocity;
             old_normal = m_normal;
@@ -206,3 +216,4 @@ void RollingBall::move(float dt)
         }
     }
 }
+
