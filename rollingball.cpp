@@ -133,7 +133,7 @@ void RollingBall::setSurface(VisualObject* surface)
         gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
         gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        //pos.z += 5;
+        pos.z += 5;
         setPosition(pos);}
     else
         move(1,1,5);
