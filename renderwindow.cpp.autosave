@@ -125,7 +125,7 @@ void RenderWindow::init()
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
     surf2->mMatrix.rotate(90, 0, 0, 0);
 
-    map->mMatrix.rotate(90,1,0,0);
+    //map->mMatrix.rotate(90,1,0,0);
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
     surf2->init(mMatrixUniform);

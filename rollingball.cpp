@@ -92,7 +92,6 @@ void RollingBall::move(float dt)
 
 void RollingBall::moveAlongLAs( float dt)
 {
-    mMatrix = mPosition * mScale;
 
     gsml::Vector3d bary;
     //std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
