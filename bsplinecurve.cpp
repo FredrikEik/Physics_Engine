@@ -7,7 +7,7 @@ BSplineCurve::BSplineCurve(int dID)
     mTxt = mTxt + ".txt";
     mMesh = new Mesh;
     mMatrix.setToIdentity();
-    mMesh->mDrawType = GL_LINES;
+    mMesh->mDrawType = GL_LINE_STRIP;
     initialize();
 }
 
@@ -27,8 +27,8 @@ void BSplineCurve::initialize()
 gsml::Vector3d BSplineCurve::deBoor(double x)
 {
     int my = findKnotInterval(x);
-    std::vector<gsml::Vector3d> a;
-    a.reserve(d+1);
+    gsml::Vector3d a[3];
+    //a.reserve(d+1);
     for(int j = 0; j<=d; j++){
         a[d-j] = c[my-j];
     }

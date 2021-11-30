@@ -154,32 +154,32 @@ void RenderWindow::makeObjects()
     xyz->init(mMatrixUniform);
     mVisualObjects.push_back(xyz);
 
-    surf = new FileSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
-    surf->init(mMatrixUniform1);
-    mVisualObjects.push_back(surf);
+//    surf = new FileSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+//    surf->init(mMatrixUniform1);
+//    mVisualObjects.push_back(surf);
 
     oball = new OctahedronBall(0);
 
-    RollingBall* ball{nullptr};
+//    RollingBall* ball{nullptr};
     for(int i{0}; i<2; i++)
     {
-//        mBSpline = new BSplineCurve(i);
-//        mBSpline->init(mMatrixUniform);
-//        mVisualObjects.push_back(mBSpline);
+        mBSpline = new BSplineCurve(i);
+        mBSpline->init(mMatrixUniform);
+        mVisualObjects.push_back(mBSpline);
 
-        ball = new RollingBall(i);
-        ball->setMesh(oball->getMesh());
-        ball->setSurface(surf);
-        ball->init(mMatrixUniform);
-        Rain.push_back(ball);
-        mVisualObjects.push_back(ball);
+//        ball = new RollingBall(i);
+//        ball->setMesh(oball->getMesh());
+//        ball->setSurface(surf);
+//        ball->init(mMatrixUniform);
+//        Rain.push_back(ball);
+//        mVisualObjects.push_back(ball);
     }
 
 
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    surf2->mScene = 1;
-    surf2->init(mMatrixUniform);
-    mVisualObjects.push_back(surf2);
+//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+//    surf2->mScene = 1;
+//    surf2->init(mMatrixUniform);
+//    mVisualObjects.push_back(surf2);
 
     //ball = new RollingBall();
     //ball->setMesh(oball->getMesh());
@@ -247,9 +247,6 @@ void RenderWindow::drawObjects()
             glUniform3f(mLightColorUniform, mLight->mLightColor.x, mLight->mLightColor.y, mLight->mLightColor.z);
         }
 
-        //        glEnable(GL_PROGRAM_POINT_SIZE);
-        //        glPointSize(5);
-
         if(mVisualObjects[i]->mScene == currentScene)
         {
             //send data to shader
@@ -258,7 +255,7 @@ void RenderWindow::drawObjects()
             glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
 
             glBindVertexArray(mVisualObjects[i]->getMesh()->mVAO );
-            glDrawArrays(mVisualObjects[i]->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
+            glDrawArrays(mVisualObjects[i]->getMesh()->mDrawType, 0, mVisualObjects[i]->getMesh()->mVertices.size());
             glBindVertexArray(0);
         }
     }

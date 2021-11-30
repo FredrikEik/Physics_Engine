@@ -95,6 +95,7 @@ void RollingBall::saveRoute(std::string filnavn)
         auto n = mbsPoints.size();
         gsml::Vector3d temp;
         ut << n << std::endl;
+
         for (auto it=mbsPoints.begin(); it != mbsPoints.end(); it++)
         {
             temp = *it;
@@ -109,7 +110,7 @@ void RollingBall::saveRoute(std::string filnavn)
 void RollingBall::constructBSpline(gsml::Vector3d dP)
 {
     mbsPoints.push_back(dP);
-    if(mbsPoints.size() == 4){
+    if(mbsPoints.size() == 9){
         saveRoute(mTxt);
         qDebug() << "Route saved";}
 }
