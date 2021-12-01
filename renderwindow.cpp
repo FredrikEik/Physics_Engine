@@ -17,9 +17,6 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-//    mLightPosition.x = 5.2f;
-//    mLightPosition.y = 5.2f;
-//    mLightPosition.z = 40.0f;
     //This is sent to QWindow:
     setSurfaceType(QWindow::OpenGLSurface);
     setFormat(format);
@@ -38,7 +35,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
-    //qDebug() << v[0] <<v[1] << v[3] << v[2];
+
 
 }
 
@@ -135,6 +132,9 @@ void RenderWindow::makeObjects()
     surf->init(mMatrixUniform1);
     mVisualObjects.push_back(surf);
 
+//     mCL->init(mMatrixUniform);
+//     mVisualObjects.push_back(mCL);
+
     oball = new OctahedronBall(1);
     RollingBall* ball{nullptr};
 
@@ -153,18 +153,18 @@ void RenderWindow::makeObjects()
 
     }
 
-//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-//    surf2->mScene = 1;
-//    surf2->init(mMatrixUniform);
-//    mVisualObjects.push_back(surf2);
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2->mScene = 1;
+    surf2->init(mMatrixUniform);
+    mVisualObjects.push_back(surf2);
 
 
-//    ball = new RollingBall(3);
-//    ball->setMesh(oball->getMesh());
-//    ball->setSurface(surf2);
-//    ball->mScene = 1;
-//    ball->init(mMatrixUniform);
-//    mVisualObjects.push_back(ball);
+    ball = new RollingBall(3);
+    ball->setMesh(oball->getMesh());
+    ball->setSurface(surf2);
+    ball->mScene = 1;
+    ball->init(mMatrixUniform);
+    mVisualObjects.push_back(ball);
 }
 
 void RenderWindow::drawObjects()

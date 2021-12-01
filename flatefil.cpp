@@ -4,45 +4,41 @@
 
 FlateFil::FlateFil(std::string filnavn) : VisualObject()
 {
-    mCL = new CountoureLines;
     mMatrix.setToIdentity();
     mShader = 1;
     mMesh = new Mesh;
     readPoints(filnavn);
-    mMesh->mDrawType = GL_TRIANGLES;
+
     makePlain();
     calculateNormals();
-
 }
 
 
 void FlateFil::makePlain()
 {
-
     float f = 0.5;
-    for(float x = 0; x<static_cast<float>(X)-1; x+=1)
-        for(float y =0; y<static_cast<float>(Y)-1; y+=1)
+    for(float x = 0; x<static_cast<float>(X-1); x+=1)
+        for(float y =0; y<static_cast<float>(Y-1); y+=1)
         {
-            //get all height data :D
-            float height1 = calcHeight(    x,    y);
-            float height2 = calcHeight(  x+1,    y);
-            float height3 = calcHeight(    x,  y+1);
-            float height4 = calcHeight(    x,  y+1);
-            float height5 = calcHeight(  x+1,    y);
-            float height6 = calcHeight(  x+1,  y+1);
+            float height1 = calcHeight(  x,   y);
+            float height2 = calcHeight(x+1,   y);
+            float height3 = calcHeight(  x, y+1);
+            float height4 = calcHeight(  x, y+1);
+            float height5 = calcHeight(x+1,   y);
+            float height6 = calcHeight(x+1, y+1);
 
-            mMesh->mVertices.push_back(gsml::Vertex{x, y, height1,   f, f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y, height2,   f, 0, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1), height3,   f, f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1), height4,   f, 0, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y, height5,   f,0, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1),height6,   f, 0, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{x, y,       height1,    f,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y,    height2,    0,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1),   height3,    f+f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1),   height4,    f+f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y,    height5,    0,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1),height6,    f,   f, 0});
 
-            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height5 + height6)/6)+mCL->ofsetZ); // GjennomsnittsHøyden
-            if(test > mCL->mMax || test < mCL->mMin){
+            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height5 + height6)/6)+offsetZ);
+            if(test > zMax || test  < zMin){
             }else{
                 if(std::fmod(test,5)<0.1){
-                    CountourPoints.push_back(gsml::Vertex{mCL->ofsetX +  x, mCL->ofsetY +   y ,test+0.5f,       1, 0, 1,0,1});
+                   mCPoints.push_back(gsml::Vertex{offsetX+x, offsetY+y, test+0.5f, 0,0,0, 0,0});
                 }
             }
         }
@@ -88,6 +84,10 @@ void FlateFil::readPoints(std::string filnavn)
                 yMin = temp.y;
             if(temp.y > yMax)
                 yMax = temp.y;
+            if(temp.z < zMin)
+                yMin = temp.y;
+            if(temp.z > zMax)
+                zMax = temp.z;
         }
         inn.close();
     }
@@ -151,11 +151,11 @@ void FlateFil::calculateNormals()
         double a2 = (p3 - p2).Angle(p1 - p2);    // p2 is the 'base' here
         double a3 = (p1 - p3).Angle(p2 - p3);    // p3 is the 'base' here
 
-//        // normalize the initial facet normals if you want to ignore surface area
-//        if (!area_weighting)
-//        {
-//            n.normalize();
-//        }
+        //        // normalize the initial facet normals if you want to ignore surface area
+        //        if (!area_weighting)
+        //        {
+        //            n.normalize();
+        //        }
 
         // store the weighted normal in an structured array
         v1->wNormals.push_back(n * a1);
@@ -220,3 +220,58 @@ void FlateFil::draw()
 }
 
 
+
+CountoureLines::CountoureLines(std::vector<gsml::Vertex> mCPoints)
+{
+    mMesh = new Mesh;
+    mMatrix.setToIdentity();
+    mShader = 1;
+    mMesh->mDrawType = GL_LINE_STRIP;
+
+    for(auto i{0}; i<mCPoints.size(); i++)
+        mMesh->mVertices.push_back(mCPoints[i]);
+}
+
+CountoureLines::~CountoureLines()
+{
+
+}
+
+
+void CountoureLines::init(GLint matrixUniform)
+{
+    mMatrixUniform = matrixUniform;
+    initializeOpenGLFunctions();
+
+    //Vertex Array Object - VAO
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
+
+    //Vertex Buffer Object to hold vertices - VBO
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
+
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
+
+    // 1rst attribute buffer : vertices
+    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // 2nd attribute buffer : colors
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
+    glEnableVertexAttribArray(1);
+
+    //enable the matrixUniform
+    // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
+
+    glBindVertexArray(0);
+}
+
+void CountoureLines::draw()
+{
+    glBindVertexArray( mMesh->mVAO );
+    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
+    glDrawArrays(GL_LINE_STRIP, 0, mMesh->mVertices.size());//mVertices.size());
+
+}

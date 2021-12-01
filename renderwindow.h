@@ -20,6 +20,7 @@
 #include "visualobject.h"
 
 
+
 class QOpenGLContext;
 class Shader;
 class MainWindow;
@@ -63,6 +64,7 @@ private:
     BSplineCurve *mBSpline;
     int currentScene{1};
     OctahedronBall *oball;
+    CountoureLines *mCL;
 
 
 

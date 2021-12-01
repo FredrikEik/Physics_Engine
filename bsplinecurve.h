@@ -14,7 +14,7 @@ public:
     int findKnotInterval(float x);
     void addC(std::string filnavn);
 private:
-    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline/BSpline";
     int n = 9; //Antall kontrollpunkter
     int d = 2; //grad
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
