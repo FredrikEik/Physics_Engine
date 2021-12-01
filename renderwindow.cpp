@@ -154,40 +154,44 @@ void RenderWindow::makeObjects()
     xyz->init(mMatrixUniform);
     mVisualObjects.push_back(xyz);
 
-//    surf = new FileSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
-//    surf->init(mMatrixUniform1);
-//    mVisualObjects.push_back(surf);
+    surf = new FileSurface("../VSIM101_H21_Rulleball_0/test_las.txt");
+    surf->init(mMatrixUniform1);
+    mVisualObjects.push_back(surf);
+
+    mContour = new MarchingSquare(surf);
+    mContour->init(mMatrixUniform);
+    mVisualObjects.push_back(mContour);
 
     oball = new OctahedronBall(0);
 
-//    RollingBall* ball{nullptr};
+    RollingBall* ball{nullptr};
     for(int i{0}; i<2; i++)
     {
         mBSpline = new BSplineCurve(i);
         mBSpline->init(mMatrixUniform);
         mVisualObjects.push_back(mBSpline);
 
-//        ball = new RollingBall(i);
-//        ball->setMesh(oball->getMesh());
-//        ball->setSurface(surf);
-//        ball->init(mMatrixUniform);
-//        Rain.push_back(ball);
-//        mVisualObjects.push_back(ball);
+        ball = new RollingBall(i);
+        ball->setMesh(oball->getMesh());
+        ball->setSurface(surf);
+        ball->init(mMatrixUniform);
+        Rain.push_back(ball);
+        mVisualObjects.push_back(ball);
     }
 
 
-//    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-//    surf2->mScene = 1;
-//    surf2->init(mMatrixUniform);
-//    mVisualObjects.push_back(surf2);
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
+    surf2->mScene = 1;
+    surf2->init(mMatrixUniform);
+    mVisualObjects.push_back(surf2);
 
-    //ball = new RollingBall();
-    //ball->setMesh(oball->getMesh());
-    //ball->setSurface(surf2);
-    //ball->mScene = 1;
-    ////ball->move(1.5,1.5,10);
-    //ball->init(mMatrixUniform);
-    //mVisualObjects.push_back(ball);
+    ball = new RollingBall(101);
+    ball->setMesh(oball->getMesh());
+    ball->setSurface(surf2);
+    ball->mScene = 1;
+    //ball->move(1.5,1.5,10);
+    ball->init(mMatrixUniform);
+    mVisualObjects.push_back(ball);
 }
 
 ///Called each frame - doing the rendering
@@ -262,7 +266,7 @@ void RenderWindow::drawObjects()
 
     glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mLight->getMatrix().constData());
     glBindVertexArray(mLight->getMesh()->mVAO );
-    glDrawArrays(mLight->mDrawType, 0, mLight->get_vertices().size());
+    glDrawArrays(mLight->getMesh()->mDrawType, 0, mLight->get_vertices().size());
     glBindVertexArray(0);
 
     if(currentScene == 0){

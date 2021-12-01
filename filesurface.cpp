@@ -2,7 +2,6 @@
 
 FileSurface::FileSurface(std::string filnavn) : VisualObject()
 {
-    mCL = new ContourLines;
     mMesh = new Mesh;
     //readFile(filnavn);
     mMatrix.setToIdentity();
@@ -73,10 +72,10 @@ void FileSurface::readPoints(std::string filnavn)
             inn >> temp.y;
             inn >> temp.z;
 
-            float fX = temp.x - 614580.f;
+            float fX = temp.x - offsetX;
             fX = fX/n;
             fX = std::floor(fX);
-            float fY = (temp.y - 6757290.f);
+            float fY = (temp.y - offsetY);
             fY = fY/n;
             fY = std::floor(fY);
             int tempX = static_cast<int>(fX);
@@ -91,9 +90,16 @@ void FileSurface::readPoints(std::string filnavn)
                 yMin = temp.y;
             if(temp.y > yMax)
                 yMax = temp.y;
+            if(temp.z < zMin)
+                zMin = temp.z;
+            if(temp.z > zMax)
+                zMax = temp.z;
         }
         inn.close();
     }
+    zMin = zMin - offsetZ;
+    zMax = zMax - offsetZ;
+    qDebug() << zMin << zMax;
     MapMin.x = std::floor(xMin); MapMax.x = std::ceil(xMax);//614580  615580
     MapMin.y = std::floor(yMin); MapMax.y = std::ceil(yMax);//6757290  6758760;
 }
@@ -107,24 +113,22 @@ void FileSurface::makePlain()
             float height1 = calcHeight(  x,   y);
             float height2 = calcHeight(x+1,   y);
             float height3 = calcHeight(  x, y+1);
-            float height4 = calcHeight(  x, y+1);
-            float height5 = calcHeight(x+1,   y);
-            float height6 = calcHeight(x+1, y+1);
+            float height4 = calcHeight(x+1, y+1);
 
-            mMesh->mVertices.push_back(gsml::Vertex{x, y,       height1,    f,   f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y,    height2,    0,   f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1),   height3,    f+f, f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{x, (y+1),   height4,    f+f, f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),y,    height5,    0,   f, 0});
-            mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1),height6,    f,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{ x   , y   , height1,    f,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1), y   , height2,    0,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{ x   ,(y+1), height3,    f+f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{ x   ,(y+1), height3,    f+f, f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1), y   , height2,    0,   f, 0});
+            mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1), height4,    f,   f, 0});
 
-            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height5 + height6)/6)+mCL->offsetZ);
-            if(test > mCL->mMin || test < mCL->mMax){
-            }else{
-                if(std::fmod(test,5)<0.1){
-                   mCL->mPoints.push_back(gsml::Vertex{mCL->offsetX+x, mCL->offsetY+y, test+0.5f, 0,0,0, 0,0});
-                }
-            }
+            mHPoints[static_cast<int>(x)][static_cast<int>(y)] = height1;
+//            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height2 + height3)/6)+offsetZ);
+//            if(test > zMax || test < zMin){
+//            }else{
+//                if(std::fmod(test,5)<0.1){
+//                    mCPoints.push_back(gsml::Vertex{offsetX+x, offsetY+y, static_cast<float>(test)-offsetZ, 1,0,0, 0,0});}
+//            }
         }
 }
 
@@ -143,9 +147,10 @@ float FileSurface::calcHeight(float x, float y)
         z = z/map[xInt][yInt].size();
     }
     else
-        z = 555;
+        z = offsetZ;
+    //    z = 555;
 
-    z = z-550;
+    z = z-offsetZ;
     z = z*0.3;
     return z;
 }
@@ -205,5 +210,46 @@ void FileSurface::calculateNormals()
     }
 }
 
+ContourLines::ContourLines(std::vector<gsml::Vertex> mCPoints)
+{
+    mMesh = new Mesh;
+    mMatrix.setToIdentity();
+    mShader = 1;
+    mMesh->mDrawType = GL_LINE_STRIP;
+    for(auto i{0}; i<mCPoints.size(); i++)
+        mMesh->mVertices.push_back(mCPoints[i]);
+}
 
+void ContourLines::init(GLint matrixUniform)
+{
+    mMatrixUniform = matrixUniform;
+    initializeOpenGLFunctions();
 
+    //Vertex Array Object - VAO
+    glGenVertexArrays( 1, &mMesh->mVAO );
+    glBindVertexArray( mMesh->mVAO );
+
+    //Vertex Buffer Object to hold vertices - VBO
+    glGenBuffers( 1, &mMesh->mVBO );
+    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
+
+    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
+
+    // 1rst attribute buffer : vertices
+    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // 2nd attribute buffer : colors
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
+    glEnableVertexAttribArray(1);
+
+    //enable the matrixUniform
+    // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
+
+    glBindVertexArray(0);
+}
+
+void ContourLines::draw()
+{
+}

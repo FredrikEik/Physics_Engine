@@ -38,7 +38,6 @@ public:
     std::vector<gsml::Vertex> get_vertices();
     int getShaderID(){return mShader;};
     gsml::Matrix4x4 getMatrix(){ return mMatrix;};
-    GLenum mDrawType{GL_TRIANGLES};
     int mScene{0};
     Mesh* getMesh(){return mMesh;}
 protected:

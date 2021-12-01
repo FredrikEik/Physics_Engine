@@ -17,6 +17,7 @@
 #include "octahedronball.h"
 #include "rollingball.h"
 #include "bsplinecurve.h"
+#include "marchingsquare.h"
 
 class QOpenGLContext;
 class Shader;
@@ -49,6 +50,7 @@ private:
     OctahedronBall* oball{nullptr};
     TriangleSurface* surf2;
     VisualObject* surf;
+    MarchingSquare* mContour;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;

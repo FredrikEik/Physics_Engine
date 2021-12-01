@@ -4,7 +4,7 @@
 XYZ::XYZ() : VisualObject()
 {
     mMesh = new Mesh;
-    mDrawType = GL_LINES;
+    mMesh->mDrawType = GL_LINES;
     mMesh->mVertices.push_back(gsml::Vertex{0,0,0,1,0,0});
     mMesh->mVertices.push_back(gsml::Vertex{1,0,0,1,0,0});
     mMesh->mVertices.push_back(gsml::Vertex{0,0,0,0,1,0});

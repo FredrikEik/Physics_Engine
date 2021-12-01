@@ -128,12 +128,12 @@ void RollingBall::setSurface(VisualObject* surface)
     int mT = static_cast<int>(surfVertices.size());
     if(surfVertices.size()>100){ // only do this for big surface
         mT = rand()%mT;
-        qDebug() << mT;
+        //qDebug() << mT;
         gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
         gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
         gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        //pos.z += 5;
+        pos.z += 10;
         setPosition(pos);}
     else
         move(1,1,5);
@@ -185,7 +185,7 @@ void RollingBall::move(float dt)
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
-                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
+                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             else
             {
@@ -193,9 +193,12 @@ void RollingBall::move(float dt)
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
-                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
+                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
+
             p->Velocity = p->oldVelocity + p->Acceleration * dt;
+//            mPos = p->Velocity * dt;
+//            mPos = mPos + p->Acceleration * dt * dt * 0.5f;
             mPos = (p->oldVelocity + p->Velocity) * (dt/2);
 
             mPosition.translate(mPos.x, mPos.y, mPos.z);
@@ -203,10 +206,18 @@ void RollingBall::move(float dt)
 
             if(m_index != old_index)
             {
-                constructBSpline(Get_position());
-                p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
-                p->Velocity = p->oldVelocity - p->Velocity * 2;
-                p->Velocity = p->Velocity * p->friction;
+                if(!isFalling)
+                    constructBSpline(Get_position());
+//                float speed = p->Velocity.length();
+//                gsml::Vector3d mVector;
+//                float dot = gsml::Vector3d::dot(p->Velocity, mN);
+//                mVector = p->Velocity - mN * (2.0f * dot);
+//                mVector.normalize();
+//                p->Velocity = mVector * speed;
+
+                                p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
+                                p->Velocity = p->oldVelocity - p->Velocity * 2;
+                                //p->Velocity = p->Velocity + p->Friction;
                 //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             p->oldVelocity = p->Velocity;

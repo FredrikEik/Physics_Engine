@@ -11,14 +11,15 @@ struct Physics
 {
     float radius = 0.25;
     float mass = 1;
-    float friction = 1;
+    float my = 0.3;
     float lilleG = 9.81;
-
+    float storeG = lilleG * mass;
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
     gsml::Vector3d Force{0.0,0.0,0.0};
     gsml::Vector3d Velocity{0,0,0};
     gsml::Vector3d oldVelocity{0,0,0};
-    gsml::Vector3d airF{0,0,0};
+    gsml::Vector3d Friction{0,0,0};
+    //gsml::Vector3d Nforce{0,0,0};
 
     bool frittfall{false};
 
@@ -43,13 +44,25 @@ struct Physics
         float A = M_PI * (radius*radius); //Area
         float dc = 0.47; //drag coefficient
         //airF = 1/2 p * (u^2) * dc * A;
-        airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        airF = airF * (0.5 * p);
-        airF = airF * dc;
-        airF = airF * A;
+        Friction = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
+        Friction = Friction * (0.5 * p);
+        Friction = Friction * dc;
+        Friction = Friction * A;
 
         Force = Acceleration * mass;
-        Force = Force - airF;
+
+        if(!frittfall)
+        {
+            gsml::Vector3d tempF = Force;
+            tempF.normalize();
+            tempF = tempF * -1;
+
+            Friction = tempF * storeG;
+            Friction = Friction * my;
+        }
+
+        Force = Force + Friction;
+
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
 };
