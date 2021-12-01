@@ -132,13 +132,14 @@ void RenderWindow::makeObjects()
     surf->init(mMatrixUniform1);
     mVisualObjects.push_back(surf);
 
-//     mCL->init(mMatrixUniform);
-//     mVisualObjects.push_back(mCL);
+    mContour = new MarchingSquare(surf);
+    mContour->init(mMatrixUniform);
+    mVisualObjects.push_back(mContour);
 
     oball = new OctahedronBall(1);
     RollingBall* ball{nullptr};
 
-    for(auto i{0}; i<200; i++)
+    for(auto i{0}; i<2; i++)
     {
         mBSpline = new BSplineCurve(i);
         mBSpline->init(mMatrixUniform);

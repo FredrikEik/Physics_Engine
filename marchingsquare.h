@@ -10,15 +10,15 @@ public:
     MarchingSquare(VisualObject* mSurf);
     ~MarchingSquare();
     void init(GLint matrixUniform) override;
-    void draw() override;
     void setSquares();
     int getState(int a, int b, int c, int d);
-    void drawLines(gsml::Vector2d v1, gsml::Vector2d v2);
-    std::vector<std::vector<float>> fields;
+    void drawLine(gsml::Vector2d a, gsml::Vector2d b);
+
 
 private:
     VisualObject* surface;
     int iso = 5;
+    int floor = 1;
 
 };
 

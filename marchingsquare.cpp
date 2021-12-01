@@ -4,8 +4,10 @@ MarchingSquare::MarchingSquare(VisualObject* mSurf)
 {
     surface = mSurf;
     mMatrix.setToIdentity();
-    mShader = 1;
+    mShader = 0;
     mMesh = new Mesh;
+    mMesh->mDrawType = GL_LINES;
+    setSquares();setSquares();setSquares();setSquares();
 
 }
 
@@ -43,85 +45,99 @@ void MarchingSquare::init(GLint matrixUniform)
 
 }
 
-void MarchingSquare::draw()
-{
-    glBindVertexArray( mMesh->mVAO );
-    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-    glDrawArrays(GL_LINE_STRIP, 0, mMesh->mVertices.size());
-}
 
 void MarchingSquare::setSquares()
 {
-//    VisualObject* mSurf = static_cast<FlateFil*>(surface);
-//    for(float i = 0; i<mSurf->getX(); i++)
-//        for(float j=0;j<mSurf->getY(); j++)
-//        {
-//            int rez = 1;
-//            float x = i * rez;
-//            float y = j * rez;
+    FlateFil* mSurf = static_cast<FlateFil*>(surface);
+    for(int i{0}; i<mSurf->getX(); i++){
+        for(int j{0}; j<mSurf->getY(); j++)
+        {
+            int rez = 1;
+            float x = i;
+            float y = j;
+            //float z = (mSurf->mHPoints[i][j] + mSurf->mHPoints[i+1][j])/2;
+            gsml::Vector2d a {x + rez*0.5f, y           };
+            gsml::Vector2d b {x + rez     , y + rez*0.5f};
+            gsml::Vector2d c {x + rez*0.5f, y + rez     };
+            gsml::Vector2d d {x           , y + rez*0.5f};
+            float aH, bH, cH, dH;
+            if(mSurf->mHPoints[i][j] < iso * floor)
+                aH = 0;
+            else
+                aH = 1;
+            if(mSurf->mHPoints[i+1][j] < iso* floor)
+                bH = 0;
+            else
+                bH = 1;
+            if(mSurf->mHPoints[i+1][j+1] < iso* floor)
+                cH = 0;
+            else
+                cH = 1;
+            if(mSurf->mHPoints[i][j+1] < iso* floor)
+                dH = 0;
+            else
+                dH = 1;
 
-//            gsml::Vector2d a(x + rez * .5,	y           );
-//            gsml::Vector2d b(x + rez     ,	y + rez * .5);
-//            gsml::Vector2d c(x + rez * .5,	y + rez     );
-//            gsml::Vector2d d(x           ,	y + rez * .5);
 
-//            int state = getState(fields[i][j], fields[i + 1][j], fields[i + 1][j + 1], fields[i][j + 1]);
-//            switch (state)
-//                        {
-//                        case 1:
-//                            drawLines(c, d);
-//                            break;
-//                        case 2:
-//                            drawLines(b, c);
-//                            break;
-//                        case 3:
-//                            drawLines(b, d);
-//                            break;
-//                        case 4:
-//                            drawLines(a, b);
-//                            break;
-//                        case 5:
-//                            drawLines(a, d);
-//                            drawLines(b, c);
-//                            break;
-//                        case 6:
-//                            drawLines(a, c);
-//                            break;
-//                        case 7:
-//                            drawLines(a, d);
-//                            break;
-//                        case 8:
-//                            drawLines(a, d);
-//                            break;
-//                        case 9:
-//                            drawLines(a, c);
-//                            break;
-//                        case 10:
-//                            drawLines(a, b);
-//                            drawLines(c, d);
-//                            break;
-//                        case 11:
-//                            drawLines(a, b);
-//                            break;
-//                        case 12:
-//                            drawLines(b, d);
-//                            break;
-//                        case 13:
-//                            drawLines(b, c);
-//                            break;
-//                        case 14:
-//                            drawLines(c, d);
-//                            break;
-//                        }
-       //}
+            int state = getState(aH, bH, cH, dH);
+
+            switch (state)
+            {
+            case 1:
+                drawLine(c, d);
+                break;
+            case 2:
+                drawLine(b, c);
+                break;
+            case 3:
+                drawLine(b, d);
+                break;
+            case 4:
+                drawLine(a, b);
+                break;
+            case 5:
+                drawLine(a, d);
+                drawLine(b, c);
+                break;
+            case 6:
+                drawLine(a, c);
+                break;
+            case 7:
+                drawLine(a, d);
+                break;
+            case 8:
+                drawLine(a, d);
+                break;
+            case 9:
+                drawLine(a, c);
+                break;
+            case 10:
+                drawLine(a, b);
+                drawLine(c, d);
+                break;
+            case 11:
+                drawLine(a, b);
+                break;
+            case 12:
+                drawLine(b, d);
+                break;
+            case 13:
+                drawLine(b, c);
+                break;
+            case 14:
+                drawLine(c, d);
+                break;
+            }
+        }}
+    floor++;
 }
-
 int MarchingSquare::getState(int a, int b, int c, int d)
 {
-    return a * 8 + b * 4 + c * 2 + d * 1;
+  return a*8 + b*4 + c*2 + d*1;
 }
 
-void MarchingSquare::drawLines(gsml::Vector2d v1, gsml::Vector2d v2)
+void MarchingSquare::drawLine(gsml::Vector2d a, gsml::Vector2d b)
 {
-
+  mMesh->mVertices.push_back(gsml::Vertex{a.x, a.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
+  mMesh->mVertices.push_back(gsml::Vertex{b.x, b.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
 }

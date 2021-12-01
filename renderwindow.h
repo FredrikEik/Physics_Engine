@@ -18,7 +18,7 @@
 #include "light.h"
 #include "octahedronball.h"
 #include "visualobject.h"
-
+#include "marchingsquare.h"
 
 
 class QOpenGLContext;
@@ -64,7 +64,9 @@ private:
     BSplineCurve *mBSpline;
     int currentScene{1};
     OctahedronBall *oball;
-    CountoureLines *mCL;
+
+    MarchingSquare *mContour;
+
 
 
 

@@ -3,24 +3,15 @@
 
 #include "visualobject.h"
 
-class CountoureLines : public VisualObject
-{
-public:
-    CountoureLines(std::vector<gsml::Vertex> mCPoints);
-    ~CountoureLines();
-    void init(GLint matrixUniform) override;
-    void draw() override;
-
-    int n{5};
-
-private:
-
-};
 
 class FlateFil : public VisualObject
 {
+
+private:
+    static const int X = 100; // (Max.x - Min.x) / n
+    static const int Y = 147; // (Max.y - Min.y) / n
+
 public:
-    ~FlateFil() override;
     FlateFil(std::string filnavn);
 
     int getX(){return X;};
@@ -32,15 +23,12 @@ public:
     float calcHeight(float x, float y);
     int width;
 
-    std::vector<gsml::Vertex> mCPoints;
-    std::vector<gsml::Vertex> getCountourPoints();
-    std::vector<gsml::Vertex> CountourPoints;
 
-    float offsetX{0};
-    float offsetZ{0};
-    float offsetY{550};
+    float mHPoints[X][Y];
+
+
 private:
-    CountoureLines *mCL;
+
     void calculateNormals();
     float xMin = 9000000;
     float xMax = 0;
@@ -51,8 +39,11 @@ private:
     gsml::Vector2d MapMin;
     gsml::Vector2d MapMax;
     int n = 10;
-    static const int X = 100; // (Max.x - Min.x) / n
-    static const int Y = 147; // (Max.y - Min.y) / n
+
+    int offsetX{614580};
+    int offsetY{6757290};
+    int offsetZ{500};
+
     std::vector<gsml::Vector3d> map[X][Y];
 
     
