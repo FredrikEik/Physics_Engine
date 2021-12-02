@@ -3,7 +3,7 @@
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
-    physics = new Physics;
+    physics = new PhysicsComponent;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     mPosition.translate(1.5,0,2);
     //_las->mMatrix.rotate(90,1,0,0);

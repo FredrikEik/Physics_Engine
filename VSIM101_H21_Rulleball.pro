@@ -15,6 +15,7 @@ HEADERS += \
     las.h \
     mainwindow.h \
     octahedronball.h \
+    physicscomponent.h \
     renderwindow.h \
     rollingball.h \
     shader.h \
@@ -29,6 +30,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     octahedronball.cpp \
+    physicscomponent.cpp \
     renderwindow.cpp \
     rollingball.cpp \
     shader.cpp \
