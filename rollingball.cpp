@@ -3,7 +3,7 @@
 
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
-    p = new Physics;
+    physics = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     mPosition.translate(1.5,0,2);
     //_las->mMatrix.rotate(90,1,0,0);
@@ -44,7 +44,7 @@ void RollingBall::setHeight(float z)
     gsml::Vector3d Translation{0,0,0};
     Translation = Get_position();
 
-    Translation.z = (HeightVector.z + p->radius);
+    Translation.z = (HeightVector.z + physics->radius);
 
     if(z != mMatrix.getColumn(3).z())
     {
@@ -124,7 +124,7 @@ void RollingBall::moveAlongLAs( float dt)
             float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
             mHeight = sqrt(mHeight * mHeight);
             bool isFalling{false};
-            if(mHeight > p->radius+0.2)
+            if(mHeight > physics->radius+0.2)
                 isFalling = true;
             else
                 isFalling = false;
@@ -132,35 +132,35 @@ void RollingBall::moveAlongLAs( float dt)
 
             if(isFalling)
             {
-                p->freeFall();
+                physics->Falling();
                 //qDebug() << "Fritt Fall";
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
-                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
+                qDebug() << "mVelocity: " << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
             else
             {
-                p->onGround(m_normal);
+                physics->onGround(m_normal);
                 setHeight(barycentricHeight(Get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
-                qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
+                qDebug() << "mVelocity: " << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
-            p->Velocity = p->VelocityOld + p->Acceleration * dt;
-            mPos = (p->VelocityOld + p->Velocity) * (dt/2);
+            physics->Velocity = physics->OldVelocity + physics->Acceleration * dt;
+            mPos = (physics->OldVelocity + physics->Velocity) * (dt/2);
 
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
 
             if(m_index != old_index)
             {
-                p->Velocity = mN * gsml::Vector3d::dot(p->VelocityOld, mN);
-                p->Velocity = p->VelocityOld - p->Velocity * 2;
-                p->Velocity = p->Velocity * p->friction;
+                physics->Velocity = mN * gsml::Vector3d::dot(physics->OldVelocity, mN);
+                physics->Velocity = physics->OldVelocity - physics->Velocity * 2;
+                physics->Velocity = physics->Velocity * physics->friction;
                 //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
-            p->VelocityOld = p->Velocity;
+            physics->OldVelocity = physics->Velocity;
             old_normal = m_normal;
             old_index = m_index;
             break;
@@ -183,12 +183,15 @@ void RollingBall::setSurface(VisualObject *surface)
 
 void RollingBall::barycentricCords(float dt)
 {
-     gKraft = gForce*mass;
+    gsml::Vector3d gKraft;
+    physics->mass = 0.01;
+    gKraft = physics->Acceleration*physics->mass;
     mMatrix = mPosition * mScale;
 
-    float rotspeed;
+    float rotspeed = 2;
     gsml::Vector3d normalvektor = 0;
     gsml::Vector3d newPos = 0;
+    gsml::Vector3d akselerasjon{0.0f,0.0f,0.0f};
     std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
 
     // Finne trekant
@@ -236,31 +239,31 @@ void RollingBall::barycentricCords(float dt)
                 //korriger posisjon oppover i normalens retning
                 //oppdaterer hastighet
                 //lagt til rotasjon
-            hastighet = hastighet + akselerasjon * dt;
-            newPos = BallPos + hastighet;
+            physics->Velocity = physics->Velocity + akselerasjon * dt;
+            newPos = BallPos + physics->Velocity;
             newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
-            rotspeed += newPos.x * gravitation;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
+            //rotspeed += newPos.x;// * physics->mass;
             mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
             mPosition.rotate(rotspeed, 1, 0, 0);
 
 
-            qDebug() << hastighet.x << hastighet.y << hastighet.z;
+            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
             if(i<3){
                 //ballen er over på ny trekant
                 //kalkulere ny hastighet og posisjon
-            hastighet = hastighet - akselerasjon * dt;
-            newPos = BallPos + hastighet;
+            physics->Velocity = physics->Velocity - akselerasjon * dt;
+            newPos = BallPos + physics->Velocity;
             newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * friction;
-            rotspeed -= newPos.x * gravitation;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
+           // rotspeed -= newPos.x;// * physics->mass;
             mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
             //mPosition.rotate(-rotspeed,0,1,0);
             mPosition.rotate(-rotspeed,1,0,0);
 
 
-            qDebug() << hastighet.x << hastighet.y << hastighet.z;
+            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
 
 

@@ -10,29 +10,29 @@ struct Physics
 {
     float radius = 0.25;
     float mass = 100;
-    float friction = 0.9;
-    float lilleG = 9.81;
+    float friction = 0.009;
+    float Gravitation = 9.81;
 
-    gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
+    gsml::Vector3d Acceleration{0.0, 0.0, -Gravitation};
     gsml::Vector3d Force{0.0,0.0,0.0};
     gsml::Vector3d Velocity{0,0,0};
-    gsml::Vector3d VelocityOld{0,0,0};
+    gsml::Vector3d OldVelocity{0,0,0};
     gsml::Vector3d airF{0,0,0};
 
-    bool frittfall{false};
+    bool IsFalling{false};
 
-    void freeFall()
+    void Falling()
     {
-        frittfall = true;
-        Acceleration = gsml::Vector3d(0, 0, -lilleG);
+        IsFalling = true;
+        Acceleration = gsml::Vector3d(0, 0, -Gravitation);
         calculateAirF();
     }
     void onGround(gsml::Vector3d N)
     {
-        if(frittfall == true)
-            VelocityOld.z = 0;
-        frittfall = false;
-        Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * lilleG;
+        if(IsFalling == true)
+            OldVelocity.z = 0;
+        IsFalling = false;
+        Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * Gravitation;
         calculateAirF();
     }
     void calculateAirF()
@@ -70,51 +70,28 @@ public:
     void setPosition(gsml::Vector3d v);
     void setHeight(float z);
     void heightAt();
-    Physics* p;
-        float radius = 0.25f;
-        float r = 1.f;
+    Physics* physics;
+    float radius = 0.25f;
+    float r = 1.f;
     
-        bool switchVersion = false;
+    bool switchVersion = false;
     void calculateBarycentricCoordinates(VisualObject *surface);
     void barycentricCords(float dt);
-    void barycentricCords2(float dt);
     void setSurface(VisualObject* surface);
 
-        int mPrevIndex{0};
-         VisualObject *mTriangleSurface{nullptr};
-         VisualObject *mLas{nullptr};
 
 protected:
     VisualObject* triangle_surface;
     VisualObject* _las;
 private:
     std::vector<gsml::Vertex> surfVertices;
-
-    float speed = 0.001f;
-
-    float mMass{0.5};
-    float mass = .01f;
-
-    gsml::Vector3d velocity{};
-    gsml::Vector3d gravity{0,-9.81f,0};
-    float gravitation = 9.81;
-    float massInKg {0.05f};
-
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
     gsml::Vector3d mN{0.0, 0.0, 1.0};
     int old_index{0};
     int m_index{0};
-    gsml::Vector3d prevTriangleNormal{0};
 
-    gsml::Vector3d hastighet{0.0f,0.0f,0.0f};
-    gsml::Vector3d akselerasjon{0.0f,0.0f,0.0f};
-    gsml::Vector3d gForce{0.0f,0.0f,-9.81f};
-    gsml::Vector3d gKraft;
 
-    float friction{.006};
-
-    bool notOnSurface = false;
 
 };
 #endif // ROLLINGBALL_H
