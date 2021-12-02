@@ -18,7 +18,21 @@
     <item>
      <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>PushButton</string>
+       <string>To Trekanter</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Simulate Rain</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>Play</string>
       </property>
      </widget>
     </item>
@@ -33,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>1047</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

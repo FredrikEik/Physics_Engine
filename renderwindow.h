@@ -35,7 +35,9 @@ public:
 
         void toggleWireframe(bool buttonState);
     std::vector<VisualObject*> mGameObjects;
-
+    bool isPlaying = false;
+    void SimulateRain();
+    void ToTrekanter();
 //    void error(const QString &msg);
 
 private slots:
@@ -43,8 +45,10 @@ private slots:
 
 private:
     void init();
+
     XYZ xyz;
 
+    RollingBall* ball{nullptr};
     LAS* map;
     TriangleSurface surf;
     TriangleSurface* surf2;
@@ -53,7 +57,7 @@ private:
     gsml::Vector3d help;
     std::vector<RollingBall*> Rain;
     std::vector<RollingBall*> mBalls;
-    bool testahha = false;
+    bool SimulateBalls = false;
 
     int mVerticesDrawn{0};
 

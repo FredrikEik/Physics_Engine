@@ -5,7 +5,7 @@ RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     p = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
-    //mPosition.translate(1.5,0,2);
+    mPosition.translate(1.5,0,2);
     //_las->mMatrix.rotate(90,1,0,0);
     mScale.scale(0.4,0.4,0.4);
     //mScale.rotate(90,1,0,0);
@@ -55,7 +55,7 @@ void RollingBall::setHeight(float z)
 void RollingBall::move(float dx, float dy, float dz)
 {
     mPosition.setPosition(dx, dy, dz);
-    mMatrix = mPosition * mScale;
+    //mMatrix = mPosition * mScale;
 }
 void RollingBall::setSurface2(VisualObject* surface)
 {

@@ -43,10 +43,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     gsml::Vector4d v{1,2,3,4};
     qDebug() << v[0] <<v[1] << v[3] << v[2];
 
-    // Demo
-
-
-
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
     gsmVMatrix = new gsml::Matrix4x4;
@@ -111,7 +107,6 @@ void RenderWindow::init()
     glGenVertexArrays( 1, &mVAO );
     glBindVertexArray( mVAO );
 
-
     //enable the matrixUniform
     // NB: enable in shader and in render() function also to use matrix
     // endret/nytt 23/1
@@ -121,30 +116,31 @@ void RenderWindow::init()
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
 
-    map = new LAS("../VSIM101_H21_Rulleball_0/datasett/test_las.txt");
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
-    surf2->mMatrix.rotate(90, 0, 0, 0);
+    xyz.mMatrix.translate(1,1,1);
+    xyz.init(mMatrixUniform);
 
-    //map->mMatrix.rotate(90,1,0,0);
+
+
+
+
+}
+
+void RenderWindow::SimulateRain()
+{
+
+    map = new LAS("../VSIM101_H21_Rulleball_0/datasett/test_las.txt");
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
-    surf2->init(mMatrixUniform);
-
-
-
-
-    RollingBall* ball{nullptr};
 
     for(auto i{0}; i<30; i++)
     {
         ball = new RollingBall(3);
-        ball->switchVersion = true;
+        //ball->switchVersion = true;
        // ball->mMatrix.rotate(90,1,0,0);
-        if(ball->switchVersion)
-        {
+
             ball->setSurface2(map);
-            testahha = true;
-        }
+            SimulateBalls = true;
+
 
 
 
@@ -154,32 +150,22 @@ void RenderWindow::init()
         mGameObjects.push_back(ball);
         //Sleep(1000);
     }
-    //  ball = new RollingBall(3, surf2);
 
+}
 
-
-    if(!ball->switchVersion)
-    {
+void RenderWindow::ToTrekanter()
+{
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
+    surf2->mMatrix.rotate(90, 0, 0, 0);
+    surf2->init(mMatrixUniform);
+    ball = new RollingBall(3);
+    //ball->mMatrix.translate(1,1,1);
         dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
-        testahha = false;
+        SimulateBalls = false;
         ball->init(mMatrixUniform);
         mBalls.push_back(ball);
         mGameObjects.push_back(surf2);
         mGameObjects.push_back(ball);
-
-    }
-
-
-
-    //ball->mMatrix.scale(.5,.5,.5);
-    //ball->mMatrix.setPosition(1.5,0,2);
-    xyz.mMatrix.translate(1,1,1);
-    xyz.init(mMatrixUniform);
-
-    //map->mMatrix.scale(.2,.2,.2);
-    //map->mMatrix.rotate(90,1,0,0);
-   // map->mMatrix.translate(1,1,1);
-
 
 
 }
@@ -224,18 +210,20 @@ void RenderWindow::render()
     // actual draw call
     // demo
 
-    if(!testahha)
-    mBalls.back()->barycentricCords(0.017f);
-    else
+    if(isPlaying)
     {
-        if(!Rain.empty()){
-            for(auto i{0}; i<static_cast<int>(Rain.size()); i++)
-            {
-                Rain[i]->moveAlongLAs(0.017f);
-                //if(i == 2){
-                //    qDebug() << "Velocity:" << Rain[i]->p->Velocity.x << Rain[i]->p->Velocity.y << Rain[i]->p->Velocity.z;
-                //    qDebug() << "AirForce:" << Rain[i]->p->airF.x << Rain[i]->p->airF.y << Rain[i]->p->airF.z;}
-            }}
+        if(!SimulateBalls)
+        mBalls.back()->barycentricCords(0.017f);
+        else
+        {
+            if(!Rain.empty()){
+                for(auto i{0}; i<static_cast<int>(Rain.size()); i++)
+                {
+                    Rain[i]->moveAlongLAs(0.017f);
+
+                }}
+        }
+
     }
 
 

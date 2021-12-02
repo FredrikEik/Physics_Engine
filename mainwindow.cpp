@@ -75,3 +75,19 @@ void MainWindow::on_pushButton_toggled(bool checked)
 {
     mRenderWindow->toggleWireframe(checked);
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    mRenderWindow->ToTrekanter();
+
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    mRenderWindow->SimulateRain();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    mRenderWindow->isPlaying = true;
+}
