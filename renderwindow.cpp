@@ -19,7 +19,7 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 3;
+    help.x = 0; help.y = -5; help.z = 3;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -125,7 +125,7 @@ void RenderWindow::init()
     surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
     surf2->mMatrix.rotate(90, 0, 0, 0);
 
-    map->mMatrix.rotate(90,1,0,0);
+    //map->mMatrix.rotate(90,1,0,0);
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
     surf2->init(mMatrixUniform);
@@ -208,7 +208,7 @@ void RenderWindow::render()
     gsmVMatrix->setToIdentity();
     //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
     //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+    gsmPMatrix->perspective(90, 4.0/3.0, 0.1, 100.0);
     //gsmPMatrix->print();
     //qDebug() << *mPMatrix;
     //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
