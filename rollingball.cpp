@@ -74,21 +74,7 @@ void RollingBall::setSurface2(VisualObject* surface)
     else
         move(1,1,5);
 }
-void RollingBall::move(float dt)
-{
 
-    mMatrix = mPosition * mScale;
-
-
-    if(!switchVersion)
-       // barycentricCords(dt);
-        moveAlongLAs(dt);
-    else
-        barycentricCords(dt);
-
-
-
-}
 
 void RollingBall::moveAlongLAs( float dt)
 {

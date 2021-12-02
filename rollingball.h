@@ -17,7 +17,7 @@ struct Physics
     gsml::Vector3d Force{0.0,0.0,0.0};
     gsml::Vector3d Velocity{0,0,0};
     gsml::Vector3d OldVelocity{0,0,0};
-    gsml::Vector3d airF{0,0,0};
+    gsml::Vector3d airFlow{0,0,0};
 
     bool IsFalling{false};
 
@@ -25,7 +25,10 @@ struct Physics
     {
         IsFalling = true;
         Acceleration = gsml::Vector3d(0, 0, -Gravitation);
-        calculateAirF();
+        gsml::Vector3d u{0-Velocity.x,0-Velocity.y,0-Velocity.z};
+        airFlow = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
+        Force = Acceleration * mass;
+        Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
     void onGround(gsml::Vector3d N)
     {
@@ -33,24 +36,9 @@ struct Physics
             OldVelocity.z = 0;
         IsFalling = false;
         Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * Gravitation;
-        calculateAirF();
-    }
-    void calculateAirF()
-    {
-        float p = 1.29; //mass density of air on earth
-        gsml::Vector3d u{0-Velocity.x,0-Velocity.y,0-Velocity.z};//flow velocity
-        float A = M_PI * (radius*radius); //Area
-        float dc = 0.47; //drag coefficient
-        //airF = 1/2 p * (u^2) * dc * A;
-        airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        airF = airF * (0.5 * p);
-        airF = airF * dc;
-        airF = airF * A;
 
-        Force = Acceleration * mass;
-        Force = Force - airF;
-        Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
+
 };
 
 class RollingBall : public OctahedronBall
@@ -61,8 +49,7 @@ public:
     ~RollingBall() override;
     void init(GLint matrixUniform) override;
     void draw() override;
-    void move(float dt) override ;
-    void move(float x, float y, float z);
+    void move(float x, float y, float z) ;
     void moveAlongLAs( float dt);
     void baryMove(float x, float y, float z);
     void setSurface2(VisualObject* surface);
@@ -74,7 +61,6 @@ public:
     float radius = 0.25f;
     float r = 1.f;
     
-    bool switchVersion = false;
     void calculateBarycentricCoordinates(VisualObject *surface);
     void barycentricCords(float dt);
     void setSurface(VisualObject* surface);
