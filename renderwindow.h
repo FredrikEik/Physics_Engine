@@ -44,6 +44,9 @@ public:
     void makeRain();
     void spawnRollingBall();
 
+
+    bool CheckContour = false;
+
 private slots:
     void render();
 
@@ -66,7 +69,6 @@ private:
     OctahedronBall *oball;
 
     MarchingSquare *mContour;
-
 
 
 

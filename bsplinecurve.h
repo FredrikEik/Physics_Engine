@@ -18,8 +18,8 @@ private:
     int n = 9; //Antall kontrollpunkter
     int d = 2; //grad
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
+    //                             n+d+1
     std::vector<double> t {0,0,0,1,2,3,4,5,6,7,7,7}; //Skjøtevektor
-    //Posisjon etc i visualObject
 };
 
 #endif // BSPLINECURVE_H

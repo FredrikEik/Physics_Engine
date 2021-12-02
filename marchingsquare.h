@@ -13,12 +13,13 @@ public:
     void setSquares();
     int getState(int a, int b, int c, int d);
     void drawLine(gsml::Vector2d a, gsml::Vector2d b);
-
+    void draw();
 
 private:
     VisualObject* surface;
-    int iso = 5;
+    int iso = 1;
     int floor = 1;
+    int nrOfFloors = 25;
 
 };
 

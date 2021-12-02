@@ -35,15 +35,15 @@ void OctahedronBall::lagTriangel(const Vec3& v1, const Vec3& v2, const Vec3& v3)
    gsml::Vertex v{};
 
    v.set_xyz(v1.x, v1.y, v1.z);		// koordinater v.x = v1.x, v.y=v1.y, v.z=v1.z
-   v.set_normal(0, 0, 0);	// rgb
+   v.set_normal(0, 0, 1);	// rgb
    v.set_st(0.0f, 0.0f);			// kan utelates
    mMesh->mVertices.push_back(v);
    v.set_xyz(v2.x, v2.y, v2.z);
-   v.set_normal(0, 0, 0);
+   v.set_normal(0, 0, 1);
    v.set_st(1.0f, 0.0f);
    mMesh->mVertices.push_back(v);
    v.set_xyz(v3.x, v3.y, v3.z);
-   v.set_normal(0, 0, 0);
+   v.set_normal(0, 0, 1);
    v.set_st(0.5f, 1.0f);
    mMesh->mVertices.push_back(v);
 }

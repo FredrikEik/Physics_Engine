@@ -3,7 +3,6 @@
 
 #include "visualobject.h"
 
-//using namespace gsls21;
 class Light : public VisualObject
 {
 public:

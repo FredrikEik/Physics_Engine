@@ -67,11 +67,6 @@ void MainWindow::init()
     mRenderWindowContainer->setFocus();
 }
 
-//Example of a slot called from the button on the top of the program.
-void MainWindow::on_pushButton_clicked()
-{
-    qDebug() << "Button clicked";
-}
 
 
 void MainWindow::on_RollingBall_clicked()
@@ -83,5 +78,17 @@ void MainWindow::on_RollingBall_clicked()
 void MainWindow::on_MakeItRain_clicked()
 {
     mRenderWindow->makeRain();
+}
+
+
+void MainWindow::on_ContourLine_clicked(bool checked)
+{
+    if(checked){
+        mRenderWindow->CheckContour = true;
+    qDebug() << "CheckContour = true";}
+    else if(!checked){
+        mRenderWindow->CheckContour = false;
+        qDebug() << "CheckContour = false";}
+
 }
 

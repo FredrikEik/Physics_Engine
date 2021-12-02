@@ -7,10 +7,10 @@
 Light::Light()
 {
     mMesh = new Mesh;
-    mMesh->mVertices.push_back(gsml::Vertex{-0.25f, -0.25f,  0.25f, 0.8f, 0.8f, 0.3f, 0.f , 0.f});
-    mMesh->mVertices.push_back(gsml::Vertex{ 0.25f, -0.25f,  0.25f, 0.8f, 0.8f, 0.3f, 1.f , 0.f});   //Right low
-    mMesh->mVertices.push_back(gsml::Vertex{ 0.0f ,  0.25f,  0.0f , 0.8f, 0.8f, 0.3f, 0.5f, 0.5f});  //Top
-    mMesh->mVertices.push_back(gsml::Vertex{ 0.0f , -0.25f, -0.25f, 0.8f, 0.8f, 0.3f, 0.5f, 0.5f});   //Back low
+    mMesh->mVertices.push_back(gsml::Vertex{-0.25f, -0.25f,  0.25f, 1.0f, 0.8f, 0.3f, 0.f , 0.f});
+    mMesh->mVertices.push_back(gsml::Vertex{ 0.25f, -0.25f,  0.25f, 1.8f, 0.8f, 0.3f, 1.f , 0.f});   //Right low
+    mMesh->mVertices.push_back(gsml::Vertex{ 0.0f ,  0.25f,  0.0f , 1.8f, 0.8f, 0.3f, 0.5f, 0.5f});  //Top
+    mMesh->mVertices.push_back(gsml::Vertex{ 0.0f , -0.25f, -0.25f, 1.8f, 0.8f, 0.3f, 0.5f, 0.5f});   //Back low
 
     mMesh->mIndices.insert( mMesh->mIndices.end(),
                      { 0, 1, 2,

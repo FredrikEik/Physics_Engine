@@ -7,7 +7,11 @@ MarchingSquare::MarchingSquare(VisualObject* mSurf)
     mShader = 0;
     mMesh = new Mesh;
     mMesh->mDrawType = GL_LINES;
-    setSquares();setSquares();setSquares();setSquares();
+    for(int i =0; i<nrOfFloors; i++)
+        setSquares();
+
+
+
 
 }
 
@@ -138,6 +142,11 @@ int MarchingSquare::getState(int a, int b, int c, int d)
 
 void MarchingSquare::drawLine(gsml::Vector2d a, gsml::Vector2d b)
 {
-  mMesh->mVertices.push_back(gsml::Vertex{a.x, a.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
-  mMesh->mVertices.push_back(gsml::Vertex{b.x, b.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{a.x, a.y,static_cast<float>(iso*floor) + 0.1f, static_cast<float>(1-1/floor*iso),0,static_cast<float>(0.05*floor*iso), 0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{b.x, b.y,static_cast<float>(iso*floor) + 0.1f, static_cast<float>(1-1/floor*iso),0,static_cast<float>(0.05*floor*iso), 0,0});
+}
+
+void MarchingSquare::draw()
+{
+
 }

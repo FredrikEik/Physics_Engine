@@ -118,10 +118,8 @@ void RenderWindow::init()
 
 void RenderWindow::makeObjects()
 {
-
-
     mLight->init(mMatrixUniform);
-    mLight->move(10,10,10);
+    mLight->move(50,10,100);
     mVisualObjects.push_back(mLight);
 
     xyz = new XYZ;
@@ -136,10 +134,12 @@ void RenderWindow::makeObjects()
     mContour->init(mMatrixUniform);
     mVisualObjects.push_back(mContour);
 
+
+
     oball = new OctahedronBall(1);
     RollingBall* ball{nullptr};
 
-    for(auto i{0}; i<2; i++)
+    for(auto i{0}; i<100; i++)
     {
         mBSpline = new BSplineCurve(i);
         mBSpline->init(mMatrixUniform);
@@ -200,16 +200,30 @@ void RenderWindow::drawObjects()
 
         if(mVisualObjects[i]->mScene == currentScene)
         {
+
+            if(i!=3){
             //send data to shader
             glUniformMatrix4fv( viewMatrix, 1, GL_TRUE, mCamera->mViewMatrix.constData());
             glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
             glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
 
+
             glBindVertexArray(mVisualObjects[i]->mMesh->mVAO );
             glDrawArrays(mVisualObjects[i]->mMesh->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
-            glBindVertexArray(0);
-        }
+            glBindVertexArray(0);}
+
+            if(CheckContour == true)
+            {
+
+                glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[3]->getMatrix().constData());
+                glBindVertexArray(mVisualObjects[3]->mMesh->mVAO );
+                glDrawArrays(mVisualObjects[3]->mMesh->mDrawType, 0, mVisualObjects[3]->get_vertices().size());
+                glBindVertexArray(0);}
+
+            }
     }
+
+
 
     glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mLight->getMatrix().constData());
     glBindVertexArray(mLight->mMesh->mVAO );

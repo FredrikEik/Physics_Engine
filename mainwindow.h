@@ -19,11 +19,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
 
     void on_RollingBall_clicked();
 
     void on_MakeItRain_clicked();
+
+    void on_ContourLine_clicked(bool checked);
 
 private:
     void init();

@@ -11,15 +11,15 @@ struct Physics
 {
     float radius = 0.25;
     float mass = 1;
-    float my = 0.4;
+    float my = 0.3;
     float lilleG = 9.81;
-
-    gsml::Vector3d storeG{0.0, 0.0, -lilleG*mass};
+    gsml::Vector3d storeG{0.0, 0.0, -lilleG * mass};
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
     gsml::Vector3d Force{0.0,0.0,0.0};
     gsml::Vector3d Velocity{0,0,0};
     gsml::Vector3d oldVelocity{0,0,0};
     gsml::Vector3d Friction{0,0,0};
+    gsml::Vector3d airF{0,0,0};
     gsml::Vector3d Nforce{0,0,0};
 
     bool frittfall{false};
@@ -27,42 +27,36 @@ struct Physics
     void freeFall()
     {
         frittfall = true;
-        Acceleration = gsml::Vector3d(0, 0, -lilleG);
-        calculateAirF(Acceleration);
+        Friction = {0,0,0};
+        Nforce = {0,0,0};
+        calculateAirF();
     }
     void onGround(gsml::Vector3d N)
     {
-        if(frittfall == true)
-            oldVelocity.z = 0;
         frittfall = false;
-        Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * lilleG;
-        calculateAirF(N);
+        Nforce = N * -storeG.z;
+
+        Friction = oldVelocity * -1;
+        Friction.normalize();
+        Friction = Friction * (Nforce.length() * my);
+
+        calculateAirF();
     }
-    void calculateAirF(gsml::Vector3d N)
+    void calculateAirF()
     {
         float p = 1.29; //mass density of air on earth
         gsml::Vector3d u{0-Velocity.x,0-Velocity.y,0-Velocity.z};//flow velocity
         float A = M_PI * (radius*radius); //Area
         float dc = 0.47; //drag coefficient
+        //airF = 1/2 p * (u^2) * dc * A;
+        airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
+        airF = airF * (0.5 * p);
+        airF = airF * dc;
+        airF = airF * A;
 
-        Friction = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        Friction = Friction * (0.5 * p);
-        Friction = Friction * dc;
-        Friction = Friction * A;
 
-        Force = Acceleration * mass;
+        Force = storeG + Nforce + Friction + airF;
 
-        if(!frittfall)
-        {
-            gsml::Vector3d tempF = Force;
-            tempF.normalize();
-            tempF = tempF * -1;
-
-            Friction = tempF * my * lilleG * mass;
-
-        }
-
-        Force = Force + Friction;
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
 };

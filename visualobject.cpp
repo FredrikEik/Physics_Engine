@@ -51,7 +51,7 @@ void VisualObject::init(GLint matrixUniform)
 
 void VisualObject::move(float dx, float dy, float dz)
 {
-   mPosition.setPosition(dx, dy, dz);
+   mMatrix.setPosition(dx, dy, dz);
 }
 
 gsml::Vector3d VisualObject::barycentricCoords(const gsml::Vector2d &p1, const gsml::Vector2d &p2, const gsml::Vector2d &p3, const gsml::Vector2d &position)

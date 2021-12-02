@@ -132,7 +132,8 @@ void RollingBall::setSurface(VisualObject* surface)
         gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
         gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        pos.z += 5;
+        pos.z += 30;
+        pos.x += 30;
         setPosition(pos);}
     else
         move(1,1,5);
@@ -195,23 +196,15 @@ void RollingBall::move(float dt)
                 if(!isFalling)
                     constructBSpline(Get_position());
 
-                float speed = p->Velocity.length();
-                gsml::Vector3d mVector;
-                float dot = gsml::Vector3d::dot(p->Velocity, mN);
-                mVector = p->Velocity - mN * (2.0f * dot);
-                mVector.normalize();
-                p->Velocity = mVector * speed;
-
+                    float dot = gsml::Vector3d::dot(p->oldVelocity, mN);
+                    p->Velocity = p->Velocity - mN * (2.0f * dot);
             }
-
             p->Velocity = p->oldVelocity + p->Acceleration * dt;
-            mPos = p->Velocity * dt;
-            mPos = mPos + p->Acceleration * dt * dt * 0.5;
+            mPos = p->oldVelocity * dt;
+            mPos = mPos + p->Acceleration * dt * dt * 0.5f;
 
             mPosition.translate(mPos.x, mPos.y, mPos.z);
             mMatrix = mPosition * mScale;
-
-
             p->oldVelocity = p->Velocity;
             old_normal = m_normal;
             old_index = m_index;
