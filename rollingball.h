@@ -13,28 +13,30 @@ struct Physics
     float mass = 1;
     float my = 0.3;
     float lilleG = 9.81;
-    float storeG = lilleG * mass;
+    gsml::Vector3d storeG{0.0, 0.0, -lilleG * mass};
     gsml::Vector3d Acceleration{0.0, 0.0, -lilleG};
     gsml::Vector3d Force{0.0,0.0,0.0};
     gsml::Vector3d Velocity{0,0,0};
     gsml::Vector3d oldVelocity{0,0,0};
     gsml::Vector3d Friction{0,0,0};
-    //gsml::Vector3d Nforce{0,0,0};
-
-    bool frittfall{false};
+    gsml::Vector3d airF{0,0,0};
+    gsml::Vector3d Nforce{0,0,0};
 
     void freeFall()
     {
-        frittfall = true;
-        Acceleration = gsml::Vector3d(0, 0, -lilleG);
+        Nforce = {0,0,0};
+        Friction = {0,0,0};
+
         calculateAirF();
     }
     void onGround(gsml::Vector3d N)
     {
-        if(frittfall == true)
-            oldVelocity.z = 0;
-        frittfall = false;
-        Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * lilleG;
+        Nforce = N * -storeG.z;
+
+        Friction = oldVelocity * -1;
+        Friction.normalize();
+        Friction = Friction * (Nforce.length() * my);
+
         calculateAirF();
     }
     void calculateAirF()
@@ -44,25 +46,12 @@ struct Physics
         float A = M_PI * (radius*radius); //Area
         float dc = 0.47; //drag coefficient
         //airF = 1/2 p * (u^2) * dc * A;
-        Friction = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
-        Friction = Friction * (0.5 * p);
-        Friction = Friction * dc;
-        Friction = Friction * A;
+        airF = gsml::Vector3d(u.x*u.x, u.y*u.y, u.z * u.z);
+        airF = airF * (0.5 * p);
+        airF = airF * dc;
+        airF = airF * A;
 
-        Force = Acceleration * mass;
-
-        if(!frittfall)
-        {
-            gsml::Vector3d tempF = Force;
-            tempF.normalize();
-            tempF = tempF * -1;
-
-            Friction = tempF * storeG;
-            Friction = Friction * my;
-        }
-
-        Force = Force + Friction;
-
+        Force = storeG + Nforce + Friction + airF;
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
 };
@@ -89,7 +78,7 @@ public:
 protected:
     VisualObject* triangle_surface;
 private:
-    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BStxt/BSpline";
     gsml::Vector3d bsPoint{0,0,0};
     std::vector<gsml::Vector3d> mbsPoints;
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
@@ -98,7 +87,6 @@ private:
     int m_index{0};
     int old_index{0};
     std::vector<gsml::Vertex> surfVertices;
-
 };
 
 

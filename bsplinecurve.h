@@ -14,12 +14,11 @@ public:
     int findKnotInterval(float x);
     void addC(std::string filnavn);
 private:
-    std::string mTxt = "../VSIM101_H21_Rulleball_0/BSpline";
+    std::string mTxt = "../VSIM101_H21_Rulleball_0/BStxt/BSpline";
     int n = 9; //Antall kontrollpunkter
     int d = 2; //grad
     std::vector<gsml::Vector3d> c; //Kontrollpunkter
     std::vector<double> t {0,0,0,1,2,3,4,5,6,7,7,7}; //Skjøtevektor
-    //Posisjon etc i visualObject
 };
 
 #endif // BSPLINECURVE_H

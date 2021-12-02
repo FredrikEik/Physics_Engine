@@ -15,9 +15,9 @@ public:
     void drawLine(gsml::Vector2d a, gsml::Vector2d b);
 private:
     VisualObject* surface;
-    int iso = 5;
+    int iso = 1; //avstand mellom linjer
+    int nrOfFloors = 20; //antall linjer
     int floor = 1;
-
 };
 
 #endif // MARCHINGSQUARE_H

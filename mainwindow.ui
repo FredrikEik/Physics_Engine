@@ -30,6 +30,16 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="Contour">
+      <property name="text">
+       <string>Toggle Contour</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QVBoxLayout" name="OpenGLLayout"/>
     </item>
    </layout>

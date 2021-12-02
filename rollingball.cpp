@@ -8,7 +8,7 @@ RollingBall::RollingBall(int dID) : VisualObject()
     p = new Physics;
     //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     //mPosition.translate(1.5,1.5,3);
-    mScale.scale(0.1,0.1,0.1);
+    mScale.scale(0.2,0.2,0.2);
     //mMatrix = mPosition * mScale;
 }
 RollingBall::~RollingBall()
@@ -76,7 +76,6 @@ void RollingBall::setHeight(float z)
     if(z != mMatrix.getColumn(3).z())
     {
         setPosition(Translation);
-        //mMatrix.setPosition(Translation.x,Translation.y,Translation.z);
     }
 }
 
@@ -133,7 +132,8 @@ void RollingBall::setSurface(VisualObject* surface)
         gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
         gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
         gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        pos.z += 10;
+        pos.x += 40;
+        pos.z += 20;
         setPosition(pos);}
     else
         move(1,1,5);
@@ -172,7 +172,7 @@ void RollingBall::move(float dt)
             float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
             mHeight = sqrt(mHeight * mHeight);
             bool isFalling{false};
-            if(mHeight > p->radius+0.2)
+            if(mHeight > p->radius)
                 isFalling = true;
             else
                 isFalling = false;
@@ -196,30 +196,22 @@ void RollingBall::move(float dt)
                 //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
 
-            p->Velocity = p->oldVelocity + p->Acceleration * dt;
-//            mPos = p->Velocity * dt;
-//            mPos = mPos + p->Acceleration * dt * dt * 0.5f;
-            mPos = (p->oldVelocity + p->Velocity) * (dt/2);
-
-            mPosition.translate(mPos.x, mPos.y, mPos.z);
-            mMatrix = mPosition * mScale;
-
             if(m_index != old_index)
             {
                 if(!isFalling)
                     constructBSpline(Get_position());
-//                float speed = p->Velocity.length();
-//                gsml::Vector3d mVector;
-//                float dot = gsml::Vector3d::dot(p->Velocity, mN);
-//                mVector = p->Velocity - mN * (2.0f * dot);
-//                mVector.normalize();
-//                p->Velocity = mVector * speed;
 
-                                p->Velocity = mN * gsml::Vector3d::dot(p->oldVelocity, mN);
-                                p->Velocity = p->oldVelocity - p->Velocity * 2;
-                                //p->Velocity = p->Velocity + p->Friction;
-                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
+                float dot = gsml::Vector3d::dot(p->oldVelocity, mN);
+                p->Velocity = p->Velocity - mN * (2.0f * dot);
             }
+
+            p->Velocity = p->oldVelocity + p->Acceleration * dt;
+            mPos = p->oldVelocity * dt;
+            mPos = mPos + p->Acceleration * dt * dt * 0.5f;
+
+            mPosition.translate(mPos.x, mPos.y, mPos.z);
+            mMatrix = mPosition * mScale;
+
             p->oldVelocity = p->Velocity;
             old_normal = m_normal;
             old_index = m_index;

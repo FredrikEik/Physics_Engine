@@ -6,7 +6,8 @@ MarchingSquare::MarchingSquare(VisualObject* mSurf)
     mMesh = new Mesh;
     mMatrix.setToIdentity();
     mMesh->mDrawType = GL_LINES;
-    setSquares();setSquares();setSquares();setSquares();
+    for(int i{0}; i<nrOfFloors; i++)
+        setSquares();
 }
 
 void MarchingSquare::init(GLint matrixUniform)
@@ -39,9 +40,7 @@ void MarchingSquare::init(GLint matrixUniform)
     glBindVertexArray(0);
 }
 
-void MarchingSquare::draw()
-{
-}
+void MarchingSquare::draw(){}
 
 void MarchingSquare::setSquares()
 {
@@ -52,7 +51,6 @@ void MarchingSquare::setSquares()
             int rez = 1;
             float x = i;
             float y = j;
-            //float z = (mSurf->mHPoints[i][j] + mSurf->mHPoints[i+1][j])/2;
             gsml::Vector2d a {x + rez*0.5f, y           };
             gsml::Vector2d b {x + rez     , y + rez*0.5f};
             gsml::Vector2d c {x + rez*0.5f, y + rez     };
@@ -136,6 +134,6 @@ int MarchingSquare::getCase(int a, int b, int c, int d)
 
 void MarchingSquare::drawLine(gsml::Vector2d a, gsml::Vector2d b)
 {
-    mMesh->mVertices.push_back(gsml::Vertex{a.x, a.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
-    mMesh->mVertices.push_back(gsml::Vertex{b.x, b.y,static_cast<float>(iso*floor) + 0.2f, 1,0,0, 0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{a.x, a.y,static_cast<float>(iso*floor) + 0.3f, static_cast<float>(1-1/floor*iso),0,static_cast<float>(0.05*floor*iso), 0,0});
+    mMesh->mVertices.push_back(gsml::Vertex{b.x, b.y,static_cast<float>(iso*floor) + 0.3f, static_cast<float>(1-1/floor*iso),0,static_cast<float>(0.05*floor*iso), 0,0});
 }

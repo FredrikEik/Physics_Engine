@@ -56,7 +56,6 @@ void TriangleSurface::writeFile(std::string filnavn)
 
     if (ut.is_open())
     {
-
         auto n = mMesh->mVertices.size();
         gsml::Vertex vertex;
         ut << n << std::endl;

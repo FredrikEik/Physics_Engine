@@ -78,3 +78,14 @@ void MainWindow::on_MakeItRain_clicked()
     mRenderWindow->makeRain();
 }
 
+
+void MainWindow::on_Contour_clicked(bool checked)
+{
+    if(checked){
+        mRenderWindow->CheckContour = true;
+        qDebug() << "CheckContour = true";}
+    else if(!checked){
+        mRenderWindow->CheckContour = false;
+        qDebug() << "CheckContour = false";}
+}
+

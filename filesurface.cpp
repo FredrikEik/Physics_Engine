@@ -123,12 +123,6 @@ void FileSurface::makePlain()
             mMesh->mVertices.push_back(gsml::Vertex{(x+1),(y+1), height4,    f,   f, 0});
 
             mHPoints[static_cast<int>(x)][static_cast<int>(y)] = height1;
-//            int test = static_cast<int>(((height1 + height2 + height3 + height4 + height2 + height3)/6)+offsetZ);
-//            if(test > zMax || test < zMin){
-//            }else{
-//                if(std::fmod(test,5)<0.1){
-//                    mCPoints.push_back(gsml::Vertex{offsetX+x, offsetY+y, static_cast<float>(test)-offsetZ, 1,0,0, 0,0});}
-//            }
         }
 }
 
@@ -154,6 +148,8 @@ float FileSurface::calcHeight(float x, float y)
     z = z*0.3;
     return z;
 }
+
+
 
 void FileSurface::calculateNormals()
 {
@@ -208,48 +204,4 @@ void FileSurface::calculateNormals()
         //mVertices[0].at(i).set_normal(N.x, N.y, N.z);// = result;
         mMesh->mVertices[i].set_normal(N);
     }
-}
-
-ContourLines::ContourLines(std::vector<gsml::Vertex> mCPoints)
-{
-    mMesh = new Mesh;
-    mMatrix.setToIdentity();
-    mShader = 1;
-    mMesh->mDrawType = GL_LINE_STRIP;
-    for(auto i{0}; i<mCPoints.size(); i++)
-        mMesh->mVertices.push_back(mCPoints[i]);
-}
-
-void ContourLines::init(GLint matrixUniform)
-{
-    mMatrixUniform = matrixUniform;
-    initializeOpenGLFunctions();
-
-    //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mMesh->mVAO );
-    glBindVertexArray( mMesh->mVAO );
-
-    //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mMesh->mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mMesh->mVBO );
-
-    glBufferData( GL_ARRAY_BUFFER, mMesh->mVertices.size()*sizeof(gsml::Vertex), mMesh->mVertices.data(), GL_STATIC_DRAW );
-
-    // 1rst attribute buffer : vertices
-    glBindBuffer(GL_ARRAY_BUFFER, mMesh->mVBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE,sizeof(gsml::Vertex), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-
-    // 2nd attribute buffer : colors
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
-    glEnableVertexAttribArray(1);
-
-    //enable the matrixUniform
-    // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
-
-    glBindVertexArray(0);
-}
-
-void ContourLines::draw()
-{
 }

@@ -17,9 +17,6 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    mLightPosition.x = 5.2f;
-    mLightPosition.y = 5.2f;
-    mLightPosition.z = 2.0f;
     //This is sent to QWindow:
     setSurfaceType(QWindow::OpenGLSurface);
     setFormat(format);
@@ -147,6 +144,7 @@ void RenderWindow::setupPhongShader(int shaderIndex)
 
 void RenderWindow::makeObjects()
 {
+    mLight->move(10,10,100);
     mLight->init(mMatrixUniform1);
     mVisualObjects.push_back(mLight);
 
@@ -165,7 +163,7 @@ void RenderWindow::makeObjects()
     oball = new OctahedronBall(0);
 
     RollingBall* ball{nullptr};
-    for(int i{0}; i<2; i++)
+    for(int i{0}; i<4; i++)
     {
         mBSpline = new BSplineCurve(i);
         mBSpline->init(mMatrixUniform);
@@ -253,14 +251,24 @@ void RenderWindow::drawObjects()
 
         if(mVisualObjects[i]->mScene == currentScene)
         {
-            //send data to shader
-            glUniformMatrix4fv( viewMatrix, 1, GL_TRUE, mCamera->mViewMatrix.constData());
-            glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
-            glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
 
-            glBindVertexArray(mVisualObjects[i]->getMesh()->mVAO );
-            glDrawArrays(mVisualObjects[i]->getMesh()->mDrawType, 0, mVisualObjects[i]->getMesh()->mVertices.size());
-            glBindVertexArray(0);
+            if(i!=3){
+                //send data to shader
+                glUniformMatrix4fv( viewMatrix, 1, GL_TRUE, mCamera->mViewMatrix.constData());
+                glUniformMatrix4fv( projectionMatrix, 1, GL_TRUE, mCamera->mProjectionMatrix.constData());
+                glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[i]->getMatrix().constData());
+
+                glBindVertexArray(mVisualObjects[i]->getMesh()->mVAO );
+                glDrawArrays(mVisualObjects[i]->getMesh()->mDrawType, 0, mVisualObjects[i]->get_vertices().size());
+                glBindVertexArray(0);}
+            else
+                if(CheckContour == true)
+                {
+                    glUniformMatrix4fv( modelMatrix, 1, GL_TRUE, mVisualObjects[3]->getMatrix().constData());
+
+                    glBindVertexArray(mVisualObjects[3]->getMesh()->mVAO );
+                    glDrawArrays(mVisualObjects[3]->getMesh()->mDrawType, 0, mVisualObjects[3]->get_vertices().size());
+                    glBindVertexArray(0);}
         }
     }
 

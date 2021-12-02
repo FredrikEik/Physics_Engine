@@ -41,6 +41,7 @@ public:
     //    void error(const QString &msg);
     void makeRain();
     void spawnRollingBall();
+    bool CheckContour{false};
 private slots:
     void render();
 

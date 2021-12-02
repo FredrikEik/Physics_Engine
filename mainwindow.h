@@ -23,6 +23,8 @@ private slots:
 
     void on_MakeItRain_clicked();
 
+    void on_Contour_clicked(bool checked);
+
 private:
     void init();
     Ui::MainWindow *ui;

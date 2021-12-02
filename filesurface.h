@@ -30,22 +30,9 @@ private:
     gsml::Vector2d MapMax;
     int n = 10;
     std::vector<gsml::Vector3d> map[X][Y];
-    //float mNormal[3];
     int offsetX{614580};
     int offsetY{6757290};
     int offsetZ{500};
-};
-
-class ContourLines : public VisualObject
-{
-public:
-    ContourLines(std::vector<gsml::Vertex> mCPoints);
-    ~ContourLines(){};
-    void init(GLint matrixUniform) override;
-    void draw() override;
-
-    int n{5};
-
 };
 
 #endif // FILESURFACE_H

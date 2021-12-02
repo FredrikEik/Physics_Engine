@@ -15,6 +15,11 @@ VisualObject::~VisualObject()
     glDeleteBuffers( 1, &mMesh->mVBO );
 }
 
+void VisualObject::move(float dx, float dy, float dz)
+{
+    mMatrix.setPosition(dx,dy,dz);
+}
+
 void VisualObject::init(GLint matrixUniform)
 {
     mMatrixUniform = matrixUniform;
