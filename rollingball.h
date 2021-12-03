@@ -34,8 +34,5 @@ private:
     gsml::Vector3d gForce{0,0,0};
     const gsml::Vector3d constGForce{0,0,-9.80565f}; //Gravitational force (downwards) is around -9.8
     const float mass{0.05f};
-
-
-
 };
 #endif // ROLLINGBALL_H
