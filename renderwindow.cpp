@@ -160,7 +160,6 @@ void RenderWindow::LagTrekant()
     mGameObjects.push_back(surf2);
     mGameObjects.push_back(ball);
 
-
 }
 
 ///Called each frame - doing the rendering
