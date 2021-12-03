@@ -59,12 +59,7 @@ void LAS::readLAS(std::string fileName)
              vertex.set_xyz(x, y, z);
              las_vertices.push_back(vertex);
         }
-        //print las data
-        float deltaX{highestX - lowestX}, deltaY{highestY - lowestY }, deltaZ{highestZ - lowestZ };
-        qDebug() << "Delta x : "<<deltaX<< " Delta y: " << deltaY<< " Delta z: "<< deltaZ<< "\n";
-        qDebug() << "Biggest x : "<< highestX<< " smallest x: " << lowestX<< "\n";
-        qDebug() << "Biggest y : "<<highestY<< " smallest Y: " << lowestY<< "\n";
-        qDebug() << "Biggest z : "<<highestZ<< " smallest z: " << lowestZ<< "\n";
+
         inn.close();
     }
     else
@@ -76,11 +71,11 @@ void LAS::minMaxNormalize()
 {
     for(unsigned int i = 0; i < las_vertices.size(); i++)
     {
-        float nX = xMin+(((las_vertices[i].getXYZ().getX() - lowestX)*(xMax-xMin)) / (highestX - lowestX));
-        float nY = yMin+(((las_vertices[i].getXYZ().getY() - lowestY)*(yMax-yMin)) / (highestY - lowestY));
-        float nZ = zMin+(((las_vertices[i].getXYZ().getZ() - lowestZ)*(zMax-zMin)) / (highestZ - lowestZ));
+        float tempX = xMin+(((las_vertices[i].getXYZ().getX() - lowestX)*(xMax-xMin)) / (highestX - lowestX));
+        float tempY = yMin+(((las_vertices[i].getXYZ().getY() - lowestY)*(yMax-yMin)) / (highestY - lowestY));
+        float tempZ = zMin+(((las_vertices[i].getXYZ().getZ() - lowestZ)*(zMax-zMin)) / (highestZ - lowestZ));
 
-        las_vertices[i].set_xyz(nX,nY,nZ);
+        las_vertices[i].set_xyz(tempX,tempY,tempZ);
     }
 
 
