@@ -1,7 +1,7 @@
 // Dag Nylund 31/1/18 - 1/2/18
 // gsml fra 5/11/20
 // gs2019 ligger nederst
-#include "../Matrix4x4/Matrix4x4.h"
+#include "Matrix4x4.h"
 
 #include <iomanip>
 #include <cmath>
@@ -17,11 +17,49 @@ using std::setprecision;
 
 const float Matrix4x4::EPS = 0.000001;
 
+Matrix4x4::Matrix4x4(std::initializer_list<GLfloat> values)
+{
+    //Initializing the matrix class the same way as a 2d array
+    int i = 0;
+    for(auto value : values)
+        matrix[i++] = value;
+}
+
+
 Matrix4x4::Matrix4x4() : m(4), n(4), lu_faktorisert(false)
 {
     for (int i=0; i<m; i++)
         for (int j=0; j<n; j++)
             A[i][j] = 0.0f;
+}
+
+Vec3 Matrix4x4::getPosition()
+{
+    Vec3 temp;
+    temp.x = A[0][3];
+    temp.y = A[1][3];
+    temp.z = A[2][3];
+    return temp;
+}
+void Matrix4x4::setPosition(GLfloat x, GLfloat y, GLfloat z)
+{
+    A[0][3] = x;
+    A[1][3] = y;
+    A[2][3] = z;
+}
+
+void Matrix4x4::translate(Vector3d positionIn)
+{
+
+    Matrix4x4 matrix =
+    {
+        1.f, 0.f, 0.f, positionIn.getX(),
+        0.f, 1.f, 0.f, positionIn.getY(),
+        0.f, 0.f, 1.f, positionIn.getZ(),
+        0.f, 0.f, 0.f, 1.f
+    };
+
+    *this = (*this)*matrix;
 }
 
 void Matrix4x4::setToIdentity()
@@ -76,10 +114,11 @@ void Matrix4x4::set_dim(int rader, int kolonner)
     m = rader; n = kolonner;
 }
 
-Dimension Matrix4x4::get_dim() const
-{
-    return Dimension(m, n);
-}
+//Dimension Matrix4x4::get_dim() const
+//{
+//    //return Dimension(m, n);
+//    return Dimension();
+//}
 
 // Det er ikke veldig elegant å skrive M.A[i][j]
 // gjentatte ganger. Et alternativ er å overlaste
@@ -380,6 +419,17 @@ void Matrix4x4::frustum(float left, float right, float bottom, float top, float 
     /*
     */
 }
+
+Vector4d Matrix4x4::getColumn(int index)
+{
+    float a = A[0][index];
+    float b = A[1][index];
+    float c = A[2][index];
+    float d = A[3][index];
+    gsml::Vector4d temp(a, b, c, d);
+    return temp;
+}
+
 // Se Angel kapittel 5.7.2
 void Matrix4x4::perspective(float fovy, float aspectRatio, float near, float far)
 {
@@ -493,10 +543,10 @@ void Matrix4x4::set_dim(int rader, int kolonner)
     m = rader; n = kolonner;
 }
 
-Dimension Matrix4x4::get_dim() const
-{
-    return Dimension(m, n);
-}
+//Dimension Matrix4x4::get_dim() const
+//{
+//    //return Dimension(m, n);
+//}
 
 // Det er ikke veldig elegant å skrive M.A[i][j]
 // gjentatte ganger. Et alternativ er å overlaste

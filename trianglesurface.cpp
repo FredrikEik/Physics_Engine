@@ -19,19 +19,16 @@ TriangleSurface::TriangleSurface() : VisualObject()
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
     readFile(filnavn);
-    //mMatrix.setToIdentity();
-    //mMatrix.translate(0,0,5);
 }
 
 TriangleSurface::~TriangleSurface()
 {
-    //qDebug() << "TriangleSurface::~TriangleSurface()";
-   //delete [] m_vertices;
-    //qDebug() << "TriangleSurface::~TriangleSurface() - vertices deleted";
+
 }
 
 void TriangleSurface::readFile(std::string filnavn)
 {
+    //leser fil
     std::ifstream inn;
     inn.open(filnavn.c_str());
 
@@ -52,6 +49,7 @@ void TriangleSurface::readFile(std::string filnavn)
 
 void TriangleSurface::writeFile(std::string filnavn)
 {
+    //skriver fil
     std::ofstream ut;
     ut.open(filnavn.c_str());
 
@@ -73,6 +71,7 @@ void TriangleSurface::init(GLint matrixUniform)
 {
     mMatrixUniform = matrixUniform;
     initializeOpenGLFunctions();
+
 
     //Vertex Array Object - VAO
     glGenVertexArrays( 1, &mVAO );
@@ -109,6 +108,7 @@ void TriangleSurface::draw()
 
 void TriangleSurface::construct()
 {
+   //konstruerings funksjonen
    float xmin=0.0f, xmax=1.0f, ymin=0.0f, ymax=1.0f, h=0.25f;
    for (auto x=xmin; x<xmax; x+=h)
        for (auto y=ymin; y<ymax; y+=h)
@@ -129,6 +129,7 @@ void TriangleSurface::construct()
 
 void TriangleSurface::construct_cylinder()
 {
+    //
     float h=0.5;
     const int SEKTORER=12;
     float t=2*M_PI/SEKTORER;
@@ -149,19 +150,7 @@ void TriangleSurface::construct_cylinder()
             mVertices.push_back(gsml::Vertex{x0,y0,z2,1,1,0,0,1});
             mVertices.push_back(gsml::Vertex{x1,y1,z2,1,1,0,1,0});
             mVertices.push_back(gsml::Vertex{x1,y1,z0,1,1,0,1,1});
-/*            float x0=cos(i*t);
-            float y0=sin(i*t);
-            float z0=h*k;
-            float x1=cos((i+1)*t);
-            float y1=sin((i+1)*t);
-            float z2=h*(k+1);
-            mVertices.push_back(Vertex{x0,y0,z0,0,0,1});
-            mVertices.push_back(Vertex{x1,y1,z0,0,0,1});
-            mVertices.push_back(Vertex{x0,y0,z2,0,0,1});
-            mVertices.push_back(Vertex{x0,y0,z2,1,1,0});
-            mVertices.push_back(Vertex{x1,y1,z0,1,1,0});
-            mVertices.push_back(Vertex{x1,y1,z2,1,1,0});
-*/        }
+        }
     }
 }
 

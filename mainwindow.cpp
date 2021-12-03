@@ -67,9 +67,23 @@ void MainWindow::init()
     mRenderWindowContainer->setFocus();
 }
 
-//Example of a slot called from the button on the top of the program.
-void MainWindow::on_pushButton_clicked()
+
+void MainWindow::on_pushButton_toggled(bool checked)
 {
-    qDebug() << "Button clicked";
+    mRenderWindow->toggleWireframe(checked);
 }
 
+void MainWindow::on_pushButton_clicked()
+{
+    mRenderWindow->LagTrekant();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    mRenderWindow->SimulatePlane();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    mRenderWindow->isPlaying = true;
+}

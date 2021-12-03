@@ -9,6 +9,8 @@
 #include <QStatusBar>
 #include <QDebug>
 
+#include "las.h"
+
 #include "shader.h"
 #include "mainwindow.h"
 
@@ -17,7 +19,8 @@
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 {
-    help.x = 5; help.y = -5; help.z = 3;
+    //creating light position
+    help.x = 0; help.y = -5; help.z = 3;
     mLightPosition.x = 5.2f;
     mLightPosition.y = 5.2f;
     mLightPosition.z = 2.0f;
@@ -40,11 +43,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
     gsml::Vector4d v{1,2,3,4};
     qDebug() << v[0] <<v[1] << v[3] << v[2];
-
-    // Demo
-    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/totrekanter.txt");
-    ball = new RollingBall(3);
-    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
 
     gsmMMatrix = new gsml::Matrix4x4;
     gsmMMatrix->setToIdentity();
@@ -110,7 +108,6 @@ void RenderWindow::init()
     glGenVertexArrays( 1, &mVAO );
     glBindVertexArray( mVAO );
 
-
     //enable the matrixUniform
     // NB: enable in shader and in render() function also to use matrix
     // endret/nytt 23/1
@@ -119,9 +116,51 @@ void RenderWindow::init()
     mVMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
     mLightPositionUniform = glGetUniformLocation( mShaderProgram->getProgram(), "light_position" );
     glBindVertexArray( 0 );
-    surf2->init(mMatrixUniform);
-    ball->init(mMatrixUniform);
+
+    xyz.mMatrix.translate(1,1,1);
     xyz.init(mMatrixUniform);
+
+
+
+
+
+}
+
+void RenderWindow::SimulatePlane()
+{
+    //lager et plane fra txt fil og legger en simulasjon av baller
+    plane = new LAS("../VSIM101_H21_Rulleball_0/datasett/test_las.txt");
+    plane->init(mMatrixUniform);
+    mGameObjects.push_back(plane);
+
+    for(auto i{0}; i<10; i++)
+    {
+        ball = new RollingBall(2);
+        ball->setSurface2(plane);
+        SimulateBalls = true;
+
+        ball->init(mMatrixUniform);
+        planeSim.push_back(ball);
+        mGameObjects.push_back(ball);
+    }
+
+}
+
+void RenderWindow::LagTrekant()
+{
+    //lager en trekant som i oblig 3 og simulerer en balls bevegelse over den
+    surf2 = new TriangleSurface("../VSIM101_H21_Rulleball_0/datasett/totrekanter.txt");
+    surf2->mMatrix.rotate(90, 0, 0, 0);
+    surf2->init(mMatrixUniform);
+    ball = new RollingBall(3);
+    dynamic_cast<RollingBall*>(ball)->setSurface(surf2);
+    SimulateBalls = false;
+    ball->init(mMatrixUniform);
+    mBalls.push_back(ball);
+    mGameObjects.push_back(surf2);
+    mGameObjects.push_back(ball);
+
+
 }
 
 ///Called each frame - doing the rendering
@@ -146,13 +185,8 @@ void RenderWindow::render()
 
     gsmPMatrix->setToIdentity();
     gsmVMatrix->setToIdentity();
-    //gsmPMatrix->frustum(-0.25,0.25,-0.25,0.25,0.1,1.5);
-    //gsmPMatrix->frustum(-0.3,0.3,-0.2,0.2,0.1,10);
-    gsmPMatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
-    //gsmPMatrix->print();
-    //qDebug() << *mPMatrix;
-    //gsmVMatrix->rotate(help, 0, 1, 0); help +=1;
-    //gsml::Vector3d eye{2.5,2.5,2};
+    gsmPMatrix->perspective(90, 4.0/3.0, 0.1, 100.0);
+
     gsml::Vector3d eye{help.x,help.y,help.z};
     gsml::Vector3d at{0 ,0 , 0};
     gsml::Vector3d up{0,0,1};
@@ -161,34 +195,29 @@ void RenderWindow::render()
     glUniformMatrix4fv( mPMatrixUniform, 1, GL_TRUE, gsmPMatrix->constData());
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
-    // actual draw call
-    // demo
-    surf2->draw();
-    ball->move(0.017f);
-    ball->draw();
 
+    if(isPlaying)
+    {
+        if(!SimulateBalls)
+        mBalls.back()->barycentricCords(0.017f);
+        else
+        {
+            if(!planeSim.empty()){
+                for(auto i{0}; i<static_cast<int>(planeSim.size()); i++)
+                {
+                    planeSim[i]->moveAlongLAs(0.017f);
 
+                }}
+        }
 
+    }
 
+    for(unsigned int i{0}; i < mGameObjects.size(); i++)
+    {
+        mGameObjects[i]->draw();
+    }
 
-
-
-
-
-
-
-
-
-    //xyz.draw();
-    //mia.draw();
-    //fx.draw();
-   // tetraeder->draw();
-    //disc->move(0.017);
-    //disc->draw();
-    //vogn->move(0.017f);
-    //vogn->draw();
-    //cylinder->draw();
-    //toppen->draw();
+    xyz.draw();
     // checkForGLerrors() because that takes a long time
     // and before swapBuffers(), else it will show the vsync time
     calculateFramerate();
@@ -200,6 +229,20 @@ void RenderWindow::render()
     // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
     // and wait for vsync.
     mContext->swapBuffers(this);
+}
+
+void RenderWindow::toggleWireframe(bool buttonState)
+{
+    if (buttonState)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    //turn on wireframe mode
+        glDisable(GL_CULL_FACE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    //turn off wireframe mode
+        glEnable(GL_CULL_FACE);
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -242,7 +285,8 @@ void RenderWindow::calculateFramerate()
             //showing some statistics in status bar
             mMainWindow->statusBar()->showMessage(" Time pr FrameDraw: " +
                                                   QString::number(nsecElapsed/1000000.f, 'g', 4) + " ms  |  " +
-                                                  "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7));
+                                                  "FPS (approximated): " + QString::number(1E9 / nsecElapsed, 'g', 7) +
+                                                  "  |  Vertices drawn: :" + QString::number(mVerticesDrawn));
             frameCount = 0;     //reset to show a new message in 60 frames
         }
     }
@@ -296,17 +340,15 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         mMainWindow->close();
     }
     if (event->key() == Qt::Key_A)
-        //mia.move(0.1,0,0);
-        help.x -= 0.1;
+        help.x -= 0.3;
     if (event->key() == Qt::Key_D)
-        help.x += 0.1;
+        help.x += 0.3;
     if (event->key() == Qt::Key_W)
-        help.y += 0.1;
+        help.y += 0.3;
     if (event->key() == Qt::Key_S)
-        help.y -= 0.1;
+        help.y -= 0.3;
     if (event->key() == Qt::Key_Q)
-        help.z += 0.1;
+        help.z += 0.3;
     if (event->key() == Qt::Key_Z)
-        help.z -= 0.1;
-    qDebug() << help.x << help.y << help.z;
+        help.z -= 0.3;
 }

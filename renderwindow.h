@@ -12,6 +12,7 @@
 #include "trianglesurface.h"
 #include "matrix4x4.h"
 #include "rollingball.h"
+#include "las.h"
 
 class QOpenGLContext;
 class Shader;
@@ -32,20 +33,32 @@ public:
 
     void exposeEvent(QExposeEvent *) override;
 
-//    void error(const QString &msg);
+    void toggleWireframe(bool buttonState);
+    std::vector<VisualObject*> mGameObjects;
+    bool isPlaying = false;
+    void SimulatePlane();
+    void LagTrekant();
 
 private slots:
     void render();
 
 private:
     void init();
+
     XYZ xyz;
+
+    RollingBall* ball{nullptr};
+    LAS* plane;
     TriangleSurface surf;
     TriangleSurface* surf2;
     QOpenGLContext *mContext;
     bool mInitialized;
     gsml::Vector3d help;
-    RollingBall* ball;
+    std::vector<RollingBall*> planeSim;
+    std::vector<RollingBall*> mBalls;
+    bool SimulateBalls = false;
+
+    int mVerticesDrawn{0};
 
     Shader *mShaderProgram;
     GLint  mMatrixUniform;

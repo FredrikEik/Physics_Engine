@@ -39,6 +39,13 @@ Vertex::Vertex(float x, float y, float z, float r, float g, float b, float s, fl
     m_st[0] = s;
     m_st[1] = t;
 }
+
+Vertex::Vertex(Vector3d a, Vector3d b, Vector2d c)
+{
+    mXYZ = a;
+    mNormal = b;
+    mST = c;
+}
 Vertex::~Vertex()
 {
     //qDebug() << "Vertex::~Vertex()";
@@ -92,6 +99,18 @@ void Vertex::set_st(GLfloat s, GLfloat t)
 void Vertex::set_uv(GLfloat u, GLfloat v)
 {
     set_st(u,v);
+}
+
+gsml::Vector3d Vertex::getNormal()
+{
+    for (int i=0; i<3; i++)
+    return m_normal[i];
+}
+
+gsml::Vector2d Vertex::getUV()
+{
+    for (int i=0; i<2; i++)
+    return m_st[i];
 }
 
 std::ostream& operator<< (std::ostream& os, const Vertex& v)

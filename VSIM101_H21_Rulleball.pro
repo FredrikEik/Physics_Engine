@@ -12,8 +12,10 @@ HEADERS += \
     Matrix4x4/matrix4x4.h \
     Matrix4x4/vector3d.h \
     Matrix4x4/vertex.h \
+    las.h \
     mainwindow.h \
     octahedronball.h \
+    physicscomponent.h \
     renderwindow.h \
     rollingball.h \
     shader.h \
@@ -24,9 +26,11 @@ HEADERS += \
 SOURCES += \
     Matrix4x4/matrix4x4.cpp \
     Matrix4x4/vertex.cpp \
+    las.cpp \
     main.cpp \
     mainwindow.cpp \
     octahedronball.cpp \
+    physicscomponent.cpp \
     renderwindow.cpp \
     rollingball.cpp \
     shader.cpp \
