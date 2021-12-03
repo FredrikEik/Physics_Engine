@@ -49,14 +49,14 @@ void RollingBall::setHeight(float z)
 
 void RollingBall::setSurface2(VisualObject* surface)
 {
-    _las = surface;
-    surfVertices = _las->get_vertices();
-    int mT = static_cast<int>(surfVertices.size());
+    las_surface = surface;
+    las_vertices = las_surface->get_vertices();
+    int mT = static_cast<int>(las_vertices.size());
     mT = rand()%mT;
     qDebug() << mT;
-    gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
-    gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
-    gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
+    gsml::Vector3d v1 =las_vertices.at(mT).getXYZ();
+    gsml::Vector3d v2 =las_vertices.at(mT+1).getXYZ();
+    gsml::Vector3d v3 =las_vertices.at(mT+2).getXYZ();
     gsml::Vector3d pos = (v1+v2+v3)*0.333;
     pos.z += 30;
     setPosition(pos);
@@ -69,12 +69,12 @@ void RollingBall::moveAlongLAs( float dt)
 
     gsml::Vector3d bary;
     gsml::Vector2d ballPosXY(get_position().x, get_position().y);
-    for (size_t i=0; i<surfVertices.size(); i++)
+    for (size_t i=0; i<las_vertices.size(); i++)
     {
         // ground size
-        gsml::Vector3d p1 = surfVertices[i].getXYZ();
-        gsml::Vector3d p2 = surfVertices[++i].getXYZ();
-        gsml::Vector3d p3 = surfVertices[++i].getXYZ();
+        gsml::Vector3d p1 = las_vertices[i].getXYZ();
+        gsml::Vector3d p2 = las_vertices[++i].getXYZ();
+        gsml::Vector3d p3 = las_vertices[++i].getXYZ();
 
         m_index = static_cast<int>(i+1) /3;
 
@@ -104,8 +104,8 @@ void RollingBall::moveAlongLAs( float dt)
             {
                 physics->Falling();
                 qDebug() << "falling";
-                mN = m_normal;
-                mN.normalize();
+                new_normal = m_normal;
+                new_normal.normalize();
                 m_index = -1;
                 qDebug() << "mVelocity: " << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
@@ -114,8 +114,8 @@ void RollingBall::moveAlongLAs( float dt)
                 qDebug() << "on ground";
                 physics->onGround(m_normal);
                 setHeight(barycentricHeight(get_position(), p1,p2,p3));
-                mN = m_normal + old_normal;
-                mN.normalize();
+                new_normal = m_normal + old_normal;
+                new_normal.normalize();
                 qDebug() << "mVelocity: " << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
             }
             physics->Velocity = physics->OldVelocity + physics->Acceleration * dt;
@@ -126,10 +126,9 @@ void RollingBall::moveAlongLAs( float dt)
 
             if(m_index != old_index)
             {
-                physics->Velocity = mN * gsml::Vector3d::dot(physics->OldVelocity, mN);
+                physics->Velocity = new_normal * gsml::Vector3d::dot(physics->OldVelocity, new_normal);
                 physics->Velocity = physics->OldVelocity - physics->Velocity * 2;
                 physics->Velocity = physics->Velocity * physics->friction;
-                //qDebug() << "mVelocity: " << p->Velocity.x << p->Velocity.y << p->Velocity.z;
             }
             physics->OldVelocity = physics->Velocity;
             old_normal = m_normal;

@@ -132,7 +132,7 @@ void RenderWindow::SimulateRain()
     map->init(mMatrixUniform);
     mGameObjects.push_back(map);
 
-    for(auto i{0}; i<30; i++)
+    for(auto i{0}; i<100; i++)
     {
         ball = new RollingBall(3);
         //ball->switchVersion = true;

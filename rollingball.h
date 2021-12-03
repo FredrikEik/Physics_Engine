@@ -33,12 +33,12 @@ public:
 
 protected:
     VisualObject* triangle_surface;
-    VisualObject* _las;
+    VisualObject* las_surface;
 private:
-    std::vector<gsml::Vertex> surfVertices;
+    std::vector<gsml::Vertex> las_vertices;
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};
-    gsml::Vector3d mN{0.0, 0.0, 1.0};
+    gsml::Vector3d new_normal{0.0, 0.0, 1.0};
     int old_index{0};
     int m_index{0};
 

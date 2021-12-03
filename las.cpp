@@ -26,7 +26,7 @@ void LAS::readLAS(std::string fileName)
     if (inn.is_open()) {
         int numberOfVertices;
         inn >> numberOfVertices;
-        lasData.reserve(numberOfVertices);
+        las_vertices.reserve(numberOfVertices);
         gsml::Vertex vertex{0,0,0};
         double tempX, tempY, tempZ;
         float x,y,z;
@@ -57,7 +57,7 @@ void LAS::readLAS(std::string fileName)
              if(tempZ < lowestZ){ lowestZ = z;}
 
              vertex.set_xyz(x, y, z);
-             lasData.push_back(vertex);
+             las_vertices.push_back(vertex);
         }
         //print las data
         float deltaX{highestX - lowestX}, deltaY{highestY - lowestY }, deltaZ{highestZ - lowestZ };
@@ -74,13 +74,13 @@ void LAS::readLAS(std::string fileName)
 
 void LAS::minMaxNormalize()
 {
-    for(int i = 0; i < lasData.size(); i++)
+    for(unsigned int i = 0; i < las_vertices.size(); i++)
     {
-        float nX = xMin+(((lasData[i].getXYZ().getX() - lowestX)*(xMax-xMin)) / (highestX - lowestX));
-        float nY = yMin+(((lasData[i].getXYZ().getY() - lowestY)*(yMax-yMin)) / (highestY - lowestY));
-        float nZ = zMin+(((lasData[i].getXYZ().getZ() - lowestZ)*(zMax-zMin)) / (highestZ - lowestZ));
+        float nX = xMin+(((las_vertices[i].getXYZ().getX() - lowestX)*(xMax-xMin)) / (highestX - lowestX));
+        float nY = yMin+(((las_vertices[i].getXYZ().getY() - lowestY)*(yMax-yMin)) / (highestY - lowestY));
+        float nZ = zMin+(((las_vertices[i].getXYZ().getZ() - lowestZ)*(zMax-zMin)) / (highestZ - lowestZ));
 
-        lasData[i].set_xyz(nX,nY,nZ);
+        las_vertices[i].set_xyz(nX,nY,nZ);
     }
 
 
@@ -91,56 +91,47 @@ void LAS::triangulate()
     int quadX = 0;
     int quadZ = 0;
 
-    // Using min, max and step to find how many quads the TriangleSurface has in each direction
+    //finner ut hvor mange firkanter terrenget har i alle retninger
     const int quadAmountZ = abs(zMax-zMin)/step;
-    //const int numOfQuads = quadAmountX*quadAmountZ; //qDebug() << numOfQuads;
 
-    // An array of vectors that hold all the heights for each quad
-    // Size of array is hardcoded, unsure how to do it from numOfQuads
-    std::array<std::vector<float>,800> heights;
-    //std::array<std::vector<float>,numOfQuads> heights;
+    //liste med høyder, hardkodet til 1000
+    std::array<std::vector<float>,1000> heights;
+    float averageHeights[1000];
 
-    //An array that holds the average height of each quad
-    float averageHeights[800];
 
-    //For every vertices
-    //qDebug() << "Vertices size" << lasData.size();
-    for(int i = 0; i < lasData.size(); i++)
+    for(unsigned int i = 0; i < las_vertices.size(); i++)
     {
-        //column
+        //kolonne
         for(int j = xMin; j < xMax; j+=step)
         {
-            if(lasData[i].getXYZ().getX() > j && lasData[i].getXYZ().getX() < j + step)
+            if(las_vertices[i].getXYZ().getX() > j && las_vertices[i].getXYZ().getX() < j + step)
             {
                 quadX = (j-xMin)/step;
             }
         }
-        //row
+        //rad
         for(int j = zMin; j < zMax; j+=step)
         {
-            if(lasData[i].getXYZ().getZ() > j && lasData[i].getXYZ().getZ() < j + step)
+            if(las_vertices[i].getXYZ().getZ() > j && las_vertices[i].getXYZ().getZ() < j + step)
             {
                 quadZ = (j-zMin)/step;
             }
         }
 
-        //index to vector array
+        //indekserer og pusher
         int vectorIndex = quadZ*quadAmountZ + quadX;
 
-        //Pushes the height(y) to the correct vector in the array
-        heights[vectorIndex].push_back(lasData[i].getXYZ().getY());
+
+        heights[vectorIndex].push_back(las_vertices[i].getXYZ().getY());
     }
 
-    for(int i = 0; i < heights.size(); i++)
+    for(unsigned int i = 0; i < heights.size(); i++)
     {
-        //qDebug() << "size of height vector " << i << heights[i].size();
 
-        //Calculate the average of all heights in quad
-        //.. and put it in the array of averageHeights
-
+        //kalkulerer gjennomsnittshøyden og putter dataen i arrayet
 
         float sum = 0;
-        for(int j = 0; j < heights[i].size(); j++)
+        for(unsigned int j = 0; j < heights[i].size(); j++)
         {
             sum += heights[i][j];
         }
@@ -149,7 +140,7 @@ void LAS::triangulate()
     }
 
 
-    //Create triangulated surface
+    //Lager terrenget
 
     for (float x = xMin; x < xMax-step; x+= step)
     {
@@ -161,24 +152,17 @@ void LAS::triangulate()
             float v{(z + abs(zMin)) / (zMax + abs(zMin) + step)};
 
             mVertices.push_back(gsml::Vertex(x, averageHeights[quadCoordZ*quadAmountZ + quadCoordX], z,
-            R/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX]*G/255, B/255,u,v));
-
+            red/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX]*green/255, blue/255,u,v));
             mVertices.push_back(gsml::Vertex(x, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX], z+step,
-            R/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX]*G/255, B/255, u, v+step));
-
+            red/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX]*green/255, blue/255, u, v+step));
             mVertices.push_back(gsml::Vertex(x+step, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1], z,
-            R/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1]*G/255, B/255, u+step,v));
-
+            red/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1]*green/255, blue/255, u+step,v));
             mVertices.push_back(gsml::Vertex(x+step, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX+1], z+step,
-            R/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX+1]*G/255, B/255, u+step, v+step));
-
+            red/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX+1]*green/255, blue/255, u+step, v+step));
             mVertices.push_back(gsml::Vertex(x+step, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1], z,
-            R/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1]*G/255, B/255, u+step,v));
-
+            red/255, averageHeights[quadCoordZ*quadAmountZ + quadCoordX+1]*green/255, blue/255, u+step,v));
             mVertices.push_back(gsml::Vertex(x, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX], z+step,
-            R/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX]*G/255, B/255, u, v+step));
-
-
+            red/255, averageHeights[(quadCoordZ+1)*quadAmountZ + quadCoordX]*green/255, blue/255, u, v+step));
 
         }
     }
@@ -208,8 +192,6 @@ void LAS::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(gsml::Vertex),  (GLvoid*)(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
 
-    //enable the matrixUniform
-    // mMatrixUniform = glGetUniformLocation( matrixUniform, "matrix" );
 
     glBindVertexArray(0);
 }
