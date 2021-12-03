@@ -19,9 +19,9 @@ gsml::Vector3d RollingBall::get_position()
 {
     gsml::Vector3d temp;
 
-    temp.x = (mMatrix.getColumn(3).x());
-    temp.y = (mMatrix.getColumn(3).y());
-    temp.z = (mMatrix.getColumn(3).z());
+    temp.x = mMatrix.getColumn(3).x();
+    temp.y = mMatrix.getColumn(3).y();
+    temp.z = mMatrix.getColumn(3).z();
 
     return temp;
 }
@@ -51,13 +51,13 @@ void RollingBall::setSurface2(VisualObject* surface)
 {
     las_surface = surface;
     las_vertices = las_surface->get_vertices();
-    int mT = static_cast<int>(las_vertices.size());
-    mT = rand()%mT;
-    qDebug() << mT;
-    gsml::Vector3d v1 =las_vertices.at(mT).getXYZ();
-    gsml::Vector3d v2 =las_vertices.at(mT+1).getXYZ();
-    gsml::Vector3d v3 =las_vertices.at(mT+2).getXYZ();
-    gsml::Vector3d pos = (v1+v2+v3)*0.333;
+    int Temp = static_cast<int>(las_vertices.size());
+    Temp = rand()%Temp;
+    qDebug() << Temp;
+    gsml::Vector3d v1 =las_vertices.at(Temp).getXYZ();
+    gsml::Vector3d v2 =las_vertices.at(Temp+1).getXYZ();
+    gsml::Vector3d v3 =las_vertices.at(Temp+2).getXYZ();
+    gsml::Vector3d pos = (v1+v2+v3)*.3;
     pos.z += 30;
     setPosition(pos);
 
@@ -76,7 +76,7 @@ void RollingBall::moveAlongLAs( float dt)
         gsml::Vector3d p2 = las_vertices[++i].getXYZ();
         gsml::Vector3d p3 = las_vertices[++i].getXYZ();
 
-        m_index = static_cast<int>(i+1) /3;
+        m_index = i /3;
 
         bary = baryCoord(gsml::Vector2d(p1.x, p1.y),
                                  gsml::Vector2d(p2.x, p2.y),
@@ -95,7 +95,7 @@ void RollingBall::moveAlongLAs( float dt)
             float Height = get_position().z - barycentricHeight(get_position(), p1,p2,p3);
             Height = sqrt(Height * Height);
             bool isFalling{false};
-            if(Height > physics->radius+0.2)
+            if(Height > physics->radius)
                 isFalling = true;
             else
                 isFalling = false;
