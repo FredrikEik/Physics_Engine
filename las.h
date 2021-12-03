@@ -11,7 +11,6 @@
 
 class LAS : public VisualObject
 {
-
 public:
     LAS(std::string fileName);
     ~LAS() override;

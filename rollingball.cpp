@@ -252,11 +252,10 @@ void RollingBall::init(GLint matrixUniform)
    mMatrixUniform = matrixUniform;
    initializeOpenGLFunctions();
 
-   //Vertex Array Object - VAO
+
    glGenVertexArrays( 1, &mVAO );
    glBindVertexArray( mVAO );
 
-   //Vertex Buffer Object to hold vertices - VBO
    glGenBuffers( 1, &mVBO );
    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
 
