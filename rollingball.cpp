@@ -4,15 +4,9 @@
 RollingBall::RollingBall(int n) : OctahedronBall (n)
 {
     physics = new PhysicsComponent;
-    //mVelocity = gsml::Vector3d{1.0f, 1.0f, -0.05f};
     mPosition.translate(1.5,0,2);
-    //_las->mMatrix.rotate(90,1,0,0);
     mScale.scale(0.4,0.4,0.4);
-    //mScale.rotate(90,1,0,0);
-    //mMatrix.rotate(90,1,0,0);
 
-
-    //gForce = gAcceleration * massInKg;
 }
 
 
@@ -21,7 +15,7 @@ RollingBall::~RollingBall()
 
 }
 
-gsml::Vector3d RollingBall::Get_position()
+gsml::Vector3d RollingBall::get_position()
 {
     gsml::Vector3d temp;
 
@@ -41,38 +35,32 @@ void RollingBall::setPosition(gsml::Vector3d v)
 void RollingBall::setHeight(float z)
 {
     gsml::Vector3d HeightVector{0,0,z};
-    gsml::Vector3d Translation{0,0,0};
-    Translation = Get_position();
+    gsml::Vector3d NewPos{0,0,0};
+    NewPos = get_position();
 
-    Translation.z = (HeightVector.z + physics->radius);
+    NewPos.z = (HeightVector.z + physics->radius);
 
     if(z != mMatrix.getColumn(3).z())
     {
-        setPosition(Translation);
-        //mMatrix.setPosition(Translation.x,Translation.y,Translation.z);
+        setPosition(NewPos);
+
     }
 }
-void RollingBall::move(float dx, float dy, float dz)
-{
-    mPosition.setPosition(dx, dy, dz);
-    //mMatrix = mPosition * mScale;
-}
+
 void RollingBall::setSurface2(VisualObject* surface)
 {
     _las = surface;
     surfVertices = _las->get_vertices();
     int mT = static_cast<int>(surfVertices.size());
-    if(surfVertices.size()>100){
-        mT = rand()%mT;
-        qDebug() << mT;
-        gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
-        gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
-        gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
-        gsml::Vector3d pos = (v1+v2+v3)*0.333;
-        pos.z += 50;
-        setPosition(pos);}
-    else
-        move(1,1,5);
+    mT = rand()%mT;
+    qDebug() << mT;
+    gsml::Vector3d v1 =surfVertices.at(mT).getXYZ();
+    gsml::Vector3d v2 =surfVertices.at(mT+1).getXYZ();
+    gsml::Vector3d v3 =surfVertices.at(mT+2).getXYZ();
+    gsml::Vector3d pos = (v1+v2+v3)*0.333;
+    pos.z += 30;
+    setPosition(pos);
+
 }
 
 
@@ -80,15 +68,13 @@ void RollingBall::moveAlongLAs( float dt)
 {
 
     gsml::Vector3d bary;
-    //std::vector<gsml::Vertex> vertices = triangle_surface->get_vertices();
-    gsml::Vector2d ballPosXY(Get_position().x, Get_position().y);
+    gsml::Vector2d ballPosXY(get_position().x, get_position().y);
     for (size_t i=0; i<surfVertices.size(); i++)
     {
-        //qDebug() << "ground size: " << vertices.size();
+        // ground size
         gsml::Vector3d p1 = surfVertices[i].getXYZ();
         gsml::Vector3d p2 = surfVertices[++i].getXYZ();
         gsml::Vector3d p3 = surfVertices[++i].getXYZ();
-        //qDebug() << "p1: " << p1.x << p1.y << p1.z << "p2: " << p2.x << p2.y << p2.z << "p3: " << p3.x << p3.y << p3.z;
 
         m_index = static_cast<int>(i+1) /3;
 
@@ -97,7 +83,6 @@ void RollingBall::moveAlongLAs( float dt)
                                  gsml::Vector2d(p3.x, p3.y),
                                  ballPosXY);
 
-        //qDebug() << "bary value: " << bary.x << " " << bary.y << " " << bary.z;
 
         if (bary.x >=0 && bary.y >=0 && bary.z >=0)
         {
@@ -107,19 +92,18 @@ void RollingBall::moveAlongLAs( float dt)
             m_normal = p12^p13;
             m_normal.normalize();
 
-            float mHeight = Get_position().z - barycentricHeight(Get_position(), p1,p2,p3);
-            mHeight = sqrt(mHeight * mHeight);
+            float Height = get_position().z - barycentricHeight(get_position(), p1,p2,p3);
+            Height = sqrt(Height * Height);
             bool isFalling{false};
-            if(mHeight > physics->radius+0.2)
+            if(Height > physics->radius+0.2)
                 isFalling = true;
             else
                 isFalling = false;
 
-
             if(isFalling)
             {
                 physics->Falling();
-                //qDebug() << "Fritt Fall";
+                qDebug() << "falling";
                 mN = m_normal;
                 mN.normalize();
                 m_index = -1;
@@ -127,8 +111,9 @@ void RollingBall::moveAlongLAs( float dt)
             }
             else
             {
+                qDebug() << "on ground";
                 physics->onGround(m_normal);
-                setHeight(barycentricHeight(Get_position(), p1,p2,p3));
+                setHeight(barycentricHeight(get_position(), p1,p2,p3));
                 mN = m_normal + old_normal;
                 mN.normalize();
                 qDebug() << "mVelocity: " << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;

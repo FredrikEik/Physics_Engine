@@ -29,12 +29,12 @@ public:
         Force = Acceleration * mass;
         Acceleration = {Force.x/mass, Force.y/mass, Force.z/mass};
     }
-    void onGround(gsml::Vector3d N)
+    void onGround(gsml::Vector3d tempNormal)
     {
         if(IsFalling == true)
             OldVelocity.z = 0;
         IsFalling = false;
-        Acceleration = gsml::Vector3d(N.x * N.z, N.y * N.z, (N.z*N.z)-1) * Gravitation;
+        Acceleration = gsml::Vector3d(tempNormal.x * tempNormal.z, tempNormal.y * tempNormal.z, (tempNormal.z*tempNormal.z)-1) * Gravitation;
 
     }
 };

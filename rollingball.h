@@ -15,16 +15,13 @@ public:
     ~RollingBall() override;
     void init(GLint matrixUniform) override;
     void draw() override;
-    void move(float x, float y, float z) ;
     void moveAlongLAs( float dt);
     void baryMove(float x, float y, float z);
     void setSurface2(VisualObject* surface);
-    gsml::Vector3d Get_position();
+    gsml::Vector3d get_position();
     void setPosition(gsml::Vector3d v);
     void setHeight(float z);
     void heightAt();
-
-    //Physics* physics;
 
     PhysicsComponent *physics;
     float radius = 0.25f;
@@ -33,7 +30,6 @@ public:
     void calculateBarycentricCoordinates(VisualObject *surface);
     void barycentricCords(float dt);
     void setSurface(VisualObject* surface);
-
 
 protected:
     VisualObject* triangle_surface;
