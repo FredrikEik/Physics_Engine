@@ -7,6 +7,7 @@ class PhysicsComponent
 {
 public:
     //lager fysikken til ballen
+
     PhysicsComponent();
     float radius = 0.25;
     float mass = 100;
@@ -18,6 +19,7 @@ public:
     gsml::Vector3d Velocity{0,0,0};
     gsml::Vector3d OldVelocity{0,0,0};
     gsml::Vector3d airFlow{0,0,0};
+
 
     bool IsFalling{false};
     //funksjon for hvis objektet faller

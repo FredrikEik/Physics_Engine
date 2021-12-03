@@ -14,6 +14,73 @@ RollingBall::~RollingBall()
 {
 
 }
+void RollingBall::barycentricCords(float dt)
+{
+    //bruker barycentric Cords for å finne ballens pos
+    gsml::Vector3d gKraft;
+    physics->mass = 0.01;
+    gKraft = physics->Acceleration*physics->mass;
+    mMatrix = mPosition * mScale;
+
+    float rotspeed = 2;
+    gsml::Vector3d normalvektor = 0;
+    gsml::Vector3d newPos = 0;
+    gsml::Vector3d akselerasjon{0.0f,0.0f,0.0f};
+    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
+
+    // Finne trekant
+    for (unsigned int i=0; i < vertices.size(); i+=3){
+
+        gsml::Vector3d pos1;
+        gsml::Vector3d pos2;
+        gsml::Vector3d pos3;
+        pos1 = gsml::Vector3d(vertices[i].getXYZ());
+        pos2 = gsml::Vector3d(vertices[i+1].getXYZ());
+        pos3 = gsml::Vector3d(vertices[i+2].getXYZ());
+
+        gsml::Vector3d BallPos = mPosition.getPosition();
+        gsml::Vector3d barCords = BallPos.barycentricCoordinates(vertices[i].getXYZ(),
+                                                  vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
+        //beregne normal og akselerasjon
+        if(barCords.x >= 0 && barCords.y >= 0 && barCords.z >= 0 &&
+                barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
+
+            normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
+            normalvektor.normalize();
+
+            old_normal = normalvektor;
+
+
+
+            akselerasjon = gKraft * normalvektor * normalvektor.z;
+
+            if(i==3){
+
+
+            physics->Velocity = physics->Velocity + akselerasjon * dt;
+            newPos = BallPos + physics->Velocity;
+            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
+            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
+            mPosition.rotate(rotspeed, 1, 0, 0);
+
+            //kalkulere ny hastighet og pos
+            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
+            }
+            if(i<3){
+            physics->Velocity = physics->Velocity - akselerasjon * dt;
+            newPos = BallPos + physics->Velocity;
+            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
+            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
+            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
+            mPosition.rotate(-rotspeed,1,0,0);
+
+
+            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
+            }
+        }
+    }
+}
 
 gsml::Vector3d RollingBall::Get_position()
 {
@@ -109,7 +176,7 @@ void RollingBall::moveAlongLAs( float dt)
             else
                 isFalling = false;
 
-
+            //sjekker om ballen faller, hvis ikke så er den på bakken
             if(isFalling)
             {
                 physics->Falling();
@@ -144,8 +211,6 @@ void RollingBall::moveAlongLAs( float dt)
             break;
         }
     }
-
-
 }
 
 
@@ -157,81 +222,6 @@ void RollingBall::setSurface(VisualObject *surface)
     triangle_surface = surface;
 }
 
-void RollingBall::barycentricCords(float dt)
-{
-    //bruker barycentric Cords for å finne ballens pos
-    gsml::Vector3d gKraft;
-    physics->mass = 0.01;
-    gKraft = physics->Acceleration*physics->mass;
-    mMatrix = mPosition * mScale;
-
-    float rotspeed = 2;
-    gsml::Vector3d normalvektor = 0;
-    gsml::Vector3d newPos = 0;
-    gsml::Vector3d akselerasjon{0.0f,0.0f,0.0f};
-    std::vector<gsml::Vertex>& vertices = dynamic_cast<TriangleSurface*>(triangle_surface)->get_vertices();
-
-    // Finne trekant
-    for (unsigned int i=0; i < vertices.size(); i+=3){
-
-        gsml::Vector3d pos1;
-        gsml::Vector3d pos2;
-        gsml::Vector3d pos3;
-        pos1 = gsml::Vector3d(vertices[i].getXYZ());
-        pos2 = gsml::Vector3d(vertices[i+1].getXYZ());
-        pos3 = gsml::Vector3d(vertices[i+2].getXYZ());
-
-        gsml::Vector3d BallPos = mPosition.getPosition();
-        gsml::Vector3d barCords = BallPos.barycentricCoordinates(vertices[i].getXYZ(),
-                                                  vertices[i+1].getXYZ(), vertices[i+2].getXYZ());
-        //beregne normal og akselerasjon
-        if(barCords.x >= 0 && barCords.y >= 0 && barCords.z >= 0 &&
-                barCords.x <= 1 && barCords.y <= 1 && barCords.z < 1){
-
-            normalvektor = gsml::Vector3d::cross(pos3 - pos1,pos2 - pos1);
-            normalvektor.normalize();
-
-            old_normal = normalvektor;
-
-
-
-            akselerasjon = gKraft * normalvektor * normalvektor.z;
-
-            if(i==3){
-
-
-            physics->Velocity = physics->Velocity + akselerasjon * dt;
-            newPos = BallPos + physics->Velocity;
-            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
-            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
-            mPosition.rotate(rotspeed, 1, 0, 0);
-
-            //kalkulere ny hastighet og pos
-            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
-            }
-            if(i<3){
-            physics->Velocity = physics->Velocity - akselerasjon * dt;
-            newPos = BallPos + physics->Velocity;
-            newPos.z = pos1.z*barCords.x+pos2.z*barCords.y+pos3.z*barCords.z;
-            newPos.x -= (pos1.x*barCords.x+pos2.x*barCords.x+pos3.x*barCords.x) * physics->friction;
-            mPosition.setPosition(newPos.x, newPos.y, newPos.z+radius);
-            mPosition.rotate(-rotspeed,1,0,0);
-
-
-            qDebug() << physics->Velocity.x << physics->Velocity.y << physics->Velocity.z;
-            }
-
-
-
-        }
-
-
-
-    }
-
-
-}
 
 void RollingBall::init(GLint matrixUniform)
 {
@@ -262,5 +252,5 @@ void RollingBall::draw()
 {
    glBindVertexArray( mVAO );
    glUniformMatrix4fv( mMatrixUniform, 1, GL_TRUE, mMatrix.constData());
-   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+   glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
 }

@@ -24,20 +24,23 @@ public:
     void setHeight(float z);
     void heightAt();
 
-
+    //legger til fysikk til ballen
     PhysicsComponent *physics;
     float radius = 0.25f;
     float r = 1.f;
-    
+
+    //barcycentric for ballens pos
     void calculateBarycentricCoordinates(VisualObject *surface);
     void barycentricCords(float dt);
     void setSurface(VisualObject* surface);
 
 
 protected:
+    //henter overflatene
     VisualObject* triangle_surface;
     VisualObject* _las;
 private:
+
     std::vector<gsml::Vertex> surfVertices;
     gsml::Vector3d m_normal{0.0, 0.0, 1.0};
     gsml::Vector3d old_normal{0.0, 0.0, 1.0};

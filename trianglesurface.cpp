@@ -18,7 +18,7 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
-    readFile(filnavn);
+    read(filnavn);
 }
 
 TriangleSurface::~TriangleSurface()
@@ -26,7 +26,7 @@ TriangleSurface::~TriangleSurface()
 
 }
 
-void TriangleSurface::readFile(std::string filnavn)
+void TriangleSurface::read(std::string filnavn)
 {
     //leser fil
     std::ifstream inn;
@@ -47,7 +47,7 @@ void TriangleSurface::readFile(std::string filnavn)
     }
 }
 
-void TriangleSurface::writeFile(std::string filnavn)
+void TriangleSurface::write(std::string filnavn)
 {
     //skriver fil
     std::ofstream ut;
@@ -61,7 +61,6 @@ void TriangleSurface::writeFile(std::string filnavn)
         ut << n << std::endl;
         for (auto it=mVertices.begin(); it != mVertices.end(); it++)
         {
-            //vertex = *it;
             ut << *it << std::endl;
         }
         ut.close();

@@ -196,6 +196,8 @@ void RenderWindow::render()
     glUniformMatrix4fv( mVMatrixUniform, 1, GL_TRUE, gsmVMatrix->constData());
     glUniform3f(mLightPositionUniform, mLightPosition.x, mLightPosition.y, mLightPosition.z);
 
+    //sjekker om isplaying er true
+    //hvis true, så sjekker den sim ball er false og så plane sim
     if(isPlaying)
     {
         if(!SimulateBalls)
@@ -211,7 +213,7 @@ void RenderWindow::render()
         }
 
     }
-
+    //tegner objectene
     for(unsigned int i{0}; i < mGameObjects.size(); i++)
     {
         mGameObjects[i]->draw();

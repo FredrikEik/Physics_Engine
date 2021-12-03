@@ -23,10 +23,11 @@ private slots:
 
     void on_pushButton_toggled(bool checked);
 
+    //knapp 1 lager trekant
     void on_pushButton_clicked();
-
+    //knapp 2 lager plane
     void on_pushButton_2_clicked();
-
+    //knapp 3 simulerer
     void on_pushButton_3_clicked();
 
 private:

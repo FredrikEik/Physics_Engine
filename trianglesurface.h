@@ -10,11 +10,12 @@ public:
     TriangleSurface();
     TriangleSurface(std::string filnavn);
     ~TriangleSurface() override;
-    void readFile(std::string filnavn);
-    void writeFile(std::string filnavn);
+    void read(std::string filnavn);
+    void write(std::string filnavn);
     void init(GLint matrixUniform) override;
     void draw() override;
 
+    //konstruerer
     void construct();
     void construct_cylinder();
     void construct_plane();
